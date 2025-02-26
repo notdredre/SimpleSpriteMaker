@@ -1,6 +1,5 @@
 import java.awt.Color;
 import java.awt.Dimension;
-
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -32,10 +31,13 @@ public class MainWindow extends JFrame implements ChangeListener {
 
     private void initComponents() {
         colourManager = ColourManager.getColourManager();
+
         mainLayout = new SpringLayout();
         mainPanel = new JPanel();
         mainPanel.setLayout(mainLayout);
+
         drawPanel = new DrawPanel();
+        colourManager.addColourObject(drawPanel);
         mainPanel.add(drawPanel);
 
         colourPanel = new JPanel();
@@ -69,6 +71,6 @@ public class MainWindow extends JFrame implements ChangeListener {
         int r = colourSliders[0].getValue();
         int g = colourSliders[1].getValue();
         int b = colourSliders[2].getValue();
-        colourManager.setPrimary(r, g, b, 255);
+        colourManager.setPrimary(r, g, b);
     }
 }
