@@ -7,11 +7,10 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 
 public class DrawPanel extends JPanel implements MouseMotionListener {
-    private final int WIDTH = 1000, HEIGHT = 800, SCALE = 20;
+    private final int WIDTH = 600, HEIGHT = 600, SCALE = 20;
     private BufferedImage drawBuffer;
 
     public DrawPanel() {
-        setSize(WIDTH, HEIGHT);
         addMouseMotionListener(this);
         drawBuffer = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
     }
@@ -48,5 +47,13 @@ public class DrawPanel extends JPanel implements MouseMotionListener {
 
     public void mouseMoved(MouseEvent e) {
 
+    }
+
+    public int getDrawWidth() {
+        return WIDTH;
+    }
+
+    public int getDrawHeight() {
+        return HEIGHT;
     }
 }
