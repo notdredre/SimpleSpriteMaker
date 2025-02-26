@@ -1,5 +1,3 @@
-import java.awt.FlowLayout;
-
 import javax.swing.JFrame;
 
 public class MainWindow extends JFrame {
@@ -8,12 +6,12 @@ public class MainWindow extends JFrame {
     public MainWindow() {
         setTitle("SimpleSpriteMaker");
         setSize(WIDTH, HEIGHT);
-        setLayout(new FlowLayout());
+        setResizable(false);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setVisible(true);
         DrawPanel dp = new DrawPanel();
-        setContentPane(dp);
+        add(dp);
+        setVisible(true);
         dp.clear();
     }
 }

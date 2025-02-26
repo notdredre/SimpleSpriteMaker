@@ -7,7 +7,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 
 public class DrawPanel extends JPanel implements MouseMotionListener {
-    private final int WIDTH = 1000, HEIGHT = 800, SCALE = 15;
+    private final int WIDTH = 1000, HEIGHT = 800, SCALE = 20;
     private BufferedImage drawBuffer;
 
     public DrawPanel() {
@@ -23,16 +23,18 @@ public class DrawPanel extends JPanel implements MouseMotionListener {
     }
 
     public void clear() {
-        Graphics2D g2 = (Graphics2D) getGraphics();
+        Graphics2D g2 = (Graphics2D) drawBuffer.getGraphics();
         g2.setColor(Color.WHITE);
-        g2.drawRect(0, 0, WIDTH, HEIGHT);
+        g2.fillRect(0, 0, WIDTH, HEIGHT);
+        g2.dispose();
+        render();
     }
 
     private void drawPixel(int x, int y, Color c) {
         Graphics2D g2 = (Graphics2D) drawBuffer.getGraphics();
         g2.scale(SCALE, SCALE);
         g2.setColor(c);
-        g2.drawRect(x, y, 1, 1);
+        g2.fillRect(x, y, 1, 1);
         g2.dispose();
         render();
     }
