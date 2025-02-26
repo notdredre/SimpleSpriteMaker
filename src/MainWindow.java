@@ -7,13 +7,16 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.SpringLayout;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
-public class MainWindow extends JFrame {
+public class MainWindow extends JFrame implements ChangeListener {
     private final int WIDTH = 1000, HEIGHT = 800;
     private JPanel mainPanel, colourPanel;
     private SpringLayout mainLayout;
     private DrawPanel drawPanel;
     private JSlider[] colourSliders;
+    private ColourManager colourManager;
 
     public MainWindow() {
         setTitle("SimpleSpriteMaker");
@@ -28,6 +31,7 @@ public class MainWindow extends JFrame {
     }
 
     private void initComponents() {
+        colourManager = ColourManager.getColourManager();
         mainLayout = new SpringLayout();
         mainPanel = new JPanel();
         mainPanel.setLayout(mainLayout);
@@ -39,10 +43,10 @@ public class MainWindow extends JFrame {
         colourPanel.setLayout(new BoxLayout(colourPanel, BoxLayout.PAGE_AXIS));
         mainPanel.add(colourPanel);
         colourSliders = new JSlider[3];
-        for (JSlider slider : colourSliders) {
-            slider = new JSlider(0, 255, 0);
-            slider.createStandardLabels(50, 0);
-            colourPanel.add(slider);
+        for (int i = 0; i < 3; i++) {
+            colourSliders[i] = new JSlider(0, 255, 0);
+            colourSliders[i].addChangeListener(this);
+            colourPanel.add(colourSliders[i]);
             colourPanel.add(Box.createVerticalStrut(20));
         }
 
@@ -54,11 +58,17 @@ public class MainWindow extends JFrame {
 
         // Constraints for colourPanel
         mainLayout.putConstraint(SpringLayout.WEST, colourPanel, 30, SpringLayout.EAST, drawPanel);
-        //mainLayout.putConstraint(SpringLayout.EAST, colourPanel, 150, SpringLayout.WEST, colourPanel);
         mainLayout.putConstraint(SpringLayout.EAST, mainPanel, 20, SpringLayout.EAST, colourPanel);
         mainLayout.putConstraint(SpringLayout.NORTH, colourPanel, 20, SpringLayout.NORTH, mainPanel);
 
         
         add(mainPanel);
+    }
+
+    public void stateChanged(ChangeEvent e) {
+        int r = colourSliders[0].getValue();
+        int g = colourSliders[1].getValue();
+        int b = colourSliders[2].getValue();
+        colourManager.setPrimary(r, g, b, 255);
     }
 }
