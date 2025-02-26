@@ -1,0 +1,50 @@
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
+
+public class DrawPanel extends JPanel implements MouseMotionListener {
+    private final int WIDTH = 1000, HEIGHT = 800, SCALE = 15;
+    private BufferedImage drawBuffer;
+
+    public DrawPanel() {
+        setSize(WIDTH, HEIGHT);
+        addMouseMotionListener(this);
+        drawBuffer = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
+    }
+
+    private void render() {
+        Graphics2D g2 = (Graphics2D) getGraphics();
+        g2.drawImage(drawBuffer, 0, 0, null);
+        g2.dispose();
+    }
+
+    public void clear() {
+        Graphics2D g2 = (Graphics2D) getGraphics();
+        g2.setColor(Color.WHITE);
+        g2.drawRect(0, 0, WIDTH, HEIGHT);
+    }
+
+    private void drawPixel(int x, int y, Color c) {
+        Graphics2D g2 = (Graphics2D) drawBuffer.getGraphics();
+        g2.scale(SCALE, SCALE);
+        g2.setColor(c);
+        g2.drawRect(x, y, 1, 1);
+        g2.dispose();
+        render();
+    }
+
+    public void mouseDragged(MouseEvent e) {
+        int x = e.getX() / SCALE;
+        int y = e.getY() / SCALE;
+        if(SwingUtilities.isLeftMouseButton(e))
+            drawPixel(x, y, Color.BLACK);
+    }
+
+    public void mouseMoved(MouseEvent e) {
+
+    }
+}
