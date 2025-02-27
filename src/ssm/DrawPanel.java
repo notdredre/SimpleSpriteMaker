@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
 import ssm.file.ImageFileManager;
 
 public class DrawPanel extends JPanel implements MouseInputListener, ColourObject, Refreshable {
-    private final int WIDTH = 600, HEIGHT = 600, SCALE = 20;
+    private final int WIDTH = 100, HEIGHT = 100, SCALE = 20;
 
     private BufferedImage drawBuffer, overlayBuffer, renderBuffer, writeBuffer;
     private Color primary, secondary;
@@ -121,11 +121,14 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
         clearOverlay();
     }
 
+    public void mouseEntered(MouseEvent e) {
+        drawOverlay(currentPixelX, currentPixelY);
+    }
+
     public void mousePressed(MouseEvent e) {}
 
     public void mouseReleased(MouseEvent e) {}
 
-    public void mouseEntered(MouseEvent e) {}
 
     public int getDrawWidth() {
         return WIDTH;
