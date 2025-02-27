@@ -48,7 +48,6 @@ public class ImageFileManager {
 
     public BufferedImage openImage(String path) throws IOException {
         File in = new File(path);
-        System.out.println(in.getAbsolutePath());
         return ImageIO.read(in);
     }
 }
