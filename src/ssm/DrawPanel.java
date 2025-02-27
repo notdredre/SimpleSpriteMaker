@@ -7,18 +7,21 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.TexturePaint;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import ssm.file.ImageFileManager;
 import ssm.tools.SquareBrush;
+import ssm.tools.SquareEraser;
 import ssm.tools.Tool;
 
-public class DrawPanel extends JPanel implements MouseInputListener, ColourObject, Refreshable {
+public class DrawPanel extends JPanel implements MouseInputListener, KeyListener, ColourObject, Refreshable {
     private final int WIDTH = 500, HEIGHT = 500, SCALE = 20;
 
-    private BufferedImage drawBuffer, overlayBuffer, renderBuffer, writeBuffer;
+    private BufferedImage drawBuffer, overlayBuffer, renderBuffer, writeBuffer, backgroundBuffer;
     private Color primary, secondary;
     private Tool currentTool;
     private ImageFileManager imageFileManager;
@@ -26,20 +29,23 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
     
     public DrawPanel() {
         currentPixelX = currentPixelY = -1;
-        currentTool = new SquareBrush(2);
+        currentTool = new SquareBrush();
         imageFileManager = ImageFileManager.getImageFileManager();
         addMouseListener(this);
         addMouseMotionListener(this);
+        addKeyListener(this);
         drawBuffer = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
         overlayBuffer = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
         renderBuffer = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
         writeBuffer = new BufferedImage(WIDTH / SCALE, HEIGHT / SCALE, BufferedImage.TYPE_INT_ARGB);
+        backgroundBuffer = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
         currentPixelX = currentPixelY = -1;
         imageFileManager.setToWrite(writeBuffer);
     }
 
     private void render() {
         Graphics2D r2 = (Graphics2D) renderBuffer.getGraphics();
+        r2.drawImage(backgroundBuffer, 0, 0, null);
         r2.drawImage(drawBuffer, 0, 0, null);
         r2.drawImage(overlayBuffer, 0, 0, null);
         r2.dispose();
@@ -50,7 +56,7 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
     }
 
     public void clear() {
-        Graphics2D d2 = (Graphics2D) drawBuffer.getGraphics();
+        Graphics2D d2 = (Graphics2D) backgroundBuffer.getGraphics();
         try {
             Paint transparency = new TexturePaint(imageFileManager.openImage(getClass().getResource("res/transparentTexture.png").getPath()), new Rectangle2D.Double(0, 0, 100, 100));
             d2.setPaint(transparency);
@@ -127,5 +133,22 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
 
     public int getDrawHeight() {
         return HEIGHT;
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {}
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
+            currentTool = new SquareEraser();
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
+            currentTool = new SquareBrush();
+        }
     }
 }

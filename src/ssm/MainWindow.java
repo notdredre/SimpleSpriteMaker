@@ -35,6 +35,7 @@ public class MainWindow extends JFrame implements Runnable {
         colourManager.updateColourObjects();
         mainPanel.setBackground(new Color(220, 220, 220));
         drawPanel.clear();
+        drawPanel.requestFocus();
         refreshThread = new Thread(this);
         refreshThread.start();
     }
