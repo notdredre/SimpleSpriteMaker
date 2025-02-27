@@ -6,12 +6,12 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 
-public class DrawPanel extends JPanel implements MouseMotionListener {
-    private final int WIDTH = 1000, HEIGHT = 800, SCALE = 20;
+public class DrawPanel extends JPanel implements MouseMotionListener, ColourObject, Refreshable {
+    private final int WIDTH = 600, HEIGHT = 600, SCALE = 20;
     private BufferedImage drawBuffer;
-
+    private Color primary, secondary;
+    
     public DrawPanel() {
-        setSize(WIDTH, HEIGHT);
         addMouseMotionListener(this);
         drawBuffer = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
     }
@@ -39,14 +39,33 @@ public class DrawPanel extends JPanel implements MouseMotionListener {
         render();
     }
 
+    public void refresh() {
+        render();
+    }
+
+    public void updateColours(Color primary, Color secondary) {
+        this.primary = primary;
+        this.secondary = secondary;
+    }
+
     public void mouseDragged(MouseEvent e) {
         int x = e.getX() / SCALE;
         int y = e.getY() / SCALE;
         if(SwingUtilities.isLeftMouseButton(e))
-            drawPixel(x, y, Color.BLACK);
+            drawPixel(x, y, primary);
+        if(SwingUtilities.isRightMouseButton(e))
+            drawPixel(x, y, secondary);
     }
 
     public void mouseMoved(MouseEvent e) {
 
+    }
+
+    public int getDrawWidth() {
+        return WIDTH;
+    }
+
+    public int getDrawHeight() {
+        return HEIGHT;
     }
 }
