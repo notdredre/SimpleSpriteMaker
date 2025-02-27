@@ -58,7 +58,7 @@ public class DrawPanel extends JPanel implements MouseInputListener, KeyListener
     public void clear() {
         Graphics2D d2 = (Graphics2D) backgroundBuffer.getGraphics();
         try {
-            Paint transparency = new TexturePaint(imageFileManager.openImage(getClass().getResource("res/transparentTexture.png").getPath()), new Rectangle2D.Double(0, 0, 100, 100));
+            Paint transparency = new TexturePaint(imageFileManager.openImage(getClass().getResourceAsStream("res/transparentTexture.png")), new Rectangle2D.Double(0, 0, 100, 100));
             d2.setPaint(transparency);
         } catch (IOException e) {
             e.printStackTrace();

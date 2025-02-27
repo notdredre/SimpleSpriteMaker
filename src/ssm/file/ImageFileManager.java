@@ -3,6 +3,7 @@ package ssm.file;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
@@ -46,8 +47,7 @@ public class ImageFileManager {
         saveImage();
     }
 
-    public BufferedImage openImage(String path) throws IOException {
-        File in = new File(path);
+    public BufferedImage openImage(InputStream in) throws IOException {
         return ImageIO.read(in);
     }
 }
