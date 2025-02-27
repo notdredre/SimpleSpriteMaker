@@ -6,7 +6,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 
-public class DrawPanel extends JPanel implements MouseMotionListener, ColourObject {
+public class DrawPanel extends JPanel implements MouseMotionListener, ColourObject, Refreshable {
     private final int WIDTH = 600, HEIGHT = 600, SCALE = 20;
     private BufferedImage drawBuffer;
     private Color primary, secondary;
@@ -39,7 +39,9 @@ public class DrawPanel extends JPanel implements MouseMotionListener, ColourObje
         render();
     }
 
-    public void changeColour(int chosen) {}
+    public void refresh() {
+        render();
+    }
 
     public void updateColours(Color primary, Color secondary) {
         this.primary = primary;

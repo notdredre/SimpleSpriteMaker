@@ -4,7 +4,7 @@ import java.awt.event.MouseListener;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 
-public class ColourPreview extends JPanel implements ColourSwitcher, MouseListener {
+public class ColourPreview extends JPanel implements ColourSwitcher, MouseListener, Refreshable {
     private ColourSwatch primary, secondary;
     private SpringLayout layout;
     private ColourManager colourManager;
@@ -43,6 +43,10 @@ public class ColourPreview extends JPanel implements ColourSwitcher, MouseListen
         if (selected == 1) {
             secondary.highlight();
         }
+    }
+
+    public void refresh() {
+        drawColours();
     }
 
     public void switchColour(int selected) {

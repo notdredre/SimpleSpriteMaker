@@ -1,11 +1,12 @@
 import java.awt.Color;
 import java.awt.Dimension;
+import java.util.ArrayList;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 
-public class MainWindow extends JFrame {
+public class MainWindow extends JFrame implements Runnable {
     private final int WIDTH = 1000, HEIGHT = 800;
     private JPanel mainPanel, colourPanel;
     private SpringLayout mainLayout;
@@ -13,11 +14,13 @@ public class MainWindow extends JFrame {
     private ColourSliders colourSliders;
     private ColourPreview colourPreview;
     private ColourManager colourManager;
+    private ArrayList<Refreshable> toRefresh;
+    private Thread refreshThread;
 
     public MainWindow() {
+        toRefresh = new ArrayList<>();
         setTitle("SimpleSpriteMaker");
         setSize(WIDTH, HEIGHT);
-        //setResizable(false);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         initComponents();
@@ -25,6 +28,8 @@ public class MainWindow extends JFrame {
         colourManager.updateColourObjects();
         mainPanel.setBackground(new Color(220, 220, 220));
         drawPanel.clear();
+        refreshThread = new Thread(this);
+        refreshThread.start();
     }
 
     private void initComponents() {
@@ -35,6 +40,7 @@ public class MainWindow extends JFrame {
         mainPanel.setLayout(mainLayout);
 
         drawPanel = new DrawPanel();
+        toRefresh.add(drawPanel);
         colourManager.addColourObject(drawPanel);
         mainPanel.add(drawPanel);
 
@@ -48,6 +54,7 @@ public class MainWindow extends JFrame {
         colourPanel.add(colourSliders);
 
         colourPreview = new ColourPreview();
+        toRefresh.add(colourPreview);
         colourManager.addColourSwitcher(colourPreview);
         colourPanel.add(colourPreview);
 
@@ -65,5 +72,22 @@ public class MainWindow extends JFrame {
 
         
         add(mainPanel);
+    }
+
+    public void run() {
+        try {
+            while(true) {
+                refreshAll();
+                Thread.sleep(15);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void refreshAll() {
+        for (Refreshable r : toRefresh) {
+            r.refresh();
+        }
     }
 }
