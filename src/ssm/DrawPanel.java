@@ -20,8 +20,11 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
     public DrawPanel() {
         currentPixelX = currentPixelY = -1;
         imageFileManager = ImageFileManager.getImageFileManager();
+        addMouseListener(this);
         addMouseMotionListener(this);
         drawBuffer = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
+        overlayBuffer = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
+        renderBuffer = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
         writeBuffer = new BufferedImage(WIDTH / SCALE, HEIGHT / SCALE, BufferedImage.TYPE_INT_ARGB);
         currentPixelX = currentPixelY = -1;
         imageFileManager.setToWrite(writeBuffer);
