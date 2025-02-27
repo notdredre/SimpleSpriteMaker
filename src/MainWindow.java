@@ -15,9 +15,12 @@ public class MainWindow extends JFrame implements ChangeListener {
     private SpringLayout mainLayout;
     private DrawPanel drawPanel;
     private JSlider[] colourSliders;
+    private ColourPreview colourPreview;
     private ColourManager colourManager;
+    private int selected;
 
     public MainWindow() {
+        selected = 0;
         setTitle("SimpleSpriteMaker");
         setSize(WIDTH, HEIGHT);
         //setResizable(false);
@@ -25,6 +28,7 @@ public class MainWindow extends JFrame implements ChangeListener {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         initComponents();
         setVisible(true);
+        colourManager.updateColourObjects();
         mainPanel.setBackground(new Color(220, 220, 220));
         drawPanel.clear();
     }
@@ -41,9 +45,10 @@ public class MainWindow extends JFrame implements ChangeListener {
         mainPanel.add(drawPanel);
 
         colourPanel = new JPanel();
-        colourPanel.setMaximumSize(new Dimension(200, 400));
+        colourPanel.setMaximumSize(new Dimension(200, 300));
         colourPanel.setLayout(new BoxLayout(colourPanel, BoxLayout.PAGE_AXIS));
         mainPanel.add(colourPanel);
+
         colourSliders = new JSlider[3];
         for (int i = 0; i < 3; i++) {
             colourSliders[i] = new JSlider(0, 255, 0);
@@ -51,6 +56,10 @@ public class MainWindow extends JFrame implements ChangeListener {
             colourPanel.add(colourSliders[i]);
             colourPanel.add(Box.createVerticalStrut(20));
         }
+
+        colourPreview = new ColourPreview();
+        colourManager.addColourObject(colourPreview);
+        colourPanel.add(colourPreview);
 
         // Constraints for drawPanel
         mainLayout.putConstraint(SpringLayout.WEST, drawPanel, 20, SpringLayout.WEST, mainPanel);
@@ -62,6 +71,7 @@ public class MainWindow extends JFrame implements ChangeListener {
         mainLayout.putConstraint(SpringLayout.WEST, colourPanel, 30, SpringLayout.EAST, drawPanel);
         mainLayout.putConstraint(SpringLayout.EAST, mainPanel, 20, SpringLayout.EAST, colourPanel);
         mainLayout.putConstraint(SpringLayout.NORTH, colourPanel, 20, SpringLayout.NORTH, mainPanel);
+        mainLayout.putConstraint(SpringLayout.SOUTH, colourPanel, 200, SpringLayout.NORTH, colourPanel);
 
         
         add(mainPanel);
@@ -71,6 +81,9 @@ public class MainWindow extends JFrame implements ChangeListener {
         int r = colourSliders[0].getValue();
         int g = colourSliders[1].getValue();
         int b = colourSliders[2].getValue();
-        colourManager.setPrimary(r, g, b);
+        if (selected == 0)
+            colourManager.setPrimary(r, g, b);
+        else
+            colourManager.setSecondary(r, g, b);
     }
 }

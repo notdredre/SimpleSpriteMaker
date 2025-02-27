@@ -51,13 +51,12 @@ public class ColourManager {
     public void addColourObject(ColourObject c) {
         if (c instanceof ColourObject) {
             colourObjects.add(c);
-            c.updateColours(primary, secondary);
             return;
         }
         throw new IllegalArgumentException();
     }
 
-    private void updateColourObjects() {
+    public void updateColourObjects() {
         for (ColourObject c : colourObjects) {
             c.updateColours(primary, secondary);
         }
