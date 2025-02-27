@@ -40,8 +40,15 @@ public class ImageFileManager {
             e.printStackTrace();
         }
     }
+
     public void saveImage(File target) {
         setTarget(target);
         saveImage();
+    }
+
+    public BufferedImage openImage(String path) throws IOException {
+        File in = new File(path);
+        System.out.println(in.getAbsolutePath());
+        return ImageIO.read(in);
     }
 }
