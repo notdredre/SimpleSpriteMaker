@@ -14,9 +14,8 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import ssm.file.ImageFileManager;
-import ssm.tools.SquareBrush;
-import ssm.tools.SquareEraser;
 import ssm.tools.Tool;
+import ssm.tools.ToolManager;
 
 public class DrawPanel extends JPanel implements MouseInputListener, KeyListener, ColourObject, Refreshable {
     private final int WIDTH = 500, HEIGHT = 500, SCALE = 20;
@@ -24,12 +23,14 @@ public class DrawPanel extends JPanel implements MouseInputListener, KeyListener
     private BufferedImage drawBuffer, overlayBuffer, renderBuffer, writeBuffer, backgroundBuffer;
     private Color primary, secondary;
     private Tool currentTool;
+    private ToolManager toolManager;
     private ImageFileManager imageFileManager;
     private int currentPixelX, currentPixelY;
     
     public DrawPanel() {
         currentPixelX = currentPixelY = -1;
-        currentTool = new SquareBrush();
+        toolManager = ToolManager.getToolManager();
+        currentTool = toolManager.getSquareBrush();
         imageFileManager = ImageFileManager.getImageFileManager();
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -141,14 +142,14 @@ public class DrawPanel extends JPanel implements MouseInputListener, KeyListener
     @Override
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
-            currentTool = new SquareEraser();
+            currentTool = toolManager.getSquareEraser();
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
-            currentTool = new SquareBrush();
+            currentTool = toolManager.getSquareBrush();
         }
     }
 }

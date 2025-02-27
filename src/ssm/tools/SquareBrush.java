@@ -4,17 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
-public class SquareBrush extends Tool {
-    private int size;
-
-    public SquareBrush() {
-        size = 1;
-    }
-
-    public SquareBrush(int size) {
-        this.size = size;
-    }
-
+public class SquareBrush extends DrawTool {
     protected void draw(int x, int y, Color c, BufferedImage buffer, int scale) {
         Graphics2D b2 = (Graphics2D) buffer.getGraphics();
         b2.setColor(c);
