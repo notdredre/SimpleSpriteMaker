@@ -15,15 +15,18 @@ public class SaveFilePanel extends JPanel implements ActionListener {
     private final FileNameExtensionFilter pngFilter = new FileNameExtensionFilter("PNG Image", "png");
     private final FileNameExtensionFilter gifFilter = new FileNameExtensionFilter("GIF Image", "gif");
     private final FileNameExtensionFilter jpgFilter = new FileNameExtensionFilter("JPG/JPEG Image", "jpg", "jpeg");
-    private JButton saveButton;
+    private JButton saveButton, saveAsButton;
     private ImageFileManager imageFileManager;
 
     public SaveFilePanel() {
         imageFileManager = ImageFileManager.getImageFileManager();
         currentTarget = null;
         saveButton = new JButton("Save");
+        saveAsButton = new JButton("Save As");
         add(saveButton);
+        add(saveAsButton);
         saveButton.addActionListener(this);
+        saveAsButton.addActionListener(this);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -38,6 +41,17 @@ public class SaveFilePanel extends JPanel implements ActionListener {
                     currentTarget = saveChooser.getSelectedFile();
                     imageFileManager.saveImage(currentTarget);
                 }
+            }
+            imageFileManager.saveImage(currentTarget);
+        }
+        if (e.getActionCommand() == "Save As") {
+            saveChooser = new JFileChooser();
+            saveChooser.addChoosableFileFilter(gifFilter);
+            saveChooser.addChoosableFileFilter(jpgFilter);
+            saveChooser.addChoosableFileFilter(pngFilter);
+            int result = saveChooser.showSaveDialog(this);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                imageFileManager.saveImage(saveChooser.getSelectedFile());
             }
         }
     }
