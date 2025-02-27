@@ -10,6 +10,7 @@ import javax.swing.SpringLayout;
 import ssm.colour.ColourManager;
 import ssm.colour.ColourPreview;
 import ssm.colour.ColourSliders;
+import ssm.file.SaveFilePanel;
 
 public class MainWindow extends JFrame implements Runnable {
     private final int WIDTH = 1000, HEIGHT = 800;
@@ -19,6 +20,7 @@ public class MainWindow extends JFrame implements Runnable {
     private ColourSliders colourSliders;
     private ColourPreview colourPreview;
     private ColourManager colourManager;
+    private SaveFilePanel saveFilePanel;
     private ArrayList<Refreshable> toRefresh;
     private Thread refreshThread;
 
@@ -63,6 +65,9 @@ public class MainWindow extends JFrame implements Runnable {
         colourManager.addColourSwitcher(colourPreview);
         colourPanel.add(colourPreview);
 
+        saveFilePanel = new SaveFilePanel();
+        mainPanel.add(saveFilePanel);
+
         // Constraints for drawPanel
         mainLayout.putConstraint(SpringLayout.WEST, drawPanel, 20, SpringLayout.WEST, mainPanel);
         mainLayout.putConstraint(SpringLayout.NORTH, drawPanel, 20, SpringLayout.NORTH, mainPanel);       
@@ -75,6 +80,9 @@ public class MainWindow extends JFrame implements Runnable {
         mainLayout.putConstraint(SpringLayout.NORTH, colourPanel, 20, SpringLayout.NORTH, mainPanel);
         mainLayout.putConstraint(SpringLayout.SOUTH, colourPanel, 200, SpringLayout.NORTH, colourPanel);
 
+        // Constraints for saveFilePanel
+        mainLayout.putConstraint(SpringLayout.WEST, saveFilePanel, 30, SpringLayout.EAST, drawPanel);
+        mainLayout.putConstraint(SpringLayout.NORTH, saveFilePanel, 30, SpringLayout.SOUTH, colourPanel);
         
         add(mainPanel);
     }

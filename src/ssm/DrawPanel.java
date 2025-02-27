@@ -7,15 +7,20 @@ import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import ssm.file.ImageFileManager;
 
 public class DrawPanel extends JPanel implements MouseMotionListener, ColourObject, Refreshable {
     private final int WIDTH = 600, HEIGHT = 600, SCALE = 20;
-    private BufferedImage drawBuffer;
+    private BufferedImage drawBuffer, writeBuffer;
     private Color primary, secondary;
+    private ImageFileManager imageFileManager;
     
     public DrawPanel() {
+        imageFileManager = ImageFileManager.getImageFileManager();
         addMouseMotionListener(this);
         drawBuffer = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
+        writeBuffer = new BufferedImage(WIDTH / SCALE, HEIGHT / SCALE, BufferedImage.TYPE_INT_ARGB);
+        imageFileManager.setToWrite(writeBuffer);
     }
 
     private void render() {
@@ -38,6 +43,11 @@ public class DrawPanel extends JPanel implements MouseMotionListener, ColourObje
         g2.setColor(c);
         g2.fillRect(x, y, 1, 1);
         g2.dispose();
+
+        Graphics2D w2 = (Graphics2D) writeBuffer.getGraphics();
+        w2.setColor(c);
+        w2.fillRect(x, y, 1, 1);
+        w2.dispose();
         render();
     }
 
