@@ -3,14 +3,21 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputListener;
 import ssm.colour.ColourObject;
+
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Paint;
+import java.awt.TexturePaint;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+
 import ssm.file.ImageFileManager;
 
 public class DrawPanel extends JPanel implements MouseInputListener, ColourObject, Refreshable {
-    private final int WIDTH = 100, HEIGHT = 100, SCALE = 20;
+    private final int WIDTH = 500, HEIGHT = 500, SCALE = 20;
 
     private BufferedImage drawBuffer, overlayBuffer, renderBuffer, writeBuffer;
     private Color primary, secondary;
@@ -43,7 +50,13 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
 
     public void clear() {
         Graphics2D d2 = (Graphics2D) drawBuffer.getGraphics();
-        d2.setColor(Color.WHITE);
+        try {
+            Paint transparency = new TexturePaint(imageFileManager.openImage(getClass().getResource("res/transparentTexture.png").getPath()), new Rectangle2D.Double(0, 0, 100, 100));
+            d2.setPaint(transparency);
+        } catch (IOException e) {
+            e.printStackTrace();
+            d2.setColor(Color.WHITE);
+        }
         d2.fillRect(0, 0, WIDTH, HEIGHT);
         d2.dispose();
         render();
