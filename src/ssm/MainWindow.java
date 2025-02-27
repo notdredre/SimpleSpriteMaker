@@ -6,11 +6,11 @@ import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
-
 import ssm.colour.ColourManager;
 import ssm.colour.ColourPreview;
 import ssm.colour.ColourSliders;
 import ssm.file.SaveFilePanel;
+import ssm.tools.ToolPanel;
 
 public class MainWindow extends JFrame implements Runnable {
     private final int WIDTH = 1000, HEIGHT = 800;
@@ -21,6 +21,7 @@ public class MainWindow extends JFrame implements Runnable {
     private ColourPreview colourPreview;
     private ColourManager colourManager;
     private SaveFilePanel saveFilePanel;
+    private ToolPanel toolPanel;
     private ArrayList<Refreshable> toRefresh;
     private Thread refreshThread;
 
@@ -66,6 +67,9 @@ public class MainWindow extends JFrame implements Runnable {
         colourManager.addColourSwitcher(colourPreview);
         colourPanel.add(colourPreview);
 
+        toolPanel = new ToolPanel();
+        mainPanel.add(toolPanel);
+
         saveFilePanel = new SaveFilePanel();
         mainPanel.add(saveFilePanel);
 
@@ -81,9 +85,15 @@ public class MainWindow extends JFrame implements Runnable {
         mainLayout.putConstraint(SpringLayout.NORTH, colourPanel, 20, SpringLayout.NORTH, mainPanel);
         mainLayout.putConstraint(SpringLayout.SOUTH, colourPanel, 200, SpringLayout.NORTH, colourPanel);
 
+        // Constraints for toolPanel
+        mainLayout.putConstraint(SpringLayout.WEST, toolPanel, 30, SpringLayout.EAST, drawPanel);
+        mainLayout.putConstraint(SpringLayout.NORTH, toolPanel, 30, SpringLayout.SOUTH, colourPanel);
+        mainLayout.putConstraint(SpringLayout.EAST, toolPanel, 200, SpringLayout.WEST, toolPanel);
+        mainLayout.putConstraint(SpringLayout.SOUTH, toolPanel, 200, SpringLayout.NORTH, toolPanel);
+
         // Constraints for saveFilePanel
         mainLayout.putConstraint(SpringLayout.WEST, saveFilePanel, 30, SpringLayout.EAST, drawPanel);
-        mainLayout.putConstraint(SpringLayout.NORTH, saveFilePanel, 30, SpringLayout.SOUTH, colourPanel);
+        mainLayout.putConstraint(SpringLayout.NORTH, saveFilePanel, 30, SpringLayout.SOUTH, toolPanel);
         
         add(mainPanel);
     }

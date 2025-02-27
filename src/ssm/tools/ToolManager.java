@@ -20,6 +20,10 @@ public class ToolManager {
         return toolManager;
     }
 
+    public Tool getCurrent() {
+        return current;
+    }
+    
     public Tool getSquareBrush() {
         current = tools.get("SquareBrush");
         return current;

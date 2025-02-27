@@ -7,8 +7,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.TexturePaint;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -17,7 +15,7 @@ import ssm.file.ImageFileManager;
 import ssm.tools.Tool;
 import ssm.tools.ToolManager;
 
-public class DrawPanel extends JPanel implements MouseInputListener, KeyListener, ColourObject, Refreshable {
+public class DrawPanel extends JPanel implements MouseInputListener, ColourObject, Refreshable {
     private final int WIDTH = 500, HEIGHT = 500, SCALE = 20;
 
     private BufferedImage drawBuffer, overlayBuffer, renderBuffer, writeBuffer, backgroundBuffer;
@@ -34,7 +32,6 @@ public class DrawPanel extends JPanel implements MouseInputListener, KeyListener
         imageFileManager = ImageFileManager.getImageFileManager();
         addMouseListener(this);
         addMouseMotionListener(this);
-        addKeyListener(this);
         drawBuffer = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
         overlayBuffer = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
         renderBuffer = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
@@ -91,6 +88,7 @@ public class DrawPanel extends JPanel implements MouseInputListener, KeyListener
     public void mouseDragged(MouseEvent e) {
         currentPixelX = e.getX() / SCALE;
         currentPixelY = e.getY() / SCALE;
+        currentTool = toolManager.getCurrent();
         if(SwingUtilities.isLeftMouseButton(e))
             currentTool.use(currentPixelX, currentPixelY, primary, drawBuffer, writeBuffer, SCALE);
         if(SwingUtilities.isRightMouseButton(e))
@@ -101,6 +99,7 @@ public class DrawPanel extends JPanel implements MouseInputListener, KeyListener
     public void mouseMoved(MouseEvent e) {
         int eventX = e.getX() / SCALE;
         int eventY = e.getY() / SCALE;
+        currentTool = toolManager.getCurrent();
         if (eventX != currentPixelX || eventY != currentPixelY) {
             currentPixelX = e.getX() / SCALE;
             currentPixelY = e.getY() / SCALE;
@@ -109,6 +108,7 @@ public class DrawPanel extends JPanel implements MouseInputListener, KeyListener
     }
 
     public void mouseClicked(MouseEvent e) {
+        currentTool = toolManager.getCurrent();
         if(SwingUtilities.isLeftMouseButton(e))
             currentTool.use(currentPixelX, currentPixelY, primary, drawBuffer, writeBuffer, SCALE);
         if(SwingUtilities.isRightMouseButton(e))
@@ -134,22 +134,5 @@ public class DrawPanel extends JPanel implements MouseInputListener, KeyListener
 
     public int getDrawHeight() {
         return HEIGHT;
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {}
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
-            currentTool = toolManager.getSquareEraser();
-        }
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
-            currentTool = toolManager.getSquareBrush();
-        }
     }
 }
