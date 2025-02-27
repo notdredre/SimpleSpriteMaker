@@ -39,6 +39,8 @@ public class DrawPanel extends JPanel implements MouseMotionListener, ColourObje
         render();
     }
 
+    public void changeColour(int chosen) {}
+
     public void updateColours(Color primary, Color secondary) {
         this.primary = primary;
         this.secondary = secondary;

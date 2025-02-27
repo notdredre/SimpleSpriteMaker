@@ -9,18 +9,16 @@ import javax.swing.SpringLayout;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class MainWindow extends JFrame implements ChangeListener {
+public class MainWindow extends JFrame {
     private final int WIDTH = 1000, HEIGHT = 800;
     private JPanel mainPanel, colourPanel;
     private SpringLayout mainLayout;
     private DrawPanel drawPanel;
-    private JSlider[] colourSliders;
+    private ColourSliders colourSliders;
     private ColourPreview colourPreview;
     private ColourManager colourManager;
-    private int selected;
 
     public MainWindow() {
-        selected = 0;
         setTitle("SimpleSpriteMaker");
         setSize(WIDTH, HEIGHT);
         //setResizable(false);
@@ -49,13 +47,9 @@ public class MainWindow extends JFrame implements ChangeListener {
         colourPanel.setLayout(new BoxLayout(colourPanel, BoxLayout.PAGE_AXIS));
         mainPanel.add(colourPanel);
 
-        colourSliders = new JSlider[3];
-        for (int i = 0; i < 3; i++) {
-            colourSliders[i] = new JSlider(0, 255, 0);
-            colourSliders[i].addChangeListener(this);
-            colourPanel.add(colourSliders[i]);
-            colourPanel.add(Box.createVerticalStrut(20));
-        }
+        colourSliders = new ColourSliders();
+        colourManager.addColourObject(colourSliders);
+        colourPanel.add(colourSliders);
 
         colourPreview = new ColourPreview();
         colourManager.addColourObject(colourPreview);
@@ -75,15 +69,5 @@ public class MainWindow extends JFrame implements ChangeListener {
 
         
         add(mainPanel);
-    }
-
-    public void stateChanged(ChangeEvent e) {
-        int r = colourSliders[0].getValue();
-        int g = colourSliders[1].getValue();
-        int b = colourSliders[2].getValue();
-        if (selected == 0)
-            colourManager.setPrimary(r, g, b);
-        else
-            colourManager.setSecondary(r, g, b);
     }
 }

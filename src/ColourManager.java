@@ -3,50 +3,52 @@ import java.util.ArrayList;
 
 public class ColourManager {
     private static ColourManager colourManager;
-    private static Color primary, secondary;
+    private static Color[] colours;
     private static ArrayList<ColourObject> colourObjects;
+    private static int selected;
 
     private ColourManager() {
-        primary = Color.BLACK;
-        secondary = Color.WHITE;
+        selected = 0;
+        colours = new Color[2];
+        colours[0] = Color.BLACK;
+        colours[1] = Color.WHITE;
         colourObjects = new ArrayList<>();
     }
 
     public static ColourManager getColourManager() {
-        if (colourManager == null)
-            return new ColourManager();
+        if (colourManager == null) {
+            colourManager = new ColourManager();
+        }
+            
         return colourManager;
     }
 
-    public void setPrimary(Color c) {
-        primary = c;
+    public void setSelected(int choice) {
+        selected = choice;
+        for (ColourObject c : colourObjects) {
+            c.changeColour(choice);
+        }
+    }
+
+    public int getSelected() {
+        return selected;
+    }
+
+    public void setColour(Color c) {
+        colours[selected] = c;
         updateColourObjects();
     }
 
-    public void setPrimary(int r, int g, int b) {
-        primary = new Color(r, g, b);
+    public void setColour(int r, int g, int b) {
+        colours[selected] = new Color(r, g, b);
         updateColourObjects();
     }
 
-    public void setPrimary(int r, int g, int b, int a) {
-        primary = new Color(r, g, b, a);
+    public void setColour(int r, int g, int b, int a) {
+        colours[selected] = new Color(r, g, b, a);
         updateColourObjects();
     }
 
-    public void setSecondary(Color c) {
-        secondary = c;
-        updateColourObjects();
-    }
-
-    public void setSecondary(int r, int g, int b) {
-        secondary = new Color(r, g, b);
-        updateColourObjects();
-    }
-
-    public void setSecondary(int r, int g, int b, int a) {
-        secondary = new Color(r, g, b, a);
-        updateColourObjects();
-    }
 
     public void addColourObject(ColourObject c) {
         if (c instanceof ColourObject) {
@@ -58,7 +60,7 @@ public class ColourManager {
 
     public void updateColourObjects() {
         for (ColourObject c : colourObjects) {
-            c.updateColours(primary, secondary);
+            c.updateColours(colours[0], colours[1]);
         }
     }
 }

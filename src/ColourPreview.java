@@ -7,11 +7,12 @@ import javax.swing.SpringLayout;
 public class ColourPreview extends JPanel implements ColourObject, MouseListener {
     private ColourSwatch primary, secondary;
     private SpringLayout layout;
-    private int selected;
+    private ColourManager colourManager;
     private final int WIDTH = 100, HEIGHT = 50, SIZE = 50;
+    private int selected;
 
     public ColourPreview() {
-        selected = 0;
+        colourManager = ColourManager.getColourManager();
         layout = new SpringLayout();
         setSize(WIDTH, HEIGHT);
         primary = new ColourSwatch(SIZE);
@@ -39,11 +40,14 @@ public class ColourPreview extends JPanel implements ColourObject, MouseListener
         if (selected == 0) {
             primary.highlight();
         }
-        else {
+        if (selected == 1) {
             secondary.highlight();
         }
     }
 
+    public void changeColour(int chosen) {
+        selected = chosen;
+    }
     public void updateColours(Color primary, Color secondary) {
         this.primary.setColour(primary);
         this.secondary.setColour(secondary);
@@ -52,14 +56,16 @@ public class ColourPreview extends JPanel implements ColourObject, MouseListener
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        System.out.println("HERE");
+        drawColours();
         if (primary.getBounds().contains(e.getPoint())) {
-            selected = 0;
+            colourManager.setSelected(0);
+            primary.highlight();
         }
         if (secondary.getBounds().contains(e.getPoint())) {
-            selected = 1;
+            colourManager.setSelected(1);
+            secondary.highlight();
         }
-        drawColours();
+        
     }
 
     @Override
