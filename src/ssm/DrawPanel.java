@@ -12,7 +12,7 @@ import ssm.file.ImageFileManager;
 public class DrawPanel extends JPanel implements MouseInputListener, ColourObject, Refreshable {
     private final int WIDTH = 600, HEIGHT = 600, SCALE = 20;
 
-    private BufferedImage drawBuffer, overlayBuffer, renderBuffer;
+    private BufferedImage drawBuffer, overlayBuffer, renderBuffer, writeBuffer;
     private Color primary, secondary;
     private ImageFileManager imageFileManager;
     private int currentPixelX, currentPixelY;
