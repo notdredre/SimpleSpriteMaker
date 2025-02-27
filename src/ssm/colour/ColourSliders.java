@@ -1,3 +1,4 @@
+package ssm.colour;
 import java.awt.Color;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
