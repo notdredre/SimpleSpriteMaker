@@ -4,7 +4,7 @@ import java.awt.event.MouseListener;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 
-public class ColourPreview extends JPanel implements ColourObject, MouseListener {
+public class ColourPreview extends JPanel implements ColourSwitcher, MouseListener {
     private ColourSwatch primary, secondary;
     private SpringLayout layout;
     private ColourManager colourManager;
@@ -45,9 +45,10 @@ public class ColourPreview extends JPanel implements ColourObject, MouseListener
         }
     }
 
-    public void changeColour(int chosen) {
-        selected = chosen;
+    public void switchColour(int selected) {
+        this.selected = selected;
     }
+
     public void updateColours(Color primary, Color secondary) {
         this.primary.setColour(primary);
         this.secondary.setColour(secondary);

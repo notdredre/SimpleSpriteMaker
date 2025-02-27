@@ -1,13 +1,9 @@
 import java.awt.Color;
 import java.awt.Dimension;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JSlider;
 import javax.swing.SpringLayout;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 public class MainWindow extends JFrame {
     private final int WIDTH = 1000, HEIGHT = 800;
@@ -48,11 +44,11 @@ public class MainWindow extends JFrame {
         mainPanel.add(colourPanel);
 
         colourSliders = new ColourSliders();
-        colourManager.addColourObject(colourSliders);
+        colourManager.addColourReading(colourSliders);
         colourPanel.add(colourSliders);
 
         colourPreview = new ColourPreview();
-        colourManager.addColourObject(colourPreview);
+        colourManager.addColourSwitcher(colourPreview);
         colourPanel.add(colourPreview);
 
         // Constraints for drawPanel

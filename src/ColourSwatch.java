@@ -30,7 +30,7 @@ public class ColourSwatch extends JPanel {
     public void highlight() {
         Graphics2D g2 = (Graphics2D) getGraphics();
         g2.setColor(Color.BLACK);
-        g2.drawRect(-1, -1, size + 1, size + 1);
+        g2.drawRect(0, 0, size, size);
         g2.dispose();
     }
 
