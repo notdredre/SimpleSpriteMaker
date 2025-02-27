@@ -1,8 +1,11 @@
+package ssm.colour;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
+
+import ssm.Refreshable;
 
 public class ColourPreview extends JPanel implements ColourSwitcher, MouseListener, Refreshable {
     private ColourSwatch primary, secondary;

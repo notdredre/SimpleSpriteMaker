@@ -1,3 +1,4 @@
+package ssm.colour;
 import java.awt.Color;
 
 public interface ColourReading {

@@ -1,3 +1,4 @@
+package ssm;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.util.ArrayList;
@@ -5,6 +6,10 @@ import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
+
+import ssm.colour.ColourManager;
+import ssm.colour.ColourPreview;
+import ssm.colour.ColourSliders;
 
 public class MainWindow extends JFrame implements Runnable {
     private final int WIDTH = 1000, HEIGHT = 800;

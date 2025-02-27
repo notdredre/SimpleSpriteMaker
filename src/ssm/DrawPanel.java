@@ -1,5 +1,7 @@
+package ssm;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import ssm.colour.ColourObject;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
