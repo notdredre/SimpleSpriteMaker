@@ -8,7 +8,8 @@ public class ToolManager {
     private Tool current;
 
     public enum ToolType {
-        DRAWTOOL("DrawTool");
+        DRAWTOOL("DrawTool"),
+        FILLTOOL("FillTool");
 
         private String value;
         ToolType(String value) {
@@ -24,6 +25,7 @@ public class ToolManager {
         tools = new HashMap<>();
         tools.put("SquareBrush", new SquareBrush());
         tools.put("SquareEraser", new SquareEraser());
+        tools.put("Fill", new FillTool());
         current = tools.get("SquareBrush");
     }
 
@@ -44,6 +46,11 @@ public class ToolManager {
 
     public Tool getSquareEraser() {
         current = tools.get("SquareEraser");
+        return current;
+    }
+
+    public Tool getFill() {
+        current = tools.get("Fill");
         return current;
     }
 

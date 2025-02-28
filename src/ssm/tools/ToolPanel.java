@@ -29,7 +29,7 @@ public class ToolPanel extends JPanel implements ActionListener {
 
     private void initButtons() {
         buttonPanel = new JPanel(layout);
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 3; i++) {
             JButton newButton = new JButton();
             newButton.addActionListener(this);
             newButton.setSize(50, 50);
@@ -41,6 +41,7 @@ public class ToolPanel extends JPanel implements ActionListener {
 
         buttons.get(0).setText("SquareBrush");
         buttons.get(1).setText("SquareEraser");
+        buttons.get(2).setText("Fill");
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -50,6 +51,9 @@ public class ToolPanel extends JPanel implements ActionListener {
         }
         if (command == "SquareEraser") {
             toolManager.getSquareEraser();
+        }
+        if (command == "Fill") {
+            toolManager.getFill();
         }
         toolControls.updateToolControls();
     }
