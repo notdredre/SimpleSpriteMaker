@@ -33,8 +33,8 @@ public class MainWindow extends JFrame implements Runnable {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         initComponents();
         setVisible(true);
+        setBackground(new Color(240, 240, 240));
         colourManager.updateColourObjects();
-        mainPanel.setBackground(new Color(220, 220, 220));
         drawPanel.clear();
         drawPanel.requestFocus();
         refreshThread = new Thread(this);
@@ -76,8 +76,8 @@ public class MainWindow extends JFrame implements Runnable {
         // Constraints for drawPanel
         mainLayout.putConstraint(SpringLayout.WEST, drawPanel, 20, SpringLayout.WEST, mainPanel);
         mainLayout.putConstraint(SpringLayout.NORTH, drawPanel, 20, SpringLayout.NORTH, mainPanel);       
-        mainLayout.putConstraint(SpringLayout.SOUTH, drawPanel, drawPanel.getDrawHeight(), SpringLayout.NORTH, drawPanel);
-        mainLayout.putConstraint(SpringLayout.EAST, drawPanel, drawPanel.getDrawWidth(), SpringLayout.WEST, drawPanel);
+        //mainLayout.putConstraint(SpringLayout.SOUTH, drawPanel, drawPanel.getDrawHeight(), SpringLayout.NORTH, drawPanel);
+        //mainLayout.putConstraint(SpringLayout.EAST, drawPanel, drawPanel.getDrawWidth(), SpringLayout.WEST, drawPanel);
 
         // Constraints for colourPanel
         mainLayout.putConstraint(SpringLayout.WEST, colourPanel, 30, SpringLayout.EAST, drawPanel);
