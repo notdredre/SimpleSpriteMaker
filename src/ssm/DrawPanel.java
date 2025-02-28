@@ -120,7 +120,11 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
     }
 
     public void mouseEntered(MouseEvent e) {
-        currentTool.preview(currentPixelX, currentPixelY, overlayBuffer, SCALE);
+        currentTool = toolManager.getCurrent();
+        int onMask = 0;
+        int offMask = MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK | MouseEvent.BUTTON3_DOWN_MASK;
+        if ((e.getModifiersEx() & (onMask | offMask)) == onMask)
+            currentTool.preview(currentPixelX, currentPixelY, overlayBuffer, SCALE);
     }
 
     public void mousePressed(MouseEvent e) {}

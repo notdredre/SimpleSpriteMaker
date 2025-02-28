@@ -15,6 +15,8 @@ public class ToolControls extends JPanel implements ChangeListener {
     private CardLayout layout;
     private ToolManager toolManager;
     private JPanel drawToolPanel;
+    private JPanel fillToolPanel;
+    private JPanel noControlPanel;
     private JLabel sizeLabel;
     private JSpinner sizeField;
     private SpinnerNumberModel sizeModel;
@@ -24,9 +26,11 @@ public class ToolControls extends JPanel implements ChangeListener {
         setPreferredSize(new Dimension(200, 100));
         toolManager = ToolManager.getToolManager();
         layout = new CardLayout();
+        fillToolPanel = noControlPanel = new JPanel();
         createDrawToolPanel();
         setLayout(layout);
         add(drawToolPanel, ToolType.DRAWTOOL.value());
+        add(fillToolPanel, ToolType.FILLTOOL.value());
     }
 
     private void createDrawToolPanel() {
