@@ -10,7 +10,8 @@ public class SquareEraser extends DrawTool {
         int screenY = y * scale;
         for (int i = screenX; i < screenX + (size * scale); i++) {
             for (int j = screenY; j < screenY + (size * scale); j++) {
-                buffer.setRGB(i, j, 0);
+                if (i >= 0 && i < buffer.getWidth() && j >= 0 && j < buffer.getHeight())
+                    buffer.setRGB(i, j, 0);
             }
         }
     }
