@@ -21,6 +21,7 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
     private int drawWidth, drawHeight, scale;
     private int width, height;
     private BufferedImage drawBuffer, overlayBuffer, renderBuffer, writeBuffer, backgroundBuffer;
+    private int x, y;
     private Color primary, secondary;
     private Tool currentTool;
     private ToolManager toolManager;
@@ -28,9 +29,15 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
     private int currentPixelX, currentPixelY;
     
     public DrawPanel() {
-        drawWidth = 50;
-        drawHeight = 50;
-        scale = WIDTH / drawWidth;
+        setBackground(new Color(180, 180, 180));
+        drawWidth = 25;
+        drawHeight = 25;
+        x = 20;
+        y = 20;
+        if (drawWidth > drawHeight)
+            scale = WIDTH / drawWidth;
+        else
+            scale = WIDTH / drawHeight;
         width = drawWidth * scale;
         height = drawHeight * scale;
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -57,7 +64,7 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
         r2.dispose();
 
         Graphics2D g2 = (Graphics2D) getGraphics();
-        g2.drawImage(renderBuffer, 0, 0, null);
+        g2.drawImage(renderBuffer, x, y, null);
         g2.dispose();
     }
 
@@ -94,8 +101,8 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
     }
 
     public void mouseDragged(MouseEvent e) {
-        currentPixelX = e.getX() / scale;
-        currentPixelY = e.getY() / scale;
+        currentPixelX = (e.getX() - x) / scale;
+        currentPixelY = (e.getY() - y) / scale;
         currentTool = toolManager.getCurrent();
         if(SwingUtilities.isLeftMouseButton(e))
             currentTool.use(currentPixelX, currentPixelY, primary, drawBuffer, writeBuffer, scale);
@@ -105,12 +112,13 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
     }
 
     public void mouseMoved(MouseEvent e) {
-        int eventX = e.getX() / scale;
-        int eventY = e.getY() / scale;
+        int eventX = Math.round((e.getX() - x) / scale);
+        int eventY = Math.round((e.getY() - y) / scale);
+        System.out.println(e.getX() + " " + e.getY() + " " + eventX + " " + eventY);
         currentTool = toolManager.getCurrent();
         if (eventX != currentPixelX || eventY != currentPixelY) {
-            currentPixelX = e.getX() / scale;
-            currentPixelY = e.getY() / scale;
+            currentPixelX = eventX;
+            currentPixelY = eventY;
             currentTool.preview(currentPixelX, currentPixelY, overlayBuffer, scale);
         }
     }
