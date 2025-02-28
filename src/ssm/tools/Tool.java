@@ -2,7 +2,10 @@ package ssm.tools;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
+import ssm.tools.ToolManager.ToolType;
+
 public abstract class Tool {
+    public abstract ToolType getToolType();
     protected abstract void draw(int x, int y, Color c, BufferedImage buffer, int scale);
     public void use(int x, int y, Color c, BufferedImage drawBuffer, BufferedImage writeBuffer, int scale) {
         draw(x, y, c, drawBuffer, scale);

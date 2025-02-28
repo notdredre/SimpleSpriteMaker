@@ -1,34 +1,42 @@
 package ssm.tools;
 
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
 public class ToolPanel extends JPanel implements ActionListener {
     private ToolManager toolManager;
     private ArrayList<JButton> buttons;
+    private JPanel buttonPanel;
+    private ToolControls toolControls;
     private GridLayout layout;
 
     public ToolPanel() {
         toolManager = ToolManager.getToolManager();
         buttons = new ArrayList<>();
+        toolControls = new ToolControls();
         layout = new GridLayout(5, 10, 5, 5);
-        setLayout(layout);
+        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         initButtons();
+        add(buttonPanel);
+        add(toolControls);
     }
 
     private void initButtons() {
+        buttonPanel = new JPanel(layout);
         for (int i = 0; i < 2; i++) {
             JButton newButton = new JButton();
             newButton.addActionListener(this);
             newButton.setSize(50, 50);
                 
             buttons.add(newButton);
-            add(newButton);
+            buttonPanel.add(newButton);
 
         }
 
@@ -44,6 +52,7 @@ public class ToolPanel extends JPanel implements ActionListener {
         if (command == "SquareEraser") {
             toolManager.getSquareEraser();
         }
+        toolControls.updateToolControls();
     }
 
 

@@ -1,7 +1,6 @@
 package ssm.tools;
 
-import java.awt.Color;
-import java.awt.image.BufferedImage;
+import ssm.tools.ToolManager.ToolType;
 
 public abstract class DrawTool extends Tool {
     protected int size;
@@ -22,6 +21,15 @@ public abstract class DrawTool extends Tool {
         size--;
     }
 
-    protected abstract void draw(int x, int y, Color c, BufferedImage buffer, int scale);
-    public abstract void preview(int x, int y, BufferedImage overlayBuffer, int scale);
+    public void setSize(int size) {
+        this.size = size;
+    }
+    
+    public int getSize() {
+        return size;
+    }
+
+    public ToolType getToolType() {
+        return ToolType.DRAWTOOL;
+    }
 }

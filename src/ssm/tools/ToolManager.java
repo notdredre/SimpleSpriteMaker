@@ -7,6 +7,19 @@ public class ToolManager {
     private HashMap<String, Tool> tools;
     private Tool current;
 
+    public enum ToolType {
+        DRAWTOOL("DrawTool");
+
+        private String value;
+        ToolType(String value) {
+            this.value = value;
+        }
+
+        public String value() {
+            return value;
+        }
+    }
+
     private ToolManager() {
         tools = new HashMap<>();
         tools.put("SquareBrush", new SquareBrush());
@@ -23,7 +36,7 @@ public class ToolManager {
     public Tool getCurrent() {
         return current;
     }
-    
+
     public Tool getSquareBrush() {
         current = tools.get("SquareBrush");
         return current;
@@ -44,5 +57,18 @@ public class ToolManager {
         if (current instanceof DrawTool) {
             ((DrawTool) current).decreaseSize();
         }
+    }
+
+    public void setSize(Number size) {
+        if (current instanceof DrawTool) {
+            ((DrawTool) current).setSize(size.intValue());
+        }
+    }
+
+    public int getSize() {
+        if (current instanceof DrawTool) {
+            return ((DrawTool) current).getSize();
+        }
+        return -1;
     }
 }
