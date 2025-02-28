@@ -4,23 +4,14 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
-public class SquareEraser extends Tool {
-    private int size;
-
-    public SquareEraser() {
-        size = 1;
-    }
-
-    public SquareEraser(int size) {
-        this.size = size;
-    }
-
+public class SquareEraser extends DrawTool {
     public void draw(int x, int y, Color c, BufferedImage buffer, int scale) {
         int screenX = x * scale;
         int screenY = y * scale;
         for (int i = screenX; i < screenX + (size * scale); i++) {
             for (int j = screenY; j < screenY + (size * scale); j++) {
-                buffer.setRGB(i, j, 0);
+                if (i >= 0 && i < buffer.getWidth() && j >= 0 && j < buffer.getHeight())
+                    buffer.setRGB(i, j, 0);
             }
         }
     }
