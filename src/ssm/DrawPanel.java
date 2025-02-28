@@ -22,6 +22,7 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
     private int width, height;
     private BufferedImage drawBuffer, overlayBuffer, renderBuffer, writeBuffer, backgroundBuffer;
     private int x, y;
+    private float percentX, percentY;
     private Color primary, secondary;
     private Tool currentTool;
     private ToolManager toolManager;
@@ -30,17 +31,19 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
     
     public DrawPanel() {
         setBackground(new Color(180, 180, 180));
-        drawWidth = 25;
-        drawHeight = 25;
-        x = 20;
-        y = 20;
+        drawWidth = 10;
+        drawHeight = 10;
         if (drawWidth > drawHeight)
             scale = WIDTH / drawWidth;
         else
             scale = WIDTH / drawHeight;
+        scale = 50;
         width = drawWidth * scale;
         height = drawHeight * scale;
+        percentX = percentY = 0.5f;
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        x = 0;
+        y = 0;
         currentPixelX = currentPixelY = -1;
         toolManager = ToolManager.getToolManager();
         currentTool = toolManager.getSquareBrush();
@@ -57,6 +60,7 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
     }
 
     private void render() {
+        positionDrawing();
         Graphics2D r2 = (Graphics2D) renderBuffer.getGraphics();
         r2.drawImage(backgroundBuffer, 0, 0, null);
         r2.drawImage(drawBuffer, 0, 0, null);
@@ -77,7 +81,7 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
             e.printStackTrace();
             d2.setColor(Color.WHITE);
         }
-        d2.fillRect(0, 0, WIDTH, HEIGHT);
+        d2.fillRect(0, 0, width, height);
         d2.dispose();
         render();
     }
@@ -114,7 +118,6 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
     public void mouseMoved(MouseEvent e) {
         int eventX = Math.round((e.getX() - x) / scale);
         int eventY = Math.round((e.getY() - y) / scale);
-        System.out.println(e.getX() + " " + e.getY() + " " + eventX + " " + eventY);
         currentTool = toolManager.getCurrent();
         if (eventX != currentPixelX || eventY != currentPixelY) {
             currentPixelX = eventX;
@@ -147,6 +150,10 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
 
     public void mouseReleased(MouseEvent e) {}
 
+    private void positionDrawing() {
+        x = Math.round(percentX * getWidth()) - width / 2;
+        y = Math.round(percentY * getHeight()) - height / 2;
+    }
 
     public int getDrawWidth() {
         return WIDTH;
