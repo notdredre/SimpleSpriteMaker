@@ -31,31 +31,32 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
     
     public DrawPanel() {
         setBackground(new Color(180, 180, 180));
-        drawWidth = 10;
-        drawHeight = 10;
-        if (drawWidth > drawHeight)
-            scale = WIDTH / drawWidth;
-        else
-            scale = WIDTH / drawHeight;
-        scale = 50;
-        width = drawWidth * scale;
-        height = drawHeight * scale;
-        percentX = percentY = 0.5f;
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
-        x = 0;
-        y = 0;
-        currentPixelX = currentPixelY = -1;
         toolManager = ToolManager.getToolManager();
         currentTool = toolManager.getSquareBrush();
         imageFileManager = ImageFileManager.getImageFileManager();
         addMouseListener(this);
         addMouseMotionListener(this);
+        createNewDrawing(30, 30);
+    }
+
+    private void createNewDrawing(int drawWidth, int drawHeight) {
+        this.drawWidth = drawWidth;
+        this.drawHeight = drawHeight;
+        if (drawWidth > drawHeight)
+            scale = WIDTH / drawWidth;
+        else
+            scale = WIDTH / drawHeight;
+        width = drawWidth * scale;
+        height = drawHeight * scale;
+        percentX = percentY = 0.5f;
+        currentPixelX = currentPixelY = -1;
+        currentTool = toolManager.getSquareBrush();
         drawBuffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         overlayBuffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         renderBuffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         writeBuffer = new BufferedImage(width / scale, height / scale, BufferedImage.TYPE_INT_ARGB);
         backgroundBuffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        currentPixelX = currentPixelY = -1;
         imageFileManager.setToWrite(writeBuffer);
     }
 
@@ -75,7 +76,7 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
     public void clear() {
         Graphics2D d2 = (Graphics2D) backgroundBuffer.getGraphics();
         try {
-            Paint transparency = new TexturePaint(imageFileManager.openImage(getClass().getResourceAsStream("res/transparentTexture.png")), new Rectangle2D.Double(0, 0, 100, 100));
+            Paint transparency = new TexturePaint(imageFileManager.openImage(getClass().getResourceAsStream("res/transparentTexture.png")), new Rectangle2D.Double(0, 0, scale * 5, scale * 5));
             d2.setPaint(transparency);
         } catch (IOException e) {
             e.printStackTrace();
