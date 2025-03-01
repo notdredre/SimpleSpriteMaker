@@ -9,6 +9,7 @@ import javax.swing.SpringLayout;
 import ssm.colour.ColourManager;
 import ssm.colour.ColourPreview;
 import ssm.colour.ColourSliders;
+import ssm.file.ImageFileManager;
 import ssm.file.SaveFilePanel;
 import ssm.tools.ToolPanel;
 
@@ -20,6 +21,7 @@ public class MainWindow extends JFrame implements Runnable {
     private ColourSliders colourSliders;
     private ColourPreview colourPreview;
     private ColourManager colourManager;
+    private ImageFileManager imageFileManager;
     private SaveFilePanel saveFilePanel;
     private ToolPanel toolPanel;
     private ArrayList<Refreshable> toRefresh;
@@ -33,8 +35,8 @@ public class MainWindow extends JFrame implements Runnable {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         initComponents();
         setVisible(true);
+        setBackground(new Color(240, 240, 240));
         colourManager.updateColourObjects();
-        mainPanel.setBackground(new Color(220, 220, 220));
         drawPanel.clear();
         drawPanel.requestFocus();
         refreshThread = new Thread(this);
@@ -43,7 +45,7 @@ public class MainWindow extends JFrame implements Runnable {
 
     private void initComponents() {
         colourManager = ColourManager.getColourManager();
-
+        imageFileManager = ImageFileManager.getImageFileManager();
         mainLayout = new SpringLayout();
         mainPanel = new JPanel();
         mainPanel.setLayout(mainLayout);
@@ -52,6 +54,7 @@ public class MainWindow extends JFrame implements Runnable {
         toRefresh.add(drawPanel);
         colourManager.addColourObject(drawPanel);
         mainPanel.add(drawPanel);
+        imageFileManager.setDrawPanel(drawPanel);
 
         colourPanel = new JPanel();
         colourPanel.setMaximumSize(new Dimension(200, 300));
@@ -76,8 +79,8 @@ public class MainWindow extends JFrame implements Runnable {
         // Constraints for drawPanel
         mainLayout.putConstraint(SpringLayout.WEST, drawPanel, 20, SpringLayout.WEST, mainPanel);
         mainLayout.putConstraint(SpringLayout.NORTH, drawPanel, 20, SpringLayout.NORTH, mainPanel);       
-        mainLayout.putConstraint(SpringLayout.SOUTH, drawPanel, drawPanel.getDrawHeight(), SpringLayout.NORTH, drawPanel);
-        mainLayout.putConstraint(SpringLayout.EAST, drawPanel, drawPanel.getDrawWidth(), SpringLayout.WEST, drawPanel);
+        //mainLayout.putConstraint(SpringLayout.SOUTH, drawPanel, drawPanel.getDrawHeight(), SpringLayout.NORTH, drawPanel);
+        //mainLayout.putConstraint(SpringLayout.EAST, drawPanel, drawPanel.getDrawWidth(), SpringLayout.WEST, drawPanel);
 
         // Constraints for colourPanel
         mainLayout.putConstraint(SpringLayout.WEST, colourPanel, 30, SpringLayout.EAST, drawPanel);
