@@ -1,8 +1,11 @@
 package ssm;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
@@ -16,6 +19,7 @@ import ssm.tools.ToolPanel;
 public class MainWindow extends JFrame implements Runnable {
     private final int WIDTH = 1000, HEIGHT = 800;
     private JPanel mainPanel, colourPanel;
+    private JButton clearButton;
     private SpringLayout mainLayout;
     private DrawPanel drawPanel;
     private ColourSliders colourSliders;
@@ -75,11 +79,20 @@ public class MainWindow extends JFrame implements Runnable {
 
         saveFilePanel = new SaveFilePanel();
         mainPanel.add(saveFilePanel);
+        
+        clearButton = new JButton("Clear");
+        clearButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                drawPanel.clear();
+            }
+        });
+        
+        mainPanel.add(clearButton);
+
 
         // Constraints for drawPanel
         mainLayout.putConstraint(SpringLayout.WEST, drawPanel, 20, SpringLayout.WEST, mainPanel);
         mainLayout.putConstraint(SpringLayout.NORTH, drawPanel, 20, SpringLayout.NORTH, mainPanel);
-        mainLayout.putConstraint(SpringLayout.SOUTH, mainPanel, 20, SpringLayout.SOUTH, drawPanel);
 
         // Constraints for colourPanel
         mainLayout.putConstraint(SpringLayout.WEST, colourPanel, 30, SpringLayout.EAST, drawPanel);
@@ -96,6 +109,11 @@ public class MainWindow extends JFrame implements Runnable {
         // Constraints for saveFilePanel
         mainLayout.putConstraint(SpringLayout.WEST, saveFilePanel, 30, SpringLayout.EAST, drawPanel);
         mainLayout.putConstraint(SpringLayout.NORTH, saveFilePanel, 30, SpringLayout.SOUTH, toolPanel);
+
+        // Constraints for clearButton
+        mainLayout.putConstraint(SpringLayout.NORTH, clearButton, 10, SpringLayout.SOUTH, drawPanel);
+        mainLayout.putConstraint(SpringLayout.EAST, clearButton, 0, SpringLayout.EAST, drawPanel);
+        mainLayout.putConstraint(SpringLayout.SOUTH, mainPanel, 20, SpringLayout.SOUTH, clearButton);
         
         add(mainPanel);
     }
