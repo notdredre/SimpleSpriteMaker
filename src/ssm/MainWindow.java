@@ -85,7 +85,6 @@ public class MainWindow extends JFrame implements Runnable {
         mainLayout.putConstraint(SpringLayout.WEST, colourPanel, 30, SpringLayout.EAST, drawPanel);
         mainLayout.putConstraint(SpringLayout.EAST, mainPanel, 20, SpringLayout.EAST, colourPanel);
         mainLayout.putConstraint(SpringLayout.NORTH, colourPanel, 20, SpringLayout.NORTH, mainPanel);
-        mainLayout.putConstraint(SpringLayout.SOUTH, colourPanel, 200, SpringLayout.NORTH, colourPanel);
 
         // Constraints for toolPanel
         mainLayout.putConstraint(SpringLayout.WEST, toolPanel, 30, SpringLayout.EAST, drawPanel);
