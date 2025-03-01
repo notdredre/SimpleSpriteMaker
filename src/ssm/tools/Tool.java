@@ -11,7 +11,7 @@ public abstract class Tool {
         draw(x, y, c, drawBuffer, scale);
         draw(x, y, c, writeBuffer, 1);
     }
-    public abstract void preview(int x, int y, BufferedImage overlayBuffer, int scale);
+    public abstract void preview(int x, int y, BufferedImage drawBuffer, BufferedImage overlayBuffer, int scale);
     protected void clearPreview(BufferedImage overlayBuffer) {
         int width = overlayBuffer.getWidth();
         int height = overlayBuffer.getHeight();

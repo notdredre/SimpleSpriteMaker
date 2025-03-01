@@ -117,7 +117,7 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
             currentTool.use(currentPixelX, currentPixelY, primary, drawBuffer, writeBuffer, scale);
         if(SwingUtilities.isRightMouseButton(e))
         currentTool.use(currentPixelX, currentPixelY, secondary, drawBuffer, writeBuffer, scale);
-        currentTool.preview(currentPixelX, currentPixelY, overlayBuffer, scale);
+        currentTool.preview(currentPixelX, currentPixelY, drawBuffer, overlayBuffer, scale);
     }
 
     public void mouseMoved(MouseEvent e) {
@@ -127,7 +127,7 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
         if (eventX != currentPixelX || eventY != currentPixelY) {
             currentPixelX = eventX;
             currentPixelY = eventY;
-            currentTool.preview(currentPixelX, currentPixelY, overlayBuffer, scale);
+            currentTool.preview(currentPixelX, currentPixelY, drawBuffer, overlayBuffer, scale);
         }
     }
 
@@ -148,7 +148,7 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
         int onMask = 0;
         int offMask = MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK | MouseEvent.BUTTON3_DOWN_MASK;
         if ((e.getModifiersEx() & (onMask | offMask)) == onMask)
-            currentTool.preview(currentPixelX, currentPixelY, overlayBuffer, scale);
+            currentTool.preview(currentPixelX, currentPixelY, drawBuffer, overlayBuffer, scale);
     }
 
     public void mousePressed(MouseEvent e) {}
