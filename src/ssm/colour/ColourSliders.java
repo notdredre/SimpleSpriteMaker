@@ -33,12 +33,14 @@ public class ColourSliders extends JPanel implements ColourReading, ChangeListen
             add(containers[i]);
             add(Box.createVerticalStrut(20));
         }
+        colourSliders[3].setValue(255);
     }
 
     private void setSliders(Color c) {
         colourSliders[0].setValue(c.getRed());
         colourSliders[1].setValue(c.getGreen());
         colourSliders[2].setValue(c.getBlue());
+        colourSliders[3].setValue(c.getAlpha());
     }
 
     public void detailColour(Color c) {
@@ -46,9 +48,17 @@ public class ColourSliders extends JPanel implements ColourReading, ChangeListen
     }
 
     public void stateChanged(ChangeEvent e) {
-        int r = colourSliders[0].getValue();
-        int g = colourSliders[1].getValue();
-        int b = colourSliders[2].getValue();
-        colourManager.setColour(r, g, b);
+        if (e.getSource().equals(colourSliders[0])) {
+            colourManager.setRed(colourSliders[0].getValue());
+        }
+        if (e.getSource().equals(colourSliders[1])) {
+            colourManager.setGreen(colourSliders[1].getValue());
+        }
+        if (e.getSource().equals(colourSliders[2])) {
+            colourManager.setBlue(colourSliders[2].getValue());
+        }
+        if (e.getSource().equals(colourSliders[3])) {
+            colourManager.setAlpha(colourSliders[3].getValue());
+        }
     }
 }

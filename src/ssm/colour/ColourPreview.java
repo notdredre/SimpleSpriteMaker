@@ -12,7 +12,6 @@ public class ColourPreview extends JPanel implements ColourSwitcher, MouseListen
     private SpringLayout layout;
     private ColourManager colourManager;
     private final int WIDTH = 100, HEIGHT = 50, SIZE = 50;
-    private int selected;
 
     public ColourPreview() {
         colourManager = ColourManager.getColourManager();
@@ -38,14 +37,8 @@ public class ColourPreview extends JPanel implements ColourSwitcher, MouseListen
     }
 
     private void drawColours() {
-        primary.draw();
-        secondary.draw();
-        if (selected == 0) {
-            primary.highlight();
-        }
-        if (selected == 1) {
-            secondary.highlight();
-        }
+        primary.render();
+        secondary.render();
     }
 
     public void refresh() {
@@ -53,13 +46,19 @@ public class ColourPreview extends JPanel implements ColourSwitcher, MouseListen
     }
 
     public void switchColour(int selected) {
-        this.selected = selected;
+        if (selected == 0) {
+            primary.setHighlighted(true);
+            secondary.setHighlighted(false);
+        }
+        if (selected == 1) {
+            primary.setHighlighted(false);
+            secondary.setHighlighted(true);
+        }
     }
 
     public void updateColours(Color primary, Color secondary) {
         this.primary.setColour(primary);
         this.secondary.setColour(secondary);
-        drawColours();
     }
 
     @Override
@@ -67,11 +66,9 @@ public class ColourPreview extends JPanel implements ColourSwitcher, MouseListen
         drawColours();
         if (primary.getBounds().contains(e.getPoint())) {
             colourManager.setSelected(0);
-            primary.highlight();
         }
         if (secondary.getBounds().contains(e.getPoint())) {
             colourManager.setSelected(1);
-            secondary.highlight();
         }
         
     }
