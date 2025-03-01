@@ -42,8 +42,8 @@ public class FillTool extends Tool {
         fill(x, y + 1, c, buffer, scale, startColor);
 
     }
-
-    public void preview(int x, int y, BufferedImage overlayBuffer, int scale) {
+  
+    public void preview(int x, int y, BufferedImage drawBuffer, BufferedImage overlayBuffer, int scale) {
 
     }
 
