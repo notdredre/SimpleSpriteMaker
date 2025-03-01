@@ -9,6 +9,7 @@ import javax.swing.SpringLayout;
 import ssm.colour.ColourManager;
 import ssm.colour.ColourPreview;
 import ssm.colour.ColourSliders;
+import ssm.file.ImageFileManager;
 import ssm.file.SaveFilePanel;
 import ssm.tools.ToolPanel;
 
@@ -20,6 +21,7 @@ public class MainWindow extends JFrame implements Runnable {
     private ColourSliders colourSliders;
     private ColourPreview colourPreview;
     private ColourManager colourManager;
+    private ImageFileManager imageFileManager;
     private SaveFilePanel saveFilePanel;
     private ToolPanel toolPanel;
     private ArrayList<Refreshable> toRefresh;
@@ -43,7 +45,7 @@ public class MainWindow extends JFrame implements Runnable {
 
     private void initComponents() {
         colourManager = ColourManager.getColourManager();
-
+        imageFileManager = ImageFileManager.getImageFileManager();
         mainLayout = new SpringLayout();
         mainPanel = new JPanel();
         mainPanel.setLayout(mainLayout);
@@ -52,6 +54,7 @@ public class MainWindow extends JFrame implements Runnable {
         toRefresh.add(drawPanel);
         colourManager.addColourObject(drawPanel);
         mainPanel.add(drawPanel);
+        imageFileManager.setDrawPanel(drawPanel);
 
         colourPanel = new JPanel();
         colourPanel.setMaximumSize(new Dimension(200, 300));

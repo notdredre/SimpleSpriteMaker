@@ -18,7 +18,7 @@ import ssm.tools.ToolManager;
 
 public class DrawPanel extends JPanel implements MouseInputListener, ColourObject, Refreshable {
     private final int WIDTH = 500, HEIGHT = 500;
-    private int drawWidth, drawHeight, scale;
+    private int scale;
     private int width, height;
     private BufferedImage drawBuffer, overlayBuffer, renderBuffer, writeBuffer, backgroundBuffer;
     private int x, y;
@@ -40,9 +40,7 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
         createNewDrawing(30, 30);
     }
 
-    private void createNewDrawing(int drawWidth, int drawHeight) {
-        this.drawWidth = drawWidth;
-        this.drawHeight = drawHeight;
+    public void createNewDrawing(int drawWidth, int drawHeight) {
         if (drawWidth > drawHeight)
             scale = WIDTH / drawWidth;
         else
@@ -58,6 +56,7 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
         writeBuffer = new BufferedImage(width / scale, height / scale, BufferedImage.TYPE_INT_ARGB);
         backgroundBuffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         imageFileManager.setToWrite(writeBuffer);
+        clear();
     }
 
     private void render() {
@@ -74,6 +73,12 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
     }
 
     public void clear() {
+        Graphics2D g2 = (Graphics2D) getGraphics();
+        if (g2 != null) {
+            g2.setColor(getBackground());
+            g2.fillRect(0, 0, getWidth(), getHeight());
+        }
+
         Graphics2D d2 = (Graphics2D) backgroundBuffer.getGraphics();
         try {
             Paint transparency = new TexturePaint(imageFileManager.openImage(getClass().getResourceAsStream("res/transparentTexture.png")), new Rectangle2D.Double(0, 0, scale * 5, scale * 5));
@@ -84,7 +89,6 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
         }
         d2.fillRect(0, 0, width, height);
         d2.dispose();
-        render();
     }
 
     private void clearOverlay() {
