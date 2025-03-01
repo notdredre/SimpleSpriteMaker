@@ -70,7 +70,7 @@ public class ColourManager {
         Color c = colours[selected];
         setColour(new Color(c.getRed(), c.getGreen(), c.getBlue(), a));
     }
-
+    
     public void addColourObject(ColourObject c) {
         if (c instanceof ColourObject) {
             colourObjects.add(c);
