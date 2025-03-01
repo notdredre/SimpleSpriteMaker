@@ -50,6 +50,7 @@ public class NewDrawingDialog extends JDialog implements ActionListener {
         String command = e.getActionCommand();
         if (command.equals("Ok")) {
             imageFileManager.newDrawing(dimensionXModel.getNumber(), dimensionYModel.getNumber());
+            dispose();
         }
         if (command.equals("Cancel")) {
             dispose();
