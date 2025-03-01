@@ -11,13 +11,13 @@ public class ColourManager {
     private static int selected;
 
     private ColourManager() {
-        selected = 0;
         colours = new Color[2];
         colours[0] = Color.BLACK;
         colours[1] = Color.WHITE;
         colourObjects = new ArrayList<>();
         colourSwitchers = new ArrayList<>();
         colourReadings = new ArrayList<>();
+        setSelected(0);
     }
 
     public static ColourManager getColourManager() {
@@ -44,16 +44,33 @@ public class ColourManager {
     }
 
     public void setColour(int r, int g, int b) {
-        colours[selected] = new Color(r, g, b);
-        updateColourObjects();
+        setColour(new Color(r, g, b));
     }
 
     public void setColour(int r, int g, int b, int a) {
-        colours[selected] = new Color(r, g, b, a);
-        updateColourObjects();
+        setColour(new Color(r, g, b, a));
     }
 
+    public void setRed(int r) {
+        Color c = colours[selected];
+        setColour(new Color(r, c.getGreen(), c.getBlue(), c.getAlpha()));
+    }
 
+    public void setGreen(int g) {
+        Color c = colours[selected];
+        setColour(new Color(c.getRed(), g, c.getBlue(), c.getAlpha()));
+    }
+
+    public void setBlue(int b) {
+        Color c = colours[selected];
+        setColour(new Color(c.getRed(), c.getGreen(), b, c.getAlpha()));
+    }
+
+    public void setAlpha(int a) {
+        Color c = colours[selected];
+        setColour(new Color(c.getRed(), c.getGreen(), c.getBlue(), a));
+    }
+    
     public void addColourObject(ColourObject c) {
         if (c instanceof ColourObject) {
             colourObjects.add(c);
@@ -66,6 +83,7 @@ public class ColourManager {
         if (c instanceof ColourSwitcher) {
             colourSwitchers.add(c);
             colourObjects.add(c);
+            updateColourSwitchers();
             return;
         }
         throw new IllegalArgumentException();
