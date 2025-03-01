@@ -79,25 +79,31 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
             g2.fillRect(0, 0, getWidth(), getHeight());
         }
 
-        Graphics2D d2 = (Graphics2D) backgroundBuffer.getGraphics();
+        clearBuffer(backgroundBuffer);
+        clearBuffer(overlayBuffer);
+        clearBuffer(drawBuffer);
+        clearBuffer(writeBuffer);
+        Graphics2D b2 = (Graphics2D) backgroundBuffer.getGraphics();
         try {
             Paint transparency = new TexturePaint(imageFileManager.openImage(getClass().getResourceAsStream("res/transparentTexture.png")), new Rectangle2D.Double(0, 0, scale * 5, scale * 5));
-            d2.setPaint(transparency);
+            b2.setPaint(transparency);
         } catch (IOException e) {
             e.printStackTrace();
-            d2.setColor(Color.WHITE);
+            b2.setColor(Color.WHITE);
         }
-        d2.fillRect(0, 0, width, height);
-        d2.dispose();
+        b2.fillRect(0, 0, width, height);
+        b2.dispose();
     }
 
-    private void clearOverlay() {
-        int[] overlayPix = new int[width * height];
-        overlayBuffer.getRGB(0, 0, width, height, overlayPix, 0, width);
-        for (int i = 0; i < width * height; i++) {
-            overlayPix[i] = 0;
+    private void clearBuffer(BufferedImage buffer) {
+        int bWidth = buffer.getWidth();
+        int bHeight = buffer.getHeight();
+        int[] pix = new int[bWidth * bHeight];
+        buffer.getRGB(0, 0, bWidth, bHeight, pix, 0, bWidth);
+        for (int i = 0; i < bWidth * bHeight; i++) {
+            pix[i] = 0;
         }
-        overlayBuffer.setRGB(0, 0, width, height, overlayPix, 0, width);
+        buffer.setRGB(0, 0, bWidth, bHeight, pix, 0, bWidth);
     }
 
     public void refresh() {
@@ -140,7 +146,7 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
     }
 
     public void mouseExited(MouseEvent e) {
-        clearOverlay();
+        clearBuffer(overlayBuffer);
     }
 
     public void mouseEntered(MouseEvent e) {
