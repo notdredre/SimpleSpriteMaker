@@ -32,6 +32,7 @@ public class DrawPanel extends JPanel implements MouseInputListener, MouseWheelL
     private int currentPixelX, currentPixelY;
     private int resizeX, resizeY, resizeFactor;
     private int panelWidth, panelHeight;
+    private int mouseX, mouseY;
     
     public DrawPanel() {
         setBackground(new Color(180, 180, 180));
@@ -55,7 +56,7 @@ public class DrawPanel extends JPanel implements MouseInputListener, MouseWheelL
             scale = HEIGHT / drawHeight;
         width = drawWidth * scale;
         height = drawHeight * scale;
-        resizeFactor = 2;
+        resizeFactor = 1;
         resizeX = Math.clamp(resizeFactor * width, width, width * RESIZE_MAX);
         resizeY = Math.clamp(resizeFactor * height, height, height * RESIZE_MAX);
         percentX = percentY = 0.5f;
@@ -92,6 +93,7 @@ public class DrawPanel extends JPanel implements MouseInputListener, MouseWheelL
         clearBuffer(overlayBuffer);
         clearBuffer(drawBuffer);
         clearBuffer(writeBuffer);
+        clearBuffer(compositeBuffer);
         resetBackground();
     }
 
@@ -132,7 +134,7 @@ public class DrawPanel extends JPanel implements MouseInputListener, MouseWheelL
         currentTool = toolManager.getCurrent();
         if(SwingUtilities.isLeftMouseButton(e))
             currentTool.use(currentPixelX, currentPixelY, primary, drawBuffer, writeBuffer, scale);
-        if(SwingUtilities.isRightMouseButton(e)) {
+        if(SwingUtilities.isRightMouseButton(e)) 
             currentTool.use(currentPixelX, currentPixelY, secondary, drawBuffer, writeBuffer, scale);
         currentTool.preview(currentPixelX, currentPixelY, drawBuffer, overlayBuffer, scale);
     }
@@ -168,13 +170,31 @@ public class DrawPanel extends JPanel implements MouseInputListener, MouseWheelL
             currentTool.preview(currentPixelX, currentPixelY, drawBuffer, overlayBuffer, scale);
     }
 
-    public void mousePressed(MouseEvent e) {}
+    public void mousePressed(MouseEvent e) {
+        mouseX = e.getX();
+        mouseY = e.getY();
+    }
 
     public void mouseReleased(MouseEvent e) {}
 
     private void positionDrawing() {
         x = Math.round(percentX * getWidth()) - resizeX / 2;
         y = Math.round(percentY * getHeight()) - resizeY / 2;
+    }
+
+    private void reposition(float percentX, float percentY) {
+        this.percentX = percentX;
+        this.percentY = percentY;
+    }
+
+    private void reposition(int mouseX, int mouseY) {
+        
+        float diffX = mouseX - this.mouseX;
+        float diffY = mouseY - this.mouseY;
+        
+        percentX += diffX / panelWidth;
+        percentY += diffY / panelHeight;
+        reposition(percentX, percentY);
     }
 
     public void scaleToWidth() {
