@@ -45,6 +45,7 @@ public class MainWindow extends JFrame implements Runnable {
         drawPanel.requestFocus();
         refreshThread = new Thread(this);
         refreshThread.start();
+        drawPanel.render();
     }
 
     private void initComponents() {
@@ -121,8 +122,13 @@ public class MainWindow extends JFrame implements Runnable {
     public void run() {
         try {
             while(true) {
+                //long pre = System.currentTimeMillis();
                 refreshAll();
-                Thread.sleep(15);
+                Thread.sleep(10);
+                /* long post = System.currentTimeMillis();
+                long diff = post - pre;
+                float fps = 1000 / Math.clamp(diff, 1, 1000000);
+                System.out.println("FRAMETIME: " + diff + " FPS: " + fps); */
             }
         } catch (Exception e) {
             e.printStackTrace();
