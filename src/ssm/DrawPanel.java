@@ -9,6 +9,8 @@ import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.TexturePaint;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -16,11 +18,12 @@ import ssm.file.ImageFileManager;
 import ssm.tools.Tool;
 import ssm.tools.ToolManager;
 
-public class DrawPanel extends JPanel implements MouseInputListener, ColourObject, Refreshable {
+public class DrawPanel extends JPanel implements MouseInputListener, MouseWheelListener, ColourObject, Refreshable {
     private final int WIDTH = 500, HEIGHT = 500;
     private int scale;
-    private int width, height;
-    private BufferedImage drawBuffer, overlayBuffer, renderBuffer, writeBuffer, backgroundBuffer;
+    private int width, height, drawWidth, drawHeight;
+    private BufferedImage drawBuffer, overlayBuffer, renderBuffer, writeBuffer, backgroundBuffer, compositeBuffer;
+    private Composite composite;
     private int x, y;
     private float percentX, percentY;
     private Color primary, secondary;
@@ -28,6 +31,8 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
     private ToolManager toolManager;
     private ImageFileManager imageFileManager;
     private int currentPixelX, currentPixelY;
+    int resizeX, resizeY;
+    float resizeFactor;
     
     public DrawPanel() {
         setBackground(new Color(180, 180, 180));
@@ -37,16 +42,20 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
         imageFileManager = ImageFileManager.getImageFileManager();
         addMouseListener(this);
         addMouseMotionListener(this);
+        addMouseWheelListener(this);
         createNewDrawing(30, 30);
     }
 
     public void createNewDrawing(int drawWidth, int drawHeight) {
+        this.drawWidth = drawWidth;
+        this.drawHeight = drawHeight;
         if (drawWidth > drawHeight)
             scale = WIDTH / drawWidth;
         else
-            scale = WIDTH / drawHeight;
+            scale = HEIGHT / drawHeight;
         width = drawWidth * scale;
         height = drawHeight * scale;
+        resizeFactor = 2;
         percentX = percentY = 0.5f;
         currentPixelX = currentPixelY = -1;
         currentTool = toolManager.getSquareBrush();
@@ -60,39 +69,38 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
     }
 
     private void render() {
+        //scaleToHeight();
+        resizeX = Math.round(Math.clamp(resizeFactor * width, width, width * 10));
+        resizeY = Math.round(Math.clamp(resizeFactor * height, height, height * 10));
         positionDrawing();
+
+        composite = Composite.getComposite(this);
+        compositeBuffer = composite.getBuffer();
+        Graphics2D c2 = (Graphics2D) compositeBuffer.getGraphics();
+        c2.setColor(getBackground());
+        c2.fillRect(0, 0, getWidth(), getHeight());
+
         Graphics2D r2 = (Graphics2D) renderBuffer.getGraphics();
         r2.drawImage(backgroundBuffer, 0, 0, null);
         r2.drawImage(drawBuffer, 0, 0, null);
         r2.drawImage(overlayBuffer, 0, 0, null);
         r2.dispose();
 
+        
+        
+        c2.drawImage(renderBuffer.getScaledInstance(resizeX, resizeY, BufferedImage.SCALE_DEFAULT), x, y, null);
+        c2.dispose();
+
         Graphics2D g2 = (Graphics2D) getGraphics();
-        g2.drawImage(renderBuffer, x, y, null);
-        g2.dispose();
+        g2.drawImage(compositeBuffer, 0, 0, null);
     }
 
     public void clear() {
-        Graphics2D g2 = (Graphics2D) getGraphics();
-        if (g2 != null) {
-            g2.setColor(getBackground());
-            g2.fillRect(0, 0, getWidth(), getHeight());
-        }
-
         clearBuffer(backgroundBuffer);
         clearBuffer(overlayBuffer);
         clearBuffer(drawBuffer);
         clearBuffer(writeBuffer);
-        Graphics2D b2 = (Graphics2D) backgroundBuffer.getGraphics();
-        try {
-            Paint transparency = new TexturePaint(imageFileManager.openImage(getClass().getResourceAsStream("res/transparentTexture.png")), new Rectangle2D.Double(0, 0, scale * 5, scale * 5));
-            b2.setPaint(transparency);
-        } catch (IOException e) {
-            e.printStackTrace();
-            b2.setColor(Color.WHITE);
-        }
-        b2.fillRect(0, 0, width, height);
-        b2.dispose();
+        resetBackground();
     }
 
     private void clearBuffer(BufferedImage buffer) {
@@ -116,8 +124,8 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
     }
 
     public void mouseDragged(MouseEvent e) {
-        currentPixelX = (e.getX() - x) / scale;
-        currentPixelY = (e.getY() - y) / scale;
+        currentPixelX = ((e.getX() - x) / scale) / (resizeX / width);
+        currentPixelY = ((e.getY() - y) / scale) / (resizeY / height);
         currentTool = toolManager.getCurrent();
         if(SwingUtilities.isLeftMouseButton(e))
             currentTool.use(currentPixelX, currentPixelY, primary, drawBuffer, writeBuffer, scale);
@@ -127,8 +135,8 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
     }
 
     public void mouseMoved(MouseEvent e) {
-        int eventX = Math.round((e.getX() - x) / scale);
-        int eventY = Math.round((e.getY() - y) / scale);
+        int eventX = ((e.getX() - x) / scale) / (resizeX / width);
+        int eventY = ((e.getY() - y) / scale) / (resizeY / height);
         currentTool = toolManager.getCurrent();
         if (eventX != currentPixelX || eventY != currentPixelY) {
             currentPixelX = eventX;
@@ -162,8 +170,35 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
     public void mouseReleased(MouseEvent e) {}
 
     private void positionDrawing() {
-        x = Math.round(percentX * getWidth()) - width / 2;
-        y = Math.round(percentY * getHeight()) - height / 2;
+        x = Math.round(percentX * getWidth()) - resizeX / 2;
+        y = Math.round(percentY * getHeight()) - resizeY / 2;
+    }
+
+    public void scaleToWidth() {
+        scale = getWidth() / drawWidth;
+    }
+
+    public void scaleToHeight() {
+        System.out.println(getHeight());
+        scale = getHeight() / drawHeight;
+    }
+
+    private void resetBackground() {
+        if (getHeight() > 0 && getWidth() > 0)
+            backgroundBuffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_3BYTE_BGR);
+        clearBuffer(backgroundBuffer);
+        Graphics2D b2 = (Graphics2D) backgroundBuffer.getGraphics();
+        b2.setBackground(getBackground());
+        b2.fillRect(0, 0, getWidth(), getHeight());
+        try {
+            Paint transparency = new TexturePaint(imageFileManager.openImage(getClass().getResourceAsStream("res/transparentTexture.png")), new Rectangle2D.Double(0, 0, scale * 5, scale * 5));
+            b2.setPaint(transparency);
+        } catch (IOException e) {
+            e.printStackTrace();
+            b2.setColor(Color.WHITE);
+        }
+        b2.fillRect(0, 0, width, height);
+        b2.dispose();
     }
 
     public int getDrawWidth() {
@@ -172,5 +207,10 @@ public class DrawPanel extends JPanel implements MouseInputListener, ColourObjec
 
     public int getDrawHeight() {
         return HEIGHT;
+    }
+
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        resizeFactor = Math.clamp(resizeFactor - e.getWheelRotation(), 1, 10);
     }
 }
