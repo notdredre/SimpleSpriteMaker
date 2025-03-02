@@ -19,7 +19,7 @@ import ssm.tools.Tool;
 import ssm.tools.ToolManager;
 
 public class DrawPanel extends JPanel implements MouseInputListener, MouseWheelListener, ColourObject, Refreshable {
-    private final int WIDTH = 500, HEIGHT = 500;
+    private final int WIDTH = 500, HEIGHT = 500, RESIZE_MAX = 5;
     private int scale;
     private int width, height, drawWidth, drawHeight;
     private BufferedImage drawBuffer, overlayBuffer, renderBuffer, writeBuffer, backgroundBuffer, compositeBuffer;
@@ -42,6 +42,7 @@ public class DrawPanel extends JPanel implements MouseInputListener, MouseWheelL
         addMouseListener(this);
         addMouseMotionListener(this);
         addMouseWheelListener(this);
+        panelWidth = panelHeight = 0;
         createNewDrawing(30, 30);
     }
 
@@ -55,8 +56,8 @@ public class DrawPanel extends JPanel implements MouseInputListener, MouseWheelL
         width = drawWidth * scale;
         height = drawHeight * scale;
         resizeFactor = 2;
-        resizeX = Math.clamp(resizeFactor * width, width, width * 10);
-        resizeY = Math.clamp(resizeFactor * height, height, height * 10);
+        resizeX = Math.clamp(resizeFactor * width, width, width * RESIZE_MAX);
+        resizeY = Math.clamp(resizeFactor * height, height, height * RESIZE_MAX);
         percentX = percentY = 0.5f;
         currentPixelX = currentPixelY = -1;
         currentTool = toolManager.getSquareBrush();
@@ -65,40 +66,25 @@ public class DrawPanel extends JPanel implements MouseInputListener, MouseWheelL
         renderBuffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         writeBuffer = new BufferedImage(width / scale, height / scale, BufferedImage.TYPE_INT_ARGB);
         backgroundBuffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        compositeBuffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         imageFileManager.setToWrite(writeBuffer);
         clear();
     }
 
     public void render() {
-        //scaleToHeight();
-
-
-        
-        
-        
         Graphics2D c2 = (Graphics2D) compositeBuffer.getGraphics();
         c2.setColor(getBackground());
         c2.fillRect(0, 0, getWidth(), getHeight());
-
         Graphics2D r2 = (Graphics2D) renderBuffer.getGraphics();
         r2.drawImage(backgroundBuffer, 0, 0, null);
         r2.drawImage(drawBuffer, 0, 0, null);
         r2.drawImage(overlayBuffer, 0, 0, null);
-        r2.dispose();
-
-        
-        
-        c2.drawImage(renderBuffer.getScaledInstance(resizeX, resizeY, BufferedImage.SCALE_DEFAULT), x, y, null);
+        r2.dispose();      
+        c2.drawImage(renderBuffer.getScaledInstance(resizeX, resizeY, BufferedImage.SCALE_FAST), x, y, null);
         c2.dispose();
-
         Graphics2D g2 = (Graphics2D) getGraphics();
-        long pre = System.currentTimeMillis();
         g2.drawImage(compositeBuffer, 0, 0, null);
         g2.dispose();
-        long post = System.currentTimeMillis();        
-        long diff = post - pre;
-        float fps = 1000 / Math.clamp(diff, 1, 1000000);
-        System.out.println("FRAMETIME: " + diff + " FPS: " + fps);
     }
 
     public void clear() {
@@ -121,15 +107,17 @@ public class DrawPanel extends JPanel implements MouseInputListener, MouseWheelL
     }
 
     public void refresh() {
-        resizeX = Math.clamp(resizeFactor * width, width, width * 10);
-        resizeY = Math.clamp(resizeFactor * height, height, height * 10);
+        resizeX = Math.clamp(resizeFactor * width, width, width * RESIZE_MAX);
+        resizeY = Math.clamp(resizeFactor * height, height, height * RESIZE_MAX);
         positionDrawing();
+        render();
         if (panelHeight == getHeight() && panelWidth == getWidth()) {
             return;
         }
         panelWidth = getWidth();
         panelHeight = getHeight();
-        compositeBuffer = new BufferedImage(panelHeight, panelHeight, BufferedImage.TYPE_INT_RGB);
+        compositeBuffer = new BufferedImage(panelWidth, panelHeight, BufferedImage.TYPE_INT_RGB);
+        render();
         
     }
 
@@ -144,10 +132,9 @@ public class DrawPanel extends JPanel implements MouseInputListener, MouseWheelL
         currentTool = toolManager.getCurrent();
         if(SwingUtilities.isLeftMouseButton(e))
             currentTool.use(currentPixelX, currentPixelY, primary, drawBuffer, writeBuffer, scale);
-        if(SwingUtilities.isRightMouseButton(e))
-        currentTool.use(currentPixelX, currentPixelY, secondary, drawBuffer, writeBuffer, scale);
+        if(SwingUtilities.isRightMouseButton(e)) {
+            currentTool.use(currentPixelX, currentPixelY, secondary, drawBuffer, writeBuffer, scale);
         currentTool.preview(currentPixelX, currentPixelY, drawBuffer, overlayBuffer, scale);
-        render();
     }
 
     public void mouseMoved(MouseEvent e) {
@@ -159,7 +146,6 @@ public class DrawPanel extends JPanel implements MouseInputListener, MouseWheelL
             currentPixelY = eventY;
             currentTool.preview(currentPixelX, currentPixelY, drawBuffer, overlayBuffer, scale);
         }
-        render();
     }
 
     public void mouseClicked(MouseEvent e) {
@@ -168,12 +154,10 @@ public class DrawPanel extends JPanel implements MouseInputListener, MouseWheelL
             currentTool.use(currentPixelX, currentPixelY, primary, drawBuffer, writeBuffer, scale);
         if(SwingUtilities.isRightMouseButton(e))
             currentTool.use(currentPixelX, currentPixelY, secondary, drawBuffer, writeBuffer, scale);
-        render();
     }
 
     public void mouseExited(MouseEvent e) {
         clearBuffer(overlayBuffer);
-        render();
     }
 
     public void mouseEntered(MouseEvent e) {
@@ -182,7 +166,6 @@ public class DrawPanel extends JPanel implements MouseInputListener, MouseWheelL
         int offMask = MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK | MouseEvent.BUTTON3_DOWN_MASK;
         if ((e.getModifiersEx() & (onMask | offMask)) == onMask)
             currentTool.preview(currentPixelX, currentPixelY, drawBuffer, overlayBuffer, scale);
-        render();
     }
 
     public void mousePressed(MouseEvent e) {}
@@ -231,7 +214,6 @@ public class DrawPanel extends JPanel implements MouseInputListener, MouseWheelL
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        resizeFactor = Math.clamp(resizeFactor - e.getWheelRotation(), 1, 10);
-        render();
+        resizeFactor = Math.clamp(resizeFactor - e.getWheelRotation(), 1, RESIZE_MAX);
     }
 }
