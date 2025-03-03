@@ -12,6 +12,7 @@ import javax.swing.SpringLayout;
 import ssm.colour.ColourManager;
 import ssm.colour.ColourPreview;
 import ssm.colour.ColourSliders;
+import ssm.draw.DrawPanel;
 import ssm.file.ImageFileManager;
 import ssm.file.SaveFilePanel;
 import ssm.tools.ToolPanel;
