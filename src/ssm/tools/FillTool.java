@@ -24,7 +24,7 @@ public class FillTool extends Tool {
 
         int currentRGB = buffer.getRGB(screenX, screenY);
         
-        if (currentRGB != startColor || currentRGB == c.getRGB())
+        if (currentRGB != startColor)
             return;
 
         Graphics2D b2 = (Graphics2D) buffer.getGraphics();

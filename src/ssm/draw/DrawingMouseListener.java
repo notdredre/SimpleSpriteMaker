@@ -18,22 +18,29 @@ public class DrawingMouseListener implements MouseInputListener, MouseWheelListe
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if(SwingUtilities.isLeftMouseButton(e))
-            drawPanel.useTool(0);
-        if(SwingUtilities.isRightMouseButton(e))
-            drawPanel.useTool(1);
+        int eventX = e.getX();
+        int eventY = e.getY();
+        if (SwingUtilities.isLeftMouseButton(e))
+            drawPanel.useTool(eventX, eventY, 0);
+        if (SwingUtilities.isRightMouseButton(e))
+            drawPanel.useTool(eventX, eventY, 1);
         drawPanel.render();
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-        mouseX = e.getX();
-        mouseY = e.getY();
+        int eventX = mouseX = e.getX();
+        int eventY = mouseY = e.getY();
+        if (SwingUtilities.isLeftMouseButton(e))
+            drawPanel.useTool(eventX, eventY, 0);
+        if (SwingUtilities.isRightMouseButton(e))
+            drawPanel.useTool(eventX, eventY, 1);
         drawPanel.render();
     }
 
     @Override
-    public void mouseReleased(MouseEvent e) {}
+    public void mouseReleased(MouseEvent e) {
+    }
 
     @Override
     public void mouseEntered(MouseEvent e) {
@@ -52,18 +59,19 @@ public class DrawingMouseListener implements MouseInputListener, MouseWheelListe
 
     @Override
     public void mouseDragged(MouseEvent e) {
+        int eventX = e.getX();
+        int eventY = e.getY();
+        if (drawPanel.comparePixel(eventX, eventY))
+            return;
         if (SwingUtilities.isMiddleMouseButton(e)) {
-            int eventX = e.getX();
-            int eventY = e.getY();
             drawPanel.reposition(eventX, eventY, mouseX, mouseY);
             mouseX = eventX;
             mouseY = eventY;
         }
-        drawPanel.scaleInput(e.getX(), e.getY());
-        if(SwingUtilities.isLeftMouseButton(e))
-            drawPanel.useTool(0);
-        if(SwingUtilities.isRightMouseButton(e))
-            drawPanel.useTool(1);
+        if (SwingUtilities.isLeftMouseButton(e))
+            drawPanel.useTool(eventX, eventY, 0);
+        if (SwingUtilities.isRightMouseButton(e))
+            drawPanel.useTool(eventX, eventY, 1);
         drawPanel.previewTool();
         drawPanel.render();
     }
@@ -86,5 +94,5 @@ public class DrawingMouseListener implements MouseInputListener, MouseWheelListe
         drawPanel.resize(resizeAmount);
         drawPanel.render();
     }
-    
+
 }
