@@ -219,10 +219,12 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
     }
 
     public void undo() {
-        clearBuffer(drawBuffer);
-        clearBuffer(writeBuffer);
-        undoStack.pop(drawBuffer, writeBuffer);
-        render();
+        if (!undoStack.isLast()) {
+            clearBuffer(drawBuffer);
+            clearBuffer(writeBuffer);
+            undoStack.pop(drawBuffer, writeBuffer);
+            render();
+        }
     }
 
     private void resetBackground() {

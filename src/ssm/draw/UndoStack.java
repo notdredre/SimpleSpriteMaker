@@ -31,7 +31,6 @@ public class UndoStack {
     public void push(BufferedImage draw, BufferedImage write) {
         drawCopy = copy(draw);
         writeCopy = copy(write);
-        System.out.println(drawCopy.getWidth() + " " + drawCopy.getHeight());
         if (isEmpty()) {
             top = bottom = 0;
             stack[0][top] = drawCopy;
@@ -52,19 +51,30 @@ public class UndoStack {
             return;
         }
 
-        Graphics2D d2 = (Graphics2D) draw.getGraphics();
-        Graphics2D w2 = (Graphics2D) write.getGraphics();
+        if (isLast()) {
+            top = bottom = -1;
+            return;
+        }
+
         top--;
-        BufferedImage d = stack[0][top];
-        BufferedImage w = stack[1][top];
-        
         if (top < 0) {
             top = STACK_SIZE - 1;
         }
+
+        BufferedImage d = stack[0][top];
+        BufferedImage w = stack[1][top];
+
+        Graphics2D d2 = (Graphics2D) draw.getGraphics();
+        Graphics2D w2 = (Graphics2D) write.getGraphics();
         d2.drawImage(d, 0, 0, null);
         w2.drawImage(w, 0, 0, null);
+        d2.dispose();
+        w2.dispose();
     }
 
+    public boolean isLast() {
+        return top == bottom;
+    }
 
     private BufferedImage copy(BufferedImage src) {
         BufferedImage copy = new BufferedImage(src.getWidth(), src.getHeight(), src.getType());
