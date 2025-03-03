@@ -30,7 +30,6 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
     private int currentPixelX, currentPixelY;
     private int resizeX, resizeY, resizeFactor;
     private int panelWidth, panelHeight;
-    private int mouseX, mouseY;
     private DrawingMouseListener drawingMouseListener;
     
     public DrawPanel() {
@@ -63,9 +62,9 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
         currentPixelX = currentPixelY = -1;
         drawBuffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         overlayBuffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        renderBuffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        renderBuffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         writeBuffer = new BufferedImage(width / scale, height / scale, BufferedImage.TYPE_INT_ARGB);
-        backgroundBuffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        backgroundBuffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         compositeBuffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         imageFileManager.setToWrite(writeBuffer);
         toolManager.getSquareBrush();
@@ -85,7 +84,7 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
         c2.dispose();
         Graphics2D g2 = (Graphics2D) getGraphics();
         if (g2 == null)
-            return;
+            return;        
         g2.drawImage(compositeBuffer, 0, 0, null);
         g2.dispose();
     }
@@ -168,13 +167,12 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
     private void reposition(float percentX, float percentY) {
         this.percentX = percentX;
         this.percentY = percentY;
+        positionDrawing();
     }
 
-    private void reposition(int mouseX, int mouseY) {
-        
-        float diffX = mouseX - this.mouseX;
-        float diffY = mouseY - this.mouseY;
-        
+    public void reposition(int newX, int newY, int oldX, int oldY) {  
+        float diffX = newX - oldX;
+        float diffY = newY - oldY;
         percentX += diffX / panelWidth;
         percentY += diffY / panelHeight;
         reposition(percentX, percentY);
@@ -191,7 +189,7 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
 
     private void resetBackground() {
         if (getHeight() > 0 && getWidth() > 0)
-            backgroundBuffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_3BYTE_BGR);
+            backgroundBuffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
         clearBuffer(backgroundBuffer);
         Graphics2D b2 = (Graphics2D) backgroundBuffer.getGraphics();
         b2.setBackground(getBackground());

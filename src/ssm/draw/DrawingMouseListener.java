@@ -52,6 +52,13 @@ public class DrawingMouseListener implements MouseInputListener, MouseWheelListe
 
     @Override
     public void mouseDragged(MouseEvent e) {
+        if (SwingUtilities.isMiddleMouseButton(e)) {
+            int eventX = e.getX();
+            int eventY = e.getY();
+            drawPanel.reposition(eventX, eventY, mouseX, mouseY);
+            mouseX = eventX;
+            mouseY = eventY;
+        }
         drawPanel.scaleInput(e.getX(), e.getY());
         if(SwingUtilities.isLeftMouseButton(e))
             drawPanel.useTool(0);
@@ -72,6 +79,9 @@ public class DrawingMouseListener implements MouseInputListener, MouseWheelListe
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
+        if (SwingUtilities.isMiddleMouseButton(e)) {
+            return;
+        }
         int resizeAmount = e.getWheelRotation();
         drawPanel.resize(resizeAmount);
         drawPanel.render();
