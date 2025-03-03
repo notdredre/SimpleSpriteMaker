@@ -93,6 +93,7 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
     }
 
     public void render() {
+        requestFocus();
         Graphics2D c2 = (Graphics2D) compositeBuffer.getGraphics();
         c2.setColor(getBackground());
         c2.fillRect(0, 0, getWidth(), getHeight());
