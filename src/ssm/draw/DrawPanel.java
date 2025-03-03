@@ -17,6 +17,7 @@ import ssm.tools.ToolManager;
 
 public class DrawPanel extends JPanel implements ColourObject, Refreshable, ToolListener {
     private final int WIDTH = 500, HEIGHT = 500, RESIZE_MAX = 5;
+    private final Color bgColour = new Color(180, 180, 180);
     private int scale;
     private int width, height, drawWidth, drawHeight;
     private BufferedImage drawBuffer, overlayBuffer, renderBuffer, writeBuffer, backgroundBuffer, compositeBuffer;
@@ -33,7 +34,7 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
     private DrawingMouseListener drawingMouseListener;
     
     public DrawPanel() {
-        setBackground(new Color(180, 180, 180));
+        setBackground(bgColour);
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         toolManager = ToolManager.getToolManager();
         toolManager.addToolListener(this);
@@ -83,6 +84,8 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
         c2.drawImage(renderBuffer.getScaledInstance(resizeX, resizeY, BufferedImage.SCALE_FAST), x, y, null);
         c2.dispose();
         Graphics2D g2 = (Graphics2D) getGraphics();
+        if (g2 == null)
+            return;
         g2.drawImage(compositeBuffer, 0, 0, null);
         g2.dispose();
     }
@@ -108,23 +111,24 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
     }
 
     public void refresh() {
-        resizeX = Math.clamp(resizeFactor * width, width, width * RESIZE_MAX);
-        resizeY = Math.clamp(resizeFactor * height, height, height * RESIZE_MAX);
-        positionDrawing();
-        render();
         if (panelHeight == getHeight() && panelWidth == getWidth()) {
             return;
         }
         panelWidth = getWidth();
         panelHeight = getHeight();
         compositeBuffer = new BufferedImage(panelWidth, panelHeight, BufferedImage.TYPE_INT_RGB);
+        positionDrawing();
         render();
-        
     }
 
     public void updateColours(Color primary, Color secondary) {
         this.primary = primary;
         this.secondary = secondary;
+    }
+
+    public void postGraphicsInit() {
+        positionDrawing();
+        resetBackground();
     }
 
     public void useTool(int option) {
@@ -151,6 +155,9 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
 
     public void resize(int resizeAmount) {
         resizeFactor = Math.clamp(resizeFactor - resizeAmount, 1, RESIZE_MAX);
+        resizeX = Math.clamp(resizeFactor * width, width, width * RESIZE_MAX);
+        resizeY = Math.clamp(resizeFactor * height, height, height * RESIZE_MAX);
+        positionDrawing();
     }
 
     private void positionDrawing() {
@@ -198,6 +205,7 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
         }
         b2.fillRect(0, 0, width, height);
         b2.dispose();
+        render();
     }
 
     public void setCurrentTool(Tool tool) {

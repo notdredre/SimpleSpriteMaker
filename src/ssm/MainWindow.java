@@ -42,11 +42,9 @@ public class MainWindow extends JFrame implements Runnable {
         setVisible(true);
         setBackground(new Color(240, 240, 240));
         colourManager.updateColourObjects();
-        drawPanel.clear();
-        drawPanel.requestFocus();
         refreshThread = new Thread(this);
         refreshThread.start();
-        drawPanel.render();
+        drawPanel.postGraphicsInit();
     }
 
     private void initComponents() {

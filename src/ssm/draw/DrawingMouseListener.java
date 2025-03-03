@@ -22,12 +22,14 @@ public class DrawingMouseListener implements MouseInputListener, MouseWheelListe
             drawPanel.useTool(0);
         if(SwingUtilities.isRightMouseButton(e))
             drawPanel.useTool(1);
+        drawPanel.render();
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
         mouseX = e.getX();
         mouseY = e.getY();
+        drawPanel.render();
     }
 
     @Override
@@ -39,11 +41,13 @@ public class DrawingMouseListener implements MouseInputListener, MouseWheelListe
         int offMask = MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK | MouseEvent.BUTTON3_DOWN_MASK;
         if ((e.getModifiersEx() & (onMask | offMask)) == onMask)
             drawPanel.previewTool();
+        drawPanel.render();
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
         drawPanel.clearOverlay();
+        drawPanel.render();
     }
 
     @Override
@@ -54,6 +58,7 @@ public class DrawingMouseListener implements MouseInputListener, MouseWheelListe
         if(SwingUtilities.isRightMouseButton(e))
             drawPanel.useTool(1);
         drawPanel.previewTool();
+        drawPanel.render();
     }
 
     @Override
@@ -62,12 +67,14 @@ public class DrawingMouseListener implements MouseInputListener, MouseWheelListe
         mouseY = e.getY();
         drawPanel.scaleInput(mouseX, mouseY);
         drawPanel.previewTool();
+        drawPanel.render();
     }
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         int resizeAmount = e.getWheelRotation();
         drawPanel.resize(resizeAmount);
+        drawPanel.render();
     }
     
 }
