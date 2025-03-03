@@ -33,6 +33,7 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
     private int resizeX, resizeY, resizeFactor;
     private int panelWidth, panelHeight;
     private DrawingMouseListener drawingMouseListener;
+    private UndoStack undoStack;
     
     public DrawPanel() {
         setBackground(bgColour);
@@ -46,12 +47,14 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
         addMouseWheelListener(drawingMouseListener);
         panelWidth = panelHeight = 0;
         scaleWidth = scaleHeight = 0;
+        undoStack = new UndoStack();
         createNewDrawing(30, 30);
         addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent e) {
                 render();
             }
         });
+        
     }
 
     public void createNewDrawing(int pixelWidth, int pixelHeight) {
@@ -82,7 +85,9 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
         imageFileManager.setToWrite(writeBuffer);
         toolManager.getSquareBrush();
         positionDrawing();
-        clear();
+        resetBackground();
+        undoStack.init();
+        commit();
     }
 
     public void render() {
@@ -207,6 +212,17 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
     public void scaleToHeight() {
         System.out.println(getHeight());
         scale = getHeight() / pixelHeight;
+    }
+
+    public void commit() {
+        undoStack.push(drawBuffer, writeBuffer);
+    }
+
+    public void undo() {
+        clearBuffer(drawBuffer);
+        clearBuffer(writeBuffer);
+        undoStack.pop(drawBuffer, writeBuffer);
+        render();
     }
 
     private void resetBackground() {

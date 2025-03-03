@@ -40,6 +40,7 @@ public class DrawingMouseListener implements MouseInputListener, MouseWheelListe
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        drawPanel.commit();
     }
 
     @Override
