@@ -97,7 +97,7 @@ public class MainWindow extends JFrame implements Runnable {
         clearButton = new JButton("Clear");
         clearButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                drawPanel.undo();
+                drawPanel.clear();
             }
         });
         
