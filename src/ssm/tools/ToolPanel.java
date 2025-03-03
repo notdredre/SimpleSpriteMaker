@@ -55,7 +55,6 @@ public class ToolPanel extends JPanel implements ActionListener {
         if (command == "Fill") {
             toolManager.getFill();
         }
-        toolControls.updateToolControls();
     }
 
 

@@ -12,9 +12,10 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import ssm.file.ImageFileManager;
 import ssm.tools.Tool;
+import ssm.tools.ToolListener;
 import ssm.tools.ToolManager;
 
-public class DrawPanel extends JPanel implements ColourObject, Refreshable {
+public class DrawPanel extends JPanel implements ColourObject, Refreshable, ToolListener {
     private final int WIDTH = 500, HEIGHT = 500, RESIZE_MAX = 5;
     private int scale;
     private int width, height, drawWidth, drawHeight;
@@ -35,7 +36,7 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable {
         setBackground(new Color(180, 180, 180));
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         toolManager = ToolManager.getToolManager();
-        currentTool = toolManager.getSquareBrush();
+        toolManager.addToolListener(this);
         imageFileManager = ImageFileManager.getImageFileManager();
         drawingMouseListener = new DrawingMouseListener(this);
         addMouseListener(drawingMouseListener);
@@ -59,7 +60,6 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable {
         resizeY = Math.clamp(resizeFactor * height, height, height * RESIZE_MAX);
         percentX = percentY = 0.5f;
         currentPixelX = currentPixelY = -1;
-        currentTool = toolManager.getSquareBrush();
         drawBuffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         overlayBuffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         renderBuffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -67,6 +67,7 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable {
         backgroundBuffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         compositeBuffer = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         imageFileManager.setToWrite(writeBuffer);
+        toolManager.getSquareBrush();
         clear();
     }
 
@@ -197,6 +198,10 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable {
         }
         b2.fillRect(0, 0, width, height);
         b2.dispose();
+    }
+
+    public void setCurrentTool(Tool tool) {
+        currentTool = tool;
     }
 
     public int getDrawWidth() {

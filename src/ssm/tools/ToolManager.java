@@ -1,11 +1,13 @@
 package ssm.tools;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ToolManager {
     private static ToolManager toolManager = null;
     private HashMap<String, Tool> tools;
     private Tool current;
+    private static ArrayList<ToolListener> toolListeners;
 
     public enum ToolType {
         DRAWTOOL("DrawTool"),
@@ -26,6 +28,7 @@ public class ToolManager {
         tools.put("SquareBrush", new SquareBrush());
         tools.put("SquareEraser", new SquareEraser());
         tools.put("Fill", new FillTool());
+        toolListeners = new ArrayList<>();
         current = tools.get("SquareBrush");
     }
 
@@ -35,23 +38,34 @@ public class ToolManager {
         return toolManager;
     }
 
+    public void addToolListener(ToolListener t) {
+        toolListeners.add(t);
+        t.setCurrentTool(current);
+    }
+
+    private void updateToolListeners() {
+        for (ToolListener t : toolListeners) {
+            t.setCurrentTool(current);
+        }
+    }
+
     public Tool getCurrent() {
         return current;
     }
 
-    public Tool getSquareBrush() {
+    public void getSquareBrush() {
         current = tools.get("SquareBrush");
-        return current;
+        updateToolListeners();
     }
 
-    public Tool getSquareEraser() {
+    public void getSquareEraser() {
         current = tools.get("SquareEraser");
-        return current;
+        updateToolListeners();
     }
 
-    public Tool getFill() {
+    public void getFill() {
         current = tools.get("Fill");
-        return current;
+        updateToolListeners();
     }
 
     public void increaseSize() {

@@ -11,7 +11,7 @@ import javax.swing.event.ChangeListener;
 
 import ssm.tools.ToolManager.ToolType;
 
-public class ToolControls extends JPanel implements ChangeListener {
+public class ToolControls extends JPanel implements ChangeListener, ToolListener {
     private CardLayout layout;
     private ToolManager toolManager;
     private JPanel drawToolPanel;
@@ -31,6 +31,7 @@ public class ToolControls extends JPanel implements ChangeListener {
         setLayout(layout);
         add(drawToolPanel, ToolType.DRAWTOOL.value());
         add(fillToolPanel, ToolType.FILLTOOL.value());
+        toolManager.addToolListener(this);
     }
 
     private void createDrawToolPanel() {
@@ -47,8 +48,12 @@ public class ToolControls extends JPanel implements ChangeListener {
     public void stateChanged(ChangeEvent e) {
         toolManager.setSize(sizeModel.getNumber());
     }
-    public void updateToolControls() {
+    private void updateToolControls(Tool tool) {
         sizeModel.setValue(toolManager.getSize());
-        layout.show(this, toolManager.getCurrent().getToolType().value());
+        layout.show(this, tool.getToolType().value());
+    }
+
+    public void setCurrentTool(Tool tool) {
+        updateToolControls(tool);
     }
 }
