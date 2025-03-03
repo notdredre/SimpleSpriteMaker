@@ -39,7 +39,7 @@ public class UndoStack {
         }
 
         if (isFull())
-            bottom++;
+            bottom = (bottom + 1) % STACK_SIZE;
 
         top = (top + 1) % STACK_SIZE;
         stack[0][top] = drawCopy;

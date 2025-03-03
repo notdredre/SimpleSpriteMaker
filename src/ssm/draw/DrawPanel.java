@@ -33,6 +33,7 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
     private int resizeX, resizeY, resizeFactor;
     private int panelWidth, panelHeight;
     private DrawingMouseListener drawingMouseListener;
+    private DrawingKeyboardListener drawingKeyboardListener;
     private UndoStack undoStack;
     
     public DrawPanel() {
@@ -42,9 +43,11 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
         toolManager.addToolListener(this);
         imageFileManager = ImageFileManager.getImageFileManager();
         drawingMouseListener = new DrawingMouseListener(this);
+        drawingKeyboardListener = new DrawingKeyboardListener(this);
         addMouseListener(drawingMouseListener);
         addMouseMotionListener(drawingMouseListener);
         addMouseWheelListener(drawingMouseListener);
+        addKeyListener(drawingKeyboardListener);
         panelWidth = panelHeight = 0;
         scaleWidth = scaleHeight = 0;
         undoStack = new UndoStack();
@@ -54,7 +57,6 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
                 render();
             }
         });
-        
     }
 
     public void createNewDrawing(int pixelWidth, int pixelHeight) {
