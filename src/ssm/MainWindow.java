@@ -48,6 +48,7 @@ public class MainWindow extends JFrame implements Runnable {
         colourManager.updateColourObjects();
         refreshThread = new Thread(this);
         refreshThread.start();
+        drawPanel.requestFocus();
         drawPanel.postGraphicsInit();
         addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent e) {

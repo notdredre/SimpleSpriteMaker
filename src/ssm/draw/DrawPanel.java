@@ -33,6 +33,8 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
     private int resizeX, resizeY, resizeFactor;
     private int panelWidth, panelHeight;
     private DrawingMouseListener drawingMouseListener;
+    private DrawingKeyboardListener drawingKeyboardListener;
+    private UndoStack undoStack;
     
     public DrawPanel() {
         setBackground(bgColour);
@@ -41,11 +43,14 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
         toolManager.addToolListener(this);
         imageFileManager = ImageFileManager.getImageFileManager();
         drawingMouseListener = new DrawingMouseListener(this);
+        drawingKeyboardListener = new DrawingKeyboardListener(this);
         addMouseListener(drawingMouseListener);
         addMouseMotionListener(drawingMouseListener);
         addMouseWheelListener(drawingMouseListener);
+        addKeyListener(drawingKeyboardListener);
         panelWidth = panelHeight = 0;
         scaleWidth = scaleHeight = 0;
+        undoStack = new UndoStack();
         createNewDrawing(30, 30);
         addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent e) {
@@ -82,7 +87,9 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
         imageFileManager.setToWrite(writeBuffer);
         toolManager.getSquareBrush();
         positionDrawing();
-        clear();
+        resetBackground();
+        undoStack.init();
+        commit();
     }
 
     public void render() {
@@ -207,6 +214,19 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
     public void scaleToHeight() {
         System.out.println(getHeight());
         scale = getHeight() / pixelHeight;
+    }
+
+    public void commit() {
+        undoStack.push(drawBuffer, writeBuffer);
+    }
+
+    public void undo() {
+        if (!undoStack.isLast()) {
+            clearBuffer(drawBuffer);
+            clearBuffer(writeBuffer);
+            undoStack.pop(drawBuffer, writeBuffer);
+            render();
+        }
     }
 
     private void resetBackground() {
