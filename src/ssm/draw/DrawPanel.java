@@ -144,7 +144,8 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
         resetBackground();
     }
 
-    public void useTool(int option) {
+    public void useTool(int eventX, int eventY, int option) {
+        scaleInput(eventX, eventY);
         if (option == 0) {
             currentTool.use(currentPixelX, currentPixelY, primary, drawBuffer, writeBuffer, scale);
         }
@@ -157,6 +158,13 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
         currentTool.preview(currentPixelX, currentPixelY, drawBuffer, overlayBuffer, scale);
     }
 
+    public boolean comparePixel(int eventX, int eventY) {
+        int newX = ((eventX - x) / scale) / (resizeX / scaleWidth);
+        int newY = ((eventY - y) / scale) / (resizeY / scaleHeight);
+        if (newX == currentPixelX && newY == currentPixelY)
+            return true;
+        return false;
+    }
     public void scaleInput(int eventX, int eventY) {
         currentPixelX = ((eventX - x) / scale) / (resizeX / scaleWidth);
         currentPixelY = ((eventY - y) / scale) / (resizeY / scaleHeight);
