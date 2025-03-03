@@ -209,7 +209,7 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
         b2.setBackground(getBackground());
         b2.fillRect(0, 0, getWidth(), getHeight());
         try {
-            Paint transparency = new TexturePaint(imageFileManager.openImage(getClass().getResourceAsStream("../res/transparentTexture.png")), new Rectangle2D.Double(0, 0, scale * 5, scale * 5));
+            Paint transparency = new TexturePaint(imageFileManager.openImage(getClass().getResourceAsStream("/ssm/res/transparentTexture.png")), new Rectangle2D.Double(0, 0, scale * 5, scale * 5));
             b2.setPaint(transparency);
         } catch (IOException e) {
             e.printStackTrace();
