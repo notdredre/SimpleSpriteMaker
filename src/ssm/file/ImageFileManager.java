@@ -55,12 +55,9 @@ public class ImageFileManager {
 
     public void saveImage(String targetName, String targetExtension) {
         File output;
-        int extensionInName = targetName.lastIndexOf("." + targetExtension);
-        if (extensionInName != -1) {
-            output = new File(targetName);
-        } else {
-            output = new File(targetName + "." + targetExtension);
-        }
+        this.targetExtension = targetExtension;
+        target = parseName(targetName);
+        output = new File(target);
         try {
             if (targetExtension == "jpg" || targetExtension == "jpeg") {
                 convertAlpha();
@@ -70,6 +67,15 @@ public class ImageFileManager {
             ImageIO.write(toWrite, targetExtension, output);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private String parseName(String fileName) {
+        int extensionInName = fileName.lastIndexOf("." + targetExtension);
+        if (extensionInName != -1) {
+            return fileName;
+        } else {
+            return fileName + "." + targetExtension;
         }
     }
 

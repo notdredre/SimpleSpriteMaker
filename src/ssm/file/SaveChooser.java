@@ -7,6 +7,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.io.FileNotFoundException;
 
 public class SaveChooser extends JFileChooser {
@@ -26,6 +27,7 @@ public class SaveChooser extends JFileChooser {
         addChoosableFileFilter(gifFilter);
         addChoosableFileFilter(jpgFilter);
         addChoosableFileFilter(pngFilter);
+        setSelectedFile(new File("Untitled"));
         addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
