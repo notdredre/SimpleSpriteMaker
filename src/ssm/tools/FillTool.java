@@ -10,6 +10,10 @@ public class FillTool extends Tool {
     public void draw(int x, int y, Color c, BufferedImage buffer, int scale) {
         int screenX = x * scale;
         int screenY = y * scale;
+
+        if (x < 0 || screenX > buffer.getWidth() - 1 || y < 0 || screenY > buffer.getHeight() - 1)
+            return;
+            
         int startColor = buffer.getRGB(screenX, screenY);
 
         fill(x, y, c, buffer, scale, startColor);

@@ -3,9 +3,9 @@ package ssm.draw;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputListener;
+import ssm.tools.ToolManager.ToolType;
 
 public class DrawingMouseListener implements MouseInputListener, MouseWheelListener {
     private DrawPanel drawPanel;
@@ -17,15 +17,7 @@ public class DrawingMouseListener implements MouseInputListener, MouseWheelListe
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
-        int eventX = e.getX();
-        int eventY = e.getY();
-        if (SwingUtilities.isLeftMouseButton(e))
-            drawPanel.useTool(eventX, eventY, 0);
-        if (SwingUtilities.isRightMouseButton(e))
-            drawPanel.useTool(eventX, eventY, 1);
-        drawPanel.render();
-    }
+    public void mouseClicked(MouseEvent e) {}
 
     @Override
     public void mousePressed(MouseEvent e) {
@@ -68,7 +60,11 @@ public class DrawingMouseListener implements MouseInputListener, MouseWheelListe
             drawPanel.reposition(eventX, eventY, mouseX, mouseY);
             mouseX = eventX;
             mouseY = eventY;
+            drawPanel.render();
+            return;
         }
+        if (drawPanel.getCurrentTool().getToolType() == ToolType.FILLTOOL)
+            return;
         if (SwingUtilities.isLeftMouseButton(e))
             drawPanel.useTool(eventX, eventY, 0);
         if (SwingUtilities.isRightMouseButton(e))

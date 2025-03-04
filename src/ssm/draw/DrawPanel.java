@@ -253,6 +253,10 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
         currentTool = tool;
     }
 
+    public Tool getCurrentTool() {
+        return currentTool;
+    }
+
     public int getPixelWidth() {
         return WIDTH;
     }
