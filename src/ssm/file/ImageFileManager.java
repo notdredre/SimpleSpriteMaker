@@ -1,23 +1,18 @@
 package ssm.file;
-
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-
 import javax.imageio.ImageIO;
-
 import ssm.draw.DrawPanel;
-import ssm.draw.Project;
 
 public class ImageFileManager {
     private static ImageFileManager imageFileManager = null;
     private String target, targetExtension;
     private BufferedImage toWrite, solidWrite;
     private DrawPanel drawPanel;
-    private Project project;
 
     private ImageFileManager() {
         target = "";
@@ -47,8 +42,6 @@ public class ImageFileManager {
     }
 
     public void saveImage() {
-        project = Project.getProject();
-        toWrite = project.getFinalWrite();
         File output = new File(target);
         try {
             ImageIO.write(toWrite, targetExtension, output);
@@ -58,8 +51,6 @@ public class ImageFileManager {
     }
 
     public void saveImage(String targetName, String targetExtension) {
-        project = Project.getProject();
-        toWrite = project.getFinalWrite();
         File output;
         this.targetExtension = targetExtension;
         target = parseName(targetName);

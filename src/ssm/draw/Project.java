@@ -4,24 +4,31 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import ssm.file.ImageFileManager;
+import ssm.tools.ToolManager;
+
 public class Project {
-    private static Project project = null;
+    private ImageFileManager imageFileManager;
+    private ToolManager toolManager;
     private ArrayList<Drawing> drawings;
     private ArrayList<BufferedImage> writeBuffers;
     private int numRows, numCols, currentRow, currentCol, lastRow, lastCol;
     private int drawingWidth, drawingHeight;
     private int scale;
 
-    private Project(int drawingWidth, int drawingHeight, int scale) {
+    public Project(int drawingWidth, int drawingHeight, int scale) {
         this(1, 1, drawingWidth, drawingHeight, scale);
     }
 
-    private Project(int numRows, int numCols, int drawingWidth, int drawingHeight, int scale) {
+    public Project(int numRows, int numCols, int drawingWidth, int drawingHeight, int scale) {
         this.numRows = numRows;
         this.numCols = numCols;
         this.drawingWidth = drawingWidth;
         this.drawingHeight = drawingHeight;
         this.scale = scale;
+        imageFileManager = ImageFileManager.getImageFileManager();
+        toolManager = ToolManager.getToolManager();
+        toolManager.getSquareBrush();
         lastRow = lastCol = -1;
         currentRow = currentCol = 0;
         drawings = new ArrayList<>(numRows * numCols);
@@ -29,24 +36,6 @@ public class Project {
         for (int i = 0; i < numRows * numCols; i++) {
             addDrawing();
         }
-    }
-
-    public static Project getProject(int numRows, int numCols, int drawingWidth, int drawingHeight, int scale) {
-        if (project == null) {
-            project = new Project(numRows, numCols, drawingWidth, drawingHeight, scale);
-        }
-        return project;
-    }
-
-    public static Project getProject(int drawingWidth, int drawingHeight, int scale) {
-        if (project == null) {
-            project = new Project(drawingWidth, drawingHeight, scale);
-        }
-        return project;
-    }
-
-    public static Project getProject() {
-        return project;
     }
 
 
@@ -85,6 +74,11 @@ public class Project {
         return finalWrite;
     }
 
+    public void saveProject() {
+        imageFileManager.setToWrite(getFinalWrite());
+        imageFileManager.saveImage();
+    }
+    
     public void moveRight() {
         if (currentCol < numCols)
             currentCol++;
