@@ -1,14 +1,11 @@
 package ssm.file;
-
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-
 import javax.imageio.ImageIO;
-
 import ssm.draw.DrawPanel;
 
 public class ImageFileManager {
@@ -34,10 +31,13 @@ public class ImageFileManager {
         this.toWrite = toWrite;
     }
 
-    public void setTarget(File target) {
-        this.target = target.getAbsolutePath();
-        String split = target.getName();
-        targetExtension = split.substring(split.indexOf('.') + 1);
+    public void setTarget(String target, String targetExtension) {
+        setTargetExtension(targetExtension);
+        this.target = parseName(target);
+    }
+
+    public void setTargetExtension(String targetExtension) {
+        this.targetExtension = targetExtension;
     }
 
     public void setDrawPanel(DrawPanel drawPanel) {
@@ -91,7 +91,7 @@ public class ImageFileManager {
 
     public void newDrawing(Number x, Number y) {
         if (drawPanel != null) {
-            drawPanel.createNewDrawing(x.intValue(), y.intValue());
+            drawPanel.createNewProject(x.intValue(), y.intValue());
         }
     }
 
