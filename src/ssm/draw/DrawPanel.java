@@ -20,9 +20,9 @@ import ssm.tools.ToolManager;
 public class DrawPanel extends JPanel implements ColourObject, Refreshable, ToolListener {
     private final int WIDTH = 500, HEIGHT = 500, RESIZE_MAX = 5;
     private final Color bgColour = new Color(180, 180, 180);
-    private int scale;
-    private int scaleWidth, scaleHeight, pixelWidth, pixelHeight;
+    private int scale, scaleWidth, scaleHeight;
     private BufferedImage drawBuffer, overlayBuffer, renderBuffer, writeBuffer, backgroundBuffer, compositeBuffer;
+    private Project project;
     private int x, y;
     private float percentX, percentY;
     private Color primary, secondary;
@@ -39,6 +39,7 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
     public DrawPanel() {
         setBackground(bgColour);
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        scale = 20;
         toolManager = ToolManager.getToolManager();
         toolManager.addToolListener(this);
         imageFileManager = ImageFileManager.getImageFileManager();
@@ -49,9 +50,8 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
         addMouseWheelListener(drawingMouseListener);
         addKeyListener(drawingKeyboardListener);
         panelWidth = panelHeight = 0;
-        scaleWidth = scaleHeight = 0;
         undoStack = new UndoStack();
-        createNewDrawing(30, 30);
+        createNewProject(25, 25);
         addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent e) {
                 render();
@@ -59,15 +59,22 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
         });
     }
 
-    public void createNewDrawing(int pixelWidth, int pixelHeight) {
-        this.pixelWidth = pixelWidth;
-        this.pixelHeight = pixelHeight;
-        if (pixelWidth > pixelHeight)
-            scale = WIDTH / pixelWidth;
+    public void createBuffers(int pixelWidth, int pixelHeight, int scale) {
+        drawBuffer = project.getDrawBuffer();
+        writeBuffer = project.getWriteBuffer();
+        overlayBuffer = new BufferedImage(scaleWidth, scaleHeight, BufferedImage.TYPE_INT_ARGB);
+        renderBuffer = new BufferedImage(scaleWidth, scaleHeight, BufferedImage.TYPE_INT_RGB);
+        backgroundBuffer = new BufferedImage(scaleWidth, scaleHeight, BufferedImage.TYPE_INT_RGB);
+        if (panelWidth > 0 && panelHeight > 0)
+            compositeBuffer = new BufferedImage(panelWidth, panelHeight, BufferedImage.TYPE_INT_RGB);
         else
-            scale = HEIGHT / pixelHeight;
+        compositeBuffer = new BufferedImage(scaleWidth, scaleHeight, BufferedImage.TYPE_INT_RGB);
+    }
+
+    public void createNewProject(int pixelWidth, int pixelHeight) {
         scaleWidth = pixelWidth * scale;
         scaleHeight = pixelHeight * scale;
+        project = Project.getProject(5, 5, pixelWidth, pixelHeight, scale);
         panelWidth = getWidth();
         panelHeight = getHeight();
         resizeFactor = 1;
@@ -75,17 +82,8 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
         resizeY = Math.clamp(resizeFactor * scaleHeight, scaleHeight, scaleHeight * RESIZE_MAX);
         percentX = percentY = 0.5f;
         currentPixelX = currentPixelY = -1;
-        drawBuffer = new BufferedImage(scaleWidth, scaleHeight, BufferedImage.TYPE_INT_ARGB);
-        overlayBuffer = new BufferedImage(scaleWidth, scaleHeight, BufferedImage.TYPE_INT_ARGB);
-        renderBuffer = new BufferedImage(scaleWidth, scaleHeight, BufferedImage.TYPE_INT_RGB);
-        writeBuffer = new BufferedImage(pixelWidth, pixelHeight, BufferedImage.TYPE_INT_ARGB);
-        backgroundBuffer = new BufferedImage(scaleWidth, scaleHeight, BufferedImage.TYPE_INT_RGB);
-        if (panelWidth > 0 && panelHeight > 0)
-            compositeBuffer = new BufferedImage(panelWidth, panelHeight, BufferedImage.TYPE_INT_RGB);
-        else
-        compositeBuffer = new BufferedImage(scaleWidth, scaleHeight, BufferedImage.TYPE_INT_RGB);
-        imageFileManager.setToWrite(writeBuffer);
         toolManager.getSquareBrush();
+        createBuffers(pixelWidth, pixelHeight, scale);
         positionDrawing();
         resetBackground();
         undoStack.init();
@@ -208,15 +206,6 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
         reposition(percentX, percentY);
     }
 
-    public void scaleToWidth() {
-        scale = getWidth() / pixelWidth;
-    }
-
-    public void scaleToHeight() {
-        System.out.println(getHeight());
-        scale = getHeight() / pixelHeight;
-    }
-
     public void commit() {
         undoStack.push(drawBuffer, writeBuffer);
     }
@@ -263,5 +252,11 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
 
     public int getPixelHeight() {
         return HEIGHT;
+    }
+
+    public void moveRight() {
+        project.moveRight();
+        drawBuffer = project.getDrawBuffer();
+        writeBuffer = project.getWriteBuffer();
     }
 }

@@ -10,12 +10,14 @@ import java.io.InputStream;
 import javax.imageio.ImageIO;
 
 import ssm.draw.DrawPanel;
+import ssm.draw.Project;
 
 public class ImageFileManager {
     private static ImageFileManager imageFileManager = null;
     private String target, targetExtension;
     private BufferedImage toWrite, solidWrite;
     private DrawPanel drawPanel;
+    private Project project;
 
     private ImageFileManager() {
         target = "";
@@ -45,6 +47,8 @@ public class ImageFileManager {
     }
 
     public void saveImage() {
+        project = Project.getProject();
+        toWrite = project.getFinalWrite();
         File output = new File(target);
         try {
             ImageIO.write(toWrite, targetExtension, output);
@@ -54,6 +58,8 @@ public class ImageFileManager {
     }
 
     public void saveImage(String targetName, String targetExtension) {
+        project = Project.getProject();
+        toWrite = project.getFinalWrite();
         File output;
         this.targetExtension = targetExtension;
         target = parseName(targetName);
@@ -91,7 +97,7 @@ public class ImageFileManager {
 
     public void newDrawing(Number x, Number y) {
         if (drawPanel != null) {
-            drawPanel.createNewDrawing(x.intValue(), y.intValue());
+            drawPanel.createNewProject(x.intValue(), y.intValue());
         }
     }
 
