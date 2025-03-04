@@ -13,7 +13,7 @@ import java.io.File;
 
 public class SaveFilePanel extends JPanel implements ActionListener {
     private File currentTarget;
-    private JFileChooser saveChooser;
+    private SaveChooser saveChooser;
     private final FileNameExtensionFilter pngFilter = new FileNameExtensionFilter("PNG Image", "png");
     private final FileNameExtensionFilter gifFilter = new FileNameExtensionFilter("GIF Image", "gif");
     private final FileNameExtensionFilter jpgFilter = new FileNameExtensionFilter("JPG/JPEG Image", "jpg", "jpeg");
@@ -40,7 +40,7 @@ public class SaveFilePanel extends JPanel implements ActionListener {
 
     private void setUpFileChooser() {
         if (saveChooser == null) {
-            saveChooser = new JFileChooser();
+            saveChooser = new SaveChooser();
             saveChooser.setAcceptAllFileFilterUsed(false);
             saveChooser.addChoosableFileFilter(gifFilter);
             saveChooser.addChoosableFileFilter(jpgFilter);
