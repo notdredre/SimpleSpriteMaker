@@ -3,20 +3,14 @@ package ssm.file;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.File;
+import java.io.FileNotFoundException;
 
 public class SaveFilePanel extends JPanel implements ActionListener {
-    private File currentTarget;
+    private String currentTarget;
     private SaveChooser saveChooser;
-    private final FileNameExtensionFilter pngFilter = new FileNameExtensionFilter("PNG Image", "png");
-    private final FileNameExtensionFilter gifFilter = new FileNameExtensionFilter("GIF Image", "gif");
-    private final FileNameExtensionFilter jpgFilter = new FileNameExtensionFilter("JPG/JPEG Image", "jpg", "jpeg");
     private JButton saveButton, saveAsButton, newButton;
     private NewDrawingDialog newDialog;
     private ImageFileManager imageFileManager;
@@ -38,23 +32,6 @@ public class SaveFilePanel extends JPanel implements ActionListener {
         saveAsButton.addActionListener(this);
     }
 
-    private void setUpFileChooser() {
-        if (saveChooser == null) {
-            saveChooser = new SaveChooser();
-            saveChooser.setAcceptAllFileFilterUsed(false);
-            saveChooser.addChoosableFileFilter(gifFilter);
-            saveChooser.addChoosableFileFilter(jpgFilter);
-            saveChooser.addChoosableFileFilter(pngFilter);
-            saveChooser.addPropertyChangeListener(new PropertyChangeListener() {
-                @Override
-                public void propertyChange(PropertyChangeEvent evt) {
-                    FileNameExtensionFilter filter = (FileNameExtensionFilter) saveChooser.getFileFilter();
-                    targetExtension = filter.getExtensions()[0];
-                }
-            });
-        }
-    }
-
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("New Drawing")) {
             if (!newDialog.isVisible()) {
@@ -67,20 +44,33 @@ public class SaveFilePanel extends JPanel implements ActionListener {
         }
         if (e.getActionCommand().equals("Save")) {
             if (currentTarget == null) {
-                setUpFileChooser();
+                if (saveChooser == null)
+                    saveChooser = new SaveChooser();
                 int result = saveChooser.showSaveDialog(this);
                 if (result == JFileChooser.APPROVE_OPTION) {
-                    currentTarget = saveChooser.getSelectedFile();
-                    imageFileManager.saveImage(currentTarget.getAbsolutePath(), targetExtension);
+                    targetExtension = saveChooser.getTargetExtension();
+                    try {
+                        currentTarget = saveChooser.getTargetPath();
+                        imageFileManager.saveImage(currentTarget, targetExtension);
+                    } catch (FileNotFoundException f) {
+                        f.printStackTrace();
+                    }
                 }
                 return;
             }
         }
         if (e.getActionCommand().equals("Save As")) {
-            setUpFileChooser();
+            if (saveChooser == null)
+                saveChooser = new SaveChooser();
             int result = saveChooser.showSaveDialog(this);
             if (result == JFileChooser.APPROVE_OPTION) {
-                imageFileManager.saveImage(saveChooser.getSelectedFile().getAbsolutePath(), targetExtension);
+                targetExtension = saveChooser.getTargetExtension();
+                try {
+                    String target = saveChooser.getTargetPath();
+                    imageFileManager.saveImage(target, targetExtension);
+                } catch (FileNotFoundException f) {
+                    f.printStackTrace();
+                }
             }
         }
     }
