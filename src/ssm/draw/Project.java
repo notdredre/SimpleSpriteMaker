@@ -66,8 +66,28 @@ public class Project {
         writeBuffers.add(new BufferedImage(drawingWidth, drawingHeight, BufferedImage.TYPE_INT_ARGB));
     }
  
+    public BufferedImage getPreviewBuffer(int row, int col) {
+        BufferedImage selected = getDrawBuffer(row, col);
+        int[] previewPix = new int[drawingWidth * drawingHeight * scale * scale];
+        selected.getRGB(0, 0, drawingWidth * scale, drawingHeight * scale, previewPix, 0, drawingWidth * scale);
+        for (int i = 0; i < drawingWidth * drawingHeight * scale * scale; i++) {
+            if (previewPix[i] != 0) {
+                int alpha = 100;
+                int rest = previewPix[i] << 8;
+                previewPix[i] = alpha << 24 | (rest >> 8);
+            }
+        }
+        BufferedImage out = new BufferedImage(drawingWidth * scale, drawingHeight * scale, BufferedImage.TYPE_INT_ARGB);
+        out.setRGB(0, 0, drawingWidth * scale, drawingHeight * scale, previewPix, 0, drawingWidth * scale);
+        return out;
+    }
+
+    private BufferedImage getDrawBuffer(int row, int col) {
+        return drawings.get(row + col).getBuffer();
+    }
+
     public BufferedImage getDrawBuffer() {
-        return drawings.get(currentRow + currentCol).getBuffer();
+        return getDrawBuffer(currentRow, currentCol);
     }
 
     public BufferedImage getWriteBuffer() {

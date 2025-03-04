@@ -21,7 +21,7 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
     private final int WIDTH = 500, HEIGHT = 500, RESIZE_MAX = 5;
     private final Color bgColour = new Color(180, 180, 180);
     private int scale, scaleWidth, scaleHeight;
-    private BufferedImage drawBuffer, overlayBuffer, renderBuffer, writeBuffer, backgroundBuffer, compositeBuffer;
+    private BufferedImage drawBuffer, overlayBuffer, renderBuffer, writeBuffer, backgroundBuffer, previewBuffer, compositeBuffer;
     private Project project;
     private int x, y;
     private float percentX, percentY;
@@ -89,13 +89,14 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
 
     public void render() {
         requestFocus();
-
+        previewBuffer = project.getPreviewBuffer(0, 0);
         Graphics2D c2 = (Graphics2D) compositeBuffer.getGraphics();
         c2.setColor(getBackground());
         c2.fillRect(0, 0, getWidth(), getHeight());
 
         Graphics2D r2 = (Graphics2D) renderBuffer.getGraphics();
         r2.drawImage(backgroundBuffer, 0, 0, null);
+        r2.drawImage(previewBuffer, 0, 0, null);
         r2.drawImage(drawBuffer, 0, 0, null);
         r2.drawImage(overlayBuffer, 0, 0, null);
         r2.dispose();      
