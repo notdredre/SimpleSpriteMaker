@@ -18,7 +18,6 @@ import ssm.colour.ColourPreview;
 import ssm.colour.ColourSliders;
 import ssm.draw.DrawPanel;
 import ssm.file.ImageFileManager;
-import ssm.file.SaveFilePanel;
 import ssm.tools.ToolPanel;
 
 public class MainWindow extends JFrame implements Runnable {
@@ -31,8 +30,9 @@ public class MainWindow extends JFrame implements Runnable {
     private ColourPreview colourPreview;
     private ColourManager colourManager;
     private ImageFileManager imageFileManager;
-    private SaveFilePanel saveFilePanel;
     private ToolPanel toolPanel;
+    private MainMenu mainMenu;
+    private ProjectManager projectManager;
     private ArrayList<Refreshable> toRefresh;
     private Thread refreshThread;
 
@@ -90,9 +90,6 @@ public class MainWindow extends JFrame implements Runnable {
 
         toolPanel = new ToolPanel();
         mainPanel.add(toolPanel);
-
-        saveFilePanel = new SaveFilePanel();
-        mainPanel.add(saveFilePanel);
         
         clearButton = new JButton("Clear");
         clearButton.addActionListener(new ActionListener() {
@@ -120,16 +117,17 @@ public class MainWindow extends JFrame implements Runnable {
         mainLayout.putConstraint(SpringLayout.EAST, toolPanel, 200, SpringLayout.WEST, toolPanel);
         mainLayout.putConstraint(SpringLayout.SOUTH, toolPanel, 200, SpringLayout.NORTH, toolPanel);
 
-        // Constraints for saveFilePanel
-        mainLayout.putConstraint(SpringLayout.WEST, saveFilePanel, 30, SpringLayout.EAST, drawPanel);
-        mainLayout.putConstraint(SpringLayout.NORTH, saveFilePanel, 30, SpringLayout.SOUTH, toolPanel);
-
         // Constraints for clearButton
         mainLayout.putConstraint(SpringLayout.NORTH, clearButton, 10, SpringLayout.SOUTH, drawPanel);
         mainLayout.putConstraint(SpringLayout.EAST, clearButton, 0, SpringLayout.EAST, drawPanel);
         mainLayout.putConstraint(SpringLayout.SOUTH, mainPanel, 20, SpringLayout.SOUTH, clearButton);
         
         add(mainPanel);
+
+        mainMenu = new MainMenu();
+        projectManager = new ProjectManager(this);
+        mainMenu.addActionListener(projectManager);
+        setMenuBar(mainMenu);
     }
 
     public void run() {
@@ -152,5 +150,9 @@ public class MainWindow extends JFrame implements Runnable {
         for (Refreshable r : toRefresh) {
             r.refresh();
         }
+    }
+
+    public DrawPanel getDrawPanel() {
+        return drawPanel;
     }
 }
