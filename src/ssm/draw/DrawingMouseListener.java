@@ -17,15 +17,7 @@ public class DrawingMouseListener implements MouseInputListener, MouseWheelListe
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
-        int eventX = e.getX();
-        int eventY = e.getY();
-        if (SwingUtilities.isLeftMouseButton(e))
-            drawPanel.useTool(eventX, eventY, 0);
-        if (SwingUtilities.isRightMouseButton(e))
-            drawPanel.useTool(eventX, eventY, 1);
-        drawPanel.render();
-    }
+    public void mouseClicked(MouseEvent e) {}
 
     @Override
     public void mousePressed(MouseEvent e) {
