@@ -3,21 +3,18 @@ package ssm.file;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
+import java.io.FileNotFoundException;
 
 public class SaveFilePanel extends JPanel implements ActionListener {
-    private File currentTarget;
-    private JFileChooser saveChooser;
-    private final FileNameExtensionFilter pngFilter = new FileNameExtensionFilter("PNG Image", "png");
-    private final FileNameExtensionFilter gifFilter = new FileNameExtensionFilter("GIF Image", "gif");
-    private final FileNameExtensionFilter jpgFilter = new FileNameExtensionFilter("JPG/JPEG Image", "jpg", "jpeg");
+    private String currentTarget;
+    private SaveChooser saveChooser;
     private JButton saveButton, saveAsButton, newButton;
     private NewDrawingDialog newDialog;
     private ImageFileManager imageFileManager;
+    private String targetExtension;
 
     public SaveFilePanel() {
         setPreferredSize(new Dimension(200, 100));
@@ -43,31 +40,37 @@ public class SaveFilePanel extends JPanel implements ActionListener {
             } else {
                 newDialog.toFront();
             }
-                
+
         }
         if (e.getActionCommand().equals("Save")) {
             if (currentTarget == null) {
-                saveChooser = new JFileChooser();
-                saveChooser.addChoosableFileFilter(gifFilter);
-                saveChooser.addChoosableFileFilter(jpgFilter);
-                saveChooser.addChoosableFileFilter(pngFilter);
+                if (saveChooser == null)
+                    saveChooser = new SaveChooser();
                 int result = saveChooser.showSaveDialog(this);
                 if (result == JFileChooser.APPROVE_OPTION) {
-                    currentTarget = saveChooser.getSelectedFile();
-                    imageFileManager.saveImage(currentTarget);
+                    targetExtension = saveChooser.getTargetExtension();
+                    try {
+                        currentTarget = saveChooser.getTargetPath();
+                        imageFileManager.saveImage(currentTarget, targetExtension);
+                    } catch (FileNotFoundException f) {
+                        f.printStackTrace();
+                    }
                 }
                 return;
             }
-            imageFileManager.saveImage(currentTarget);
         }
         if (e.getActionCommand().equals("Save As")) {
-            saveChooser = new JFileChooser();
-            saveChooser.addChoosableFileFilter(gifFilter);
-            saveChooser.addChoosableFileFilter(jpgFilter);
-            saveChooser.addChoosableFileFilter(pngFilter);
+            if (saveChooser == null)
+                saveChooser = new SaveChooser();
             int result = saveChooser.showSaveDialog(this);
             if (result == JFileChooser.APPROVE_OPTION) {
-                imageFileManager.saveImage(saveChooser.getSelectedFile());
+                targetExtension = saveChooser.getTargetExtension();
+                try {
+                    String target = saveChooser.getTargetPath();
+                    imageFileManager.saveImage(target, targetExtension);
+                } catch (FileNotFoundException f) {
+                    f.printStackTrace();
+                }
             }
         }
     }
