@@ -9,7 +9,7 @@ import javax.swing.JFileChooser;
 import ssm.draw.DrawPanel;
 import ssm.draw.Project;
 import ssm.file.ImageFileManager;
-import ssm.file.NewDrawingDialog;
+import ssm.file.NewProjectDialog;
 import ssm.file.SaveChooser;
 
 public class ProjectManager implements ActionListener {
@@ -17,7 +17,7 @@ public class ProjectManager implements ActionListener {
     private String targetExtension;
     private String currentTarget;
     private SaveChooser saveChooser;
-    private NewDrawingDialog newDialog;
+    private NewProjectDialog newDialog;
     private MainWindow mainWindow;
     private DrawPanel drawPanel;
     private ImageFileManager imageFileManager;
@@ -26,7 +26,7 @@ public class ProjectManager implements ActionListener {
         this.mainWindow = mainWindow;
         drawPanel = mainWindow.getDrawPanel();
         saveChooser = null;
-        newDialog = new NewDrawingDialog();
+        newDialog = new NewProjectDialog();
         imageFileManager = ImageFileManager.getImageFileManager();
     }
 

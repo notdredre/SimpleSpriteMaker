@@ -15,7 +15,7 @@ public class SaveFilePanel extends JPanel implements ActionListener {
     private String currentTarget;
     private SaveChooser saveChooser;
     private JButton saveButton, saveAsButton, newButton;
-    private NewDrawingDialog newDialog;
+    private NewProjectDialog newDialog;
     private ImageFileManager imageFileManager;
     private Project project;
     private String targetExtension;
@@ -24,7 +24,7 @@ public class SaveFilePanel extends JPanel implements ActionListener {
         setPreferredSize(new Dimension(200, 100));
         imageFileManager = ImageFileManager.getImageFileManager();
         currentTarget = null;
-        newDialog = new NewDrawingDialog();
+        newDialog = new NewProjectDialog();
         newButton = new JButton("New Drawing");
         saveButton = new JButton("Save");
         saveAsButton = new JButton("Save As");
