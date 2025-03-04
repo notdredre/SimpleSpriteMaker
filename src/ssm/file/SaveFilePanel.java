@@ -3,6 +3,9 @@ package ssm.file;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
+
+import ssm.draw.Project;
+
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,6 +17,7 @@ public class SaveFilePanel extends JPanel implements ActionListener {
     private JButton saveButton, saveAsButton, newButton;
     private NewDrawingDialog newDialog;
     private ImageFileManager imageFileManager;
+    private Project project;
     private String targetExtension;
 
     public SaveFilePanel() {
@@ -33,6 +37,7 @@ public class SaveFilePanel extends JPanel implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
+        project = Project.getProject();
         if (e.getActionCommand().equals("New Drawing")) {
             if (!newDialog.isVisible()) {
                 newDialog.setLocationRelativeTo(null);
@@ -48,31 +53,33 @@ public class SaveFilePanel extends JPanel implements ActionListener {
                     saveChooser = new SaveChooser();
                 int result = saveChooser.showSaveDialog(this);
                 if (result == JFileChooser.APPROVE_OPTION) {
-                    targetExtension = saveChooser.getTargetExtension();
                     try {
                         currentTarget = saveChooser.getTargetPath();
-                        imageFileManager.saveImage(currentTarget, targetExtension);
+                        targetExtension = saveChooser.getTargetExtension();
+                        imageFileManager.setTarget(currentTarget, targetExtension);
+                        project.saveProject();
                     } catch (FileNotFoundException f) {
                         f.printStackTrace();
-                    }
+                    }   
                 }
                 return;
             }
+            project.saveProject();
         }
         if (e.getActionCommand().equals("Save As")) {
             if (saveChooser == null)
                 saveChooser = new SaveChooser();
             int result = saveChooser.showSaveDialog(this);
             if (result == JFileChooser.APPROVE_OPTION) {
-                targetExtension = saveChooser.getTargetExtension();
                 try {
                     String target = saveChooser.getTargetPath();
-                    imageFileManager.saveImage(target, targetExtension);
+                    targetExtension = saveChooser.getTargetExtension();
+                    imageFileManager.setTarget(target, targetExtension);
+                    project.saveProject();
                 } catch (FileNotFoundException f) {
                     f.printStackTrace();
                 }
             }
         }
     }
-
 }

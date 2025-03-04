@@ -9,6 +9,7 @@ import ssm.tools.ToolManager;
 
 public class Project {
     private ImageFileManager imageFileManager;
+    private static Project project = null;
     private ToolManager toolManager;
     private ArrayList<Drawing> drawings;
     private ArrayList<BufferedImage> writeBuffers;
@@ -16,11 +17,11 @@ public class Project {
     private int drawingWidth, drawingHeight;
     private int scale;
 
-    public Project(int drawingWidth, int drawingHeight, int scale) {
+    private Project(int drawingWidth, int drawingHeight, int scale) {
         this(1, 1, drawingWidth, drawingHeight, scale);
     }
 
-    public Project(int numRows, int numCols, int drawingWidth, int drawingHeight, int scale) {
+    private Project(int numRows, int numCols, int drawingWidth, int drawingHeight, int scale) {
         this.numRows = numRows;
         this.numCols = numCols;
         this.drawingWidth = drawingWidth;
@@ -38,6 +39,19 @@ public class Project {
         }
     }
 
+    public static Project newProject(int numRows, int numCols, int drawingWidth, int drawingHeight, int scale) {
+        project = new Project(numRows, numCols, drawingWidth, drawingHeight, scale);
+        return project;
+    }
+
+    public static Project newProject(int drawingWidth, int drawingHeight, int scale) {
+        project = new Project(drawingWidth, drawingHeight, scale);
+        return project;
+    }
+
+    public static Project getProject() {
+        return project;
+    }
 
     public void addDrawing() {
         lastCol = (lastCol + 1) % numCols;
@@ -80,7 +94,7 @@ public class Project {
     }
     
     public void moveRight() {
-        if (currentCol < numCols)
+        if (currentCol < numCols - 1)
             currentCol++;
     }
 
@@ -90,7 +104,7 @@ public class Project {
     }
 
     public void moveDown() {
-        if (currentRow < numRows)
+        if (currentRow < numRows - 1)
             currentRow++;
     }
 

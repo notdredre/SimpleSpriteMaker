@@ -60,7 +60,7 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
     public void createNewProject(int pixelWidth, int pixelHeight) {
         scaleWidth = pixelWidth * scale;
         scaleHeight = pixelHeight * scale;
-        project = new Project(5, 5, pixelWidth, pixelHeight, scale);
+        project = Project.newProject(5, 5, pixelWidth, pixelHeight, scale);
         panelWidth = getWidth();
         panelHeight = getHeight();
         resizeFactor = 1;

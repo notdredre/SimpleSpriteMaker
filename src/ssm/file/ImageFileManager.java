@@ -31,10 +31,13 @@ public class ImageFileManager {
         this.toWrite = toWrite;
     }
 
-    public void setTarget(File target) {
-        this.target = target.getAbsolutePath();
-        String split = target.getName();
-        targetExtension = split.substring(split.indexOf('.') + 1);
+    public void setTarget(String target, String targetExtension) {
+        setTargetExtension(targetExtension);
+        this.target = parseName(target);
+    }
+
+    public void setTargetExtension(String targetExtension) {
+        this.targetExtension = targetExtension;
     }
 
     public void setDrawPanel(DrawPanel drawPanel) {
