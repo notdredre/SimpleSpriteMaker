@@ -13,7 +13,7 @@ public class Project {
     private ToolManager toolManager;
     private ArrayList<Drawing> drawings;
     private ArrayList<BufferedImage> writeBuffers;
-    private int numRows, numCols, currentRow, currentCol, lastRow, lastCol;
+    private int numRows, numCols, currentRow, currentCol, lastRow, lastCol, previewRow, previewCol;
     private int drawingWidth, drawingHeight;
     private int scale;
 
@@ -30,7 +30,7 @@ public class Project {
         imageFileManager = ImageFileManager.getImageFileManager();
         toolManager = ToolManager.getToolManager();
         toolManager.getSquareBrush();
-        lastRow = lastCol = -1;
+        lastRow = lastCol = previewRow = previewCol = -1;
         currentRow = currentCol = 0;
         drawings = new ArrayList<>(numRows * numCols);
         writeBuffers = new ArrayList<>(numRows * numCols);
@@ -65,8 +65,15 @@ public class Project {
     private void addWriteBuffer() {
         writeBuffers.add(new BufferedImage(drawingWidth, drawingHeight, BufferedImage.TYPE_INT_ARGB));
     }
+
+    public void setPreview(int row, int col) {
+        if (row >= 0 && row < numRows && col >= 0 && col < numCols) {
+            previewRow = row;
+            previewCol = col;
+        }
+    }
  
-    public BufferedImage getPreviewBuffer(int row, int col) {
+    private BufferedImage getPreviewBuffer(int row, int col) {
         BufferedImage selected = getDrawBuffer(row, col);
         int[] previewPix = new int[drawingWidth * drawingHeight * scale * scale];
         selected.getRGB(0, 0, drawingWidth * scale, drawingHeight * scale, previewPix, 0, drawingWidth * scale);
@@ -80,6 +87,13 @@ public class Project {
         BufferedImage out = new BufferedImage(drawingWidth * scale, drawingHeight * scale, BufferedImage.TYPE_INT_ARGB);
         out.setRGB(0, 0, drawingWidth * scale, drawingHeight * scale, previewPix, 0, drawingWidth * scale);
         return out;
+    }
+
+    public BufferedImage getPreviewBuffer() {
+        if (previewRow != -1 && previewCol != -1)
+            return getPreviewBuffer(previewRow, previewCol);
+        else
+            return null;
     }
 
     private BufferedImage getDrawBuffer(int row, int col) {

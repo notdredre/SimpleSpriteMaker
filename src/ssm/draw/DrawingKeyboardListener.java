@@ -17,10 +17,6 @@ public class DrawingKeyboardListener implements KeyListener {
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_Z && (e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) == KeyEvent.CTRL_DOWN_MASK)
             drawPanel.undo();
-
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            drawPanel.moveRight();
-        }
     }
 
     @Override

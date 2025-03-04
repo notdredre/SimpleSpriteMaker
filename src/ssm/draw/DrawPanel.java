@@ -89,14 +89,15 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
 
     public void render() {
         requestFocus();
-        previewBuffer = project.getPreviewBuffer(0, 0);
+        previewBuffer = project.getPreviewBuffer();
         Graphics2D c2 = (Graphics2D) compositeBuffer.getGraphics();
         c2.setColor(getBackground());
         c2.fillRect(0, 0, getWidth(), getHeight());
 
         Graphics2D r2 = (Graphics2D) renderBuffer.getGraphics();
         r2.drawImage(backgroundBuffer, 0, 0, null);
-        r2.drawImage(previewBuffer, 0, 0, null);
+        if (previewBuffer != null)
+            r2.drawImage(previewBuffer, 0, 0, null);
         r2.drawImage(drawBuffer, 0, 0, null);
         r2.drawImage(overlayBuffer, 0, 0, null);
         r2.dispose();      
