@@ -7,6 +7,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 
 public class SaveFilePanel extends JPanel implements ActionListener {
@@ -18,6 +20,7 @@ public class SaveFilePanel extends JPanel implements ActionListener {
     private JButton saveButton, saveAsButton, newButton;
     private NewDrawingDialog newDialog;
     private ImageFileManager imageFileManager;
+    private String targetExtension;
 
     public SaveFilePanel() {
         setPreferredSize(new Dimension(200, 100));
@@ -35,6 +38,23 @@ public class SaveFilePanel extends JPanel implements ActionListener {
         saveAsButton.addActionListener(this);
     }
 
+    private void setUpFileChooser() {
+        if (saveChooser == null) {
+            saveChooser = new JFileChooser();
+            saveChooser.setAcceptAllFileFilterUsed(false);
+            saveChooser.addChoosableFileFilter(gifFilter);
+            saveChooser.addChoosableFileFilter(jpgFilter);
+            saveChooser.addChoosableFileFilter(pngFilter);
+            saveChooser.addPropertyChangeListener(new PropertyChangeListener() {
+                @Override
+                public void propertyChange(PropertyChangeEvent evt) {
+                    FileNameExtensionFilter filter = (FileNameExtensionFilter) saveChooser.getFileFilter();
+                    targetExtension = filter.getExtensions()[0];
+                }
+            });
+        }
+    }
+
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("New Drawing")) {
             if (!newDialog.isVisible()) {
@@ -43,31 +63,24 @@ public class SaveFilePanel extends JPanel implements ActionListener {
             } else {
                 newDialog.toFront();
             }
-                
+
         }
         if (e.getActionCommand().equals("Save")) {
             if (currentTarget == null) {
-                saveChooser = new JFileChooser();
-                saveChooser.addChoosableFileFilter(gifFilter);
-                saveChooser.addChoosableFileFilter(jpgFilter);
-                saveChooser.addChoosableFileFilter(pngFilter);
+                setUpFileChooser();
                 int result = saveChooser.showSaveDialog(this);
                 if (result == JFileChooser.APPROVE_OPTION) {
                     currentTarget = saveChooser.getSelectedFile();
-                    imageFileManager.saveImage(currentTarget);
+                    imageFileManager.saveImage(currentTarget.getAbsolutePath(), targetExtension);
                 }
                 return;
             }
-            imageFileManager.saveImage(currentTarget);
         }
         if (e.getActionCommand().equals("Save As")) {
-            saveChooser = new JFileChooser();
-            saveChooser.addChoosableFileFilter(gifFilter);
-            saveChooser.addChoosableFileFilter(jpgFilter);
-            saveChooser.addChoosableFileFilter(pngFilter);
+            setUpFileChooser();
             int result = saveChooser.showSaveDialog(this);
             if (result == JFileChooser.APPROVE_OPTION) {
-                imageFileManager.saveImage(saveChooser.getSelectedFile());
+                imageFileManager.saveImage(saveChooser.getSelectedFile().getAbsolutePath(), targetExtension);
             }
         }
     }
