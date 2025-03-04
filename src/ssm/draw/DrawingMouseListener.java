@@ -60,6 +60,8 @@ public class DrawingMouseListener implements MouseInputListener, MouseWheelListe
             drawPanel.reposition(eventX, eventY, mouseX, mouseY);
             mouseX = eventX;
             mouseY = eventY;
+            drawPanel.render();
+            return;
         }
         if (drawPanel.getCurrentTool().getToolType() == ToolType.FILLTOOL)
             return;
