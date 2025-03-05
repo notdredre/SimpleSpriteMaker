@@ -73,7 +73,7 @@ public class MainWindow extends JFrame implements Runnable {
         mainPanel.add(drawPanel);
 
         projectManager = ProjectManager.getProjectManager(this);
-
+        projectManager.createNewProject(25, 25);
         colourPanel = new JPanel();
         colourPanel.setMaximumSize(new Dimension(200, 300));
         colourPanel.setLayout(new BoxLayout(colourPanel, BoxLayout.PAGE_AXIS));
@@ -127,13 +127,13 @@ public class MainWindow extends JFrame implements Runnable {
         // Constraints for spritesheetPanel
         mainLayout.putConstraint(SpringLayout.WEST, spritesheetPanel, 30, SpringLayout.EAST, drawPanel);
         mainLayout.putConstraint(SpringLayout.NORTH, spritesheetPanel, 30, SpringLayout.SOUTH, toolPanel);
-        mainLayout.putConstraint(SpringLayout.SOUTH, spritesheetPanel, 100, SpringLayout.NORTH, spritesheetPanel);
+        mainLayout.putConstraint(SpringLayout.SOUTH, spritesheetPanel, 300, SpringLayout.NORTH, spritesheetPanel);
         mainLayout.putConstraint(SpringLayout.EAST, spritesheetPanel, 200, SpringLayout.WEST, spritesheetPanel);
         
         add(mainPanel);
 
         mainMenu = new MainMenu();
-        projectManager.createNewProject(25, 25);
+        
         mainMenu.addActionListener(projectManager);
         setMenuBar(mainMenu);
     }

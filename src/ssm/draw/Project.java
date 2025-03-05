@@ -16,6 +16,7 @@ public class Project {
     private int numRows, numCols, currentRow, currentCol, lastRow, lastCol, previewRow, previewCol;
     private int drawingWidth, drawingHeight;
     private int scale;
+    private boolean previewEnabled;
 
     private Project(int drawingWidth, int drawingHeight, int scale) {
         this(1, 1, drawingWidth, drawingHeight, scale);
@@ -90,8 +91,10 @@ public class Project {
     }
 
     public BufferedImage getPreviewBuffer() {
-        if (previewRow != -1 && previewCol != -1)
-            return getPreviewBuffer(previewRow, previewCol);
+        if (previewEnabled) {
+            int[] cell = getLeft(currentRow, currentCol);
+            return getPreviewBuffer(cell[0], cell[1]);
+        }
         else
             return null;
     }
@@ -126,28 +129,107 @@ public class Project {
         imageFileManager.setToWrite(getFinalWrite());
         imageFileManager.saveImage();
     }
+
+    public int getCurrentRow() {
+        return currentRow;
+    }
+
+    public int getCurrentCol() {
+        return currentCol;
+    }
     
-    public void moveRight() {
-        currentCol = (currentCol + 1) % numCols;
-        if (currentCol == 0)
-            currentRow = (currentRow + 1) % numRows;
+    public int getNumRows() {
+        return numRows;
     }
 
+    public int getNumCols() {
+        return numCols;
+    }
+
+    public void setCell(int row, int col) {
+        if (row >= 0 && row < numRows && col >= 0 && col < numCols) {
+            currentRow = row;
+            currentCol = col;
+        }
+    }
+    
+    public void setPreview(boolean preview) {
+        this.previewEnabled = preview;
+    }
     public void moveLeft() {
-        currentCol = Math.abs((currentCol - 1) % numCols);
-        if (currentCol == numCols - 1)
-            currentRow = Math.abs((currentRow - 1) % numRows);
+        int[] cell = getLeft(currentRow, currentCol);
+        int row = cell[0];
+        int col = cell[1];
+        setCell(row, col);
     }
 
-    public void moveDown() {
-        currentRow = (currentRow + 1) % numRows;
-        if (currentRow == 0)
-            currentCol = (currentCol + 1) % numCols;
+    public void moveRight() {
+        int[] cell = getRight(currentRow, currentCol);
+        int row = cell[0];
+        int col = cell[1];
+        setCell(row, col);
     }
 
     public void moveUp() {
-        currentRow = Math.abs((currentRow - 1) % numRows);
-        if (currentRow == numRows - 1)
-            currentCol = Math.abs((currentCol - 1) % numCols);
+        int[] cell = getUp(currentRow, currentCol);
+        int row = cell[0];
+        int col = cell[1];
+        setCell(row, col);
+    }
+
+    public void moveDown() {
+        int[] cell = getDown(currentRow, currentCol);
+        int row = cell[0];
+        int col = cell[1];
+        setCell(row, col);
+    }
+
+    public int[] getRight(int row, int col) {
+        int[] cell = new int[2];
+        cell[0] = row;
+        cell[1] = col;
+        cell[1] = (cell[1] + 1) % numCols;
+        if (cell[1] == 0)
+            cell[0] = (cell[0] + 1) % numRows;
+        
+        return cell;
+    }
+
+    public int[] getLeft(int row, int col) {
+        int[] cell = new int[2];
+        cell[0] = row;
+        cell[1] = col;
+        cell[1]--;
+        if (cell[1] < 0) {
+            cell[1] = numCols - 1;
+            cell[0]--;
+            if (cell[0] < 0)
+                cell[0] = numRows - 1;
+        }
+        return cell;
+    }
+
+    public int[] getDown(int row, int col) {
+        int[] cell = new int[2];
+        cell[0] = row;
+        cell[1] = col;
+        cell[0] = (cell[0] + 1) % numRows;
+        if (cell[0] == 0) 
+            cell[1] = (cell[1] + 1) % numCols;
+        return cell;
+    }
+
+    public int[] getUp(int row, int col) {
+        int cell[] = new int[2];
+        cell[0] = row;
+        cell[1] = col; 
+        cell[0]--;
+        if (cell[0] < 0) {
+            cell[0] = numRows - 1;
+            cell[1]--;
+            if (cell[1] < 0)
+                cell[1] = numCols - 1;
+        }
+        return cell;
     }
 }

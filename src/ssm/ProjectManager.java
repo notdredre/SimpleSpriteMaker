@@ -50,6 +50,30 @@ public class ProjectManager implements ActionListener {
         createNewProject(1, 1, drawingWidth, drawingHeight);
     }
 
+    public void setPreview(boolean preview) {
+        project.setPreview(true);
+    }
+
+    public int getCurrentCol() {
+        return project.getCurrentCol();
+    }
+
+    public int getCurrentRow() {
+        return project.getCurrentRow();
+    }
+
+    public int getNumRows() {
+        return project.getNumRows();
+    }
+
+    public int getNumCols() {
+        return project.getNumCols();
+    }
+
+    public void setCell(int row, int col) {
+        project.setCell(row, col);
+    }
+
     public void moveLeft() {
         project.moveLeft();
         drawPanel.updateBuffers();
