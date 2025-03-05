@@ -13,6 +13,7 @@ import ssm.file.NewProjectDialog;
 import ssm.file.SaveChooser;
 
 public class ProjectManager implements ActionListener {
+    private static ProjectManager projectManager = null;
     private Project project;
     private String targetExtension;
     private String currentTarget;
@@ -22,12 +23,22 @@ public class ProjectManager implements ActionListener {
     private DrawPanel drawPanel;
     private ImageFileManager imageFileManager;
 
-    public ProjectManager(MainWindow mainWindow) {
+    private ProjectManager(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         drawPanel = mainWindow.getDrawPanel();
         saveChooser = null;
         newDialog = new NewProjectDialog(this);
         imageFileManager = ImageFileManager.getImageFileManager();
+    }
+
+    public static ProjectManager getProjectManager(MainWindow mainWindow) {
+        if (projectManager == null)
+            projectManager = new ProjectManager(mainWindow);
+        return projectManager;
+    }
+
+    public static ProjectManager getProjectManager() {
+        return projectManager;
     }
 
     public void createNewProject(int numRow, int numCols, int drawingWidth, int drawingHeight) {
@@ -37,6 +48,26 @@ public class ProjectManager implements ActionListener {
 
     public void createNewProject(int drawingWidth, int drawingHeight) {
         createNewProject(1, 1, drawingWidth, drawingHeight);
+    }
+
+    public void moveLeft() {
+        project.moveLeft();
+        drawPanel.updateBuffers();
+    }
+
+    public void moveRight() {
+        project.moveRight();
+        drawPanel.updateBuffers();
+    }
+    
+    public void moveUp() {
+        project.moveUp();
+        drawPanel.updateBuffers();
+    }
+
+    public void moveDown() {
+        project.moveDown();
+        drawPanel.updateBuffers();
     }
 
     public void actionPerformed(ActionEvent e) {

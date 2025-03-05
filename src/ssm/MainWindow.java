@@ -72,7 +72,7 @@ public class MainWindow extends JFrame implements Runnable {
         colourManager.addColourObject(drawPanel);
         mainPanel.add(drawPanel);
 
-        projectManager = new ProjectManager(this);
+        projectManager = ProjectManager.getProjectManager(this);
 
         colourPanel = new JPanel();
         colourPanel.setMaximumSize(new Dimension(200, 300));
@@ -100,7 +100,7 @@ public class MainWindow extends JFrame implements Runnable {
         
         mainPanel.add(clearButton);
 
-        spritesheetPanel = new SpritesheetPanel(drawPanel);
+        spritesheetPanel = new SpritesheetPanel();
         mainPanel.add(spritesheetPanel);
 
         // Constraints for drawPanel

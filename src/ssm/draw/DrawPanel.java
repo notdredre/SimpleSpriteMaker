@@ -245,27 +245,9 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
         return currentTool;
     }
 
-    public void moveLeft() {
-        project.moveLeft();
+    public void updateBuffers() {
         drawBuffer = project.getDrawBuffer();
         writeBuffer = project.getWriteBuffer();
-    }
-
-    public void moveRight() {
-        project.moveRight();
-        drawBuffer = project.getDrawBuffer();
-        writeBuffer = project.getWriteBuffer();
-    }
-
-    public void moveUp() {
-        project.moveUp();
-        drawBuffer = project.getDrawBuffer();
-        writeBuffer = project.getWriteBuffer();
-    }
-
-    public void moveDown() {
-        project.moveDown();
-        drawBuffer = project.getDrawBuffer();
-        writeBuffer = project.getWriteBuffer();
+        render();
     }
 }

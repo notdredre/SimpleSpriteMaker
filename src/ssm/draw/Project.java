@@ -128,22 +128,26 @@ public class Project {
     }
     
     public void moveRight() {
-        if (currentCol < numCols - 1)
-            currentCol++;
+        currentCol = (currentCol + 1) % numCols;
+        if (currentCol == 0)
+            currentRow = (currentRow + 1) % numRows;
     }
 
     public void moveLeft() {
-        if (currentCol > 0)
-            currentCol--;
+        currentCol = Math.abs((currentCol - 1) % numCols);
+        if (currentCol == numCols - 1)
+            currentRow = Math.abs((currentRow - 1) % numRows);
     }
 
     public void moveDown() {
-        if (currentRow < numRows - 1)
-            currentRow++;
+        currentRow = (currentRow + 1) % numRows;
+        if (currentRow == 0)
+            currentCol = (currentCol + 1) % numCols;
     }
 
     public void moveUp() {
-        if (currentRow > 0)
-            currentRow--;
+        currentRow = Math.abs((currentRow - 1) % numRows);
+        if (currentRow == numRows - 1)
+            currentCol = Math.abs((currentCol - 1) % numCols);
     }
 }

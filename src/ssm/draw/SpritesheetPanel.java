@@ -6,12 +6,14 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+import ssm.ProjectManager;
+
 public class SpritesheetPanel extends JPanel implements ActionListener{
     private JButton left, right, up, down;
-    private DrawPanel drawPanel;
+    ProjectManager projectManager;
 
-    public SpritesheetPanel(DrawPanel drawPanel) {
-        this.drawPanel = drawPanel;
+    public SpritesheetPanel() {
+        projectManager = ProjectManager.getProjectManager(null);
         left = new JButton("Left");
         right = new JButton("Right");
         up = new JButton("Up");
@@ -29,16 +31,16 @@ public class SpritesheetPanel extends JPanel implements ActionListener{
     public void actionPerformed(ActionEvent e) {
         switch(e.getActionCommand()) {
             case "Left":
-                drawPanel.moveLeft();
+                projectManager.moveLeft();
                 break;
             case "Right":
-                drawPanel.moveRight();
+                projectManager.moveRight();
                 break;
             case "Down":
-                drawPanel.moveDown();
+                projectManager.moveDown();
                 break;
             case "Up":
-                drawPanel.moveUp();
+                projectManager.moveUp();
                 break;
         }
     }
