@@ -17,6 +17,7 @@ import ssm.colour.ColourManager;
 import ssm.colour.ColourPreview;
 import ssm.colour.ColourSliders;
 import ssm.draw.DrawPanel;
+import ssm.draw.SpritesheetPanel;
 import ssm.tools.ToolPanel;
 
 public class MainWindow extends JFrame implements Runnable {
@@ -29,6 +30,7 @@ public class MainWindow extends JFrame implements Runnable {
     private ColourPreview colourPreview;
     private ColourManager colourManager;
     private ToolPanel toolPanel;
+    private SpritesheetPanel spritesheetPanel;
     private MainMenu mainMenu;
     private ProjectManager projectManager;
     private ArrayList<Refreshable> toRefresh;
@@ -70,6 +72,8 @@ public class MainWindow extends JFrame implements Runnable {
         colourManager.addColourObject(drawPanel);
         mainPanel.add(drawPanel);
 
+        projectManager = new ProjectManager(this);
+
         colourPanel = new JPanel();
         colourPanel.setMaximumSize(new Dimension(200, 300));
         colourPanel.setLayout(new BoxLayout(colourPanel, BoxLayout.PAGE_AXIS));
@@ -96,6 +100,8 @@ public class MainWindow extends JFrame implements Runnable {
         
         mainPanel.add(clearButton);
 
+        spritesheetPanel = new SpritesheetPanel(drawPanel);
+        mainPanel.add(spritesheetPanel);
 
         // Constraints for drawPanel
         mainLayout.putConstraint(SpringLayout.WEST, drawPanel, 20, SpringLayout.WEST, mainPanel);
@@ -117,11 +123,16 @@ public class MainWindow extends JFrame implements Runnable {
         mainLayout.putConstraint(SpringLayout.NORTH, clearButton, 10, SpringLayout.SOUTH, drawPanel);
         mainLayout.putConstraint(SpringLayout.EAST, clearButton, 0, SpringLayout.EAST, drawPanel);
         mainLayout.putConstraint(SpringLayout.SOUTH, mainPanel, 20, SpringLayout.SOUTH, clearButton);
+
+        // Constraints for spritesheetPanel
+        mainLayout.putConstraint(SpringLayout.WEST, spritesheetPanel, 30, SpringLayout.EAST, drawPanel);
+        mainLayout.putConstraint(SpringLayout.NORTH, spritesheetPanel, 30, SpringLayout.SOUTH, toolPanel);
+        mainLayout.putConstraint(SpringLayout.SOUTH, spritesheetPanel, 100, SpringLayout.NORTH, spritesheetPanel);
+        mainLayout.putConstraint(SpringLayout.EAST, spritesheetPanel, 200, SpringLayout.WEST, spritesheetPanel);
         
         add(mainPanel);
 
         mainMenu = new MainMenu();
-        projectManager = new ProjectManager(this);
         projectManager.createNewProject(25, 25);
         mainMenu.addActionListener(projectManager);
         setMenuBar(mainMenu);

@@ -97,7 +97,7 @@ public class Project {
     }
 
     private BufferedImage getDrawBuffer(int row, int col) {
-        return drawings.get(row + col).getBuffer();
+        return drawings.get(row * numCols + col).getBuffer();
     }
 
     public BufferedImage getDrawBuffer() {
@@ -105,7 +105,7 @@ public class Project {
     }
 
     public BufferedImage getWriteBuffer() {
-        return writeBuffers.get(currentRow + currentCol);
+        return writeBuffers.get(currentRow * numCols + currentCol);
     }
 
     public BufferedImage getFinalWrite() {
