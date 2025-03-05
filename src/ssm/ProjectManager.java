@@ -26,8 +26,17 @@ public class ProjectManager implements ActionListener {
         this.mainWindow = mainWindow;
         drawPanel = mainWindow.getDrawPanel();
         saveChooser = null;
-        newDialog = new NewProjectDialog();
+        newDialog = new NewProjectDialog(this);
         imageFileManager = ImageFileManager.getImageFileManager();
+    }
+
+    public void createNewProject(int numRow, int numCols, int drawingWidth, int drawingHeight) {
+        project = Project.newProject(numRow, numCols, drawingWidth, drawingHeight, 20);
+        drawPanel.init(drawingWidth, drawingHeight);
+    }
+
+    public void createNewProject(int drawingWidth, int drawingHeight) {
+        createNewProject(1, 1, drawingWidth, drawingHeight);
     }
 
     public void actionPerformed(ActionEvent e) {

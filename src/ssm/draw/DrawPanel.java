@@ -54,13 +54,12 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
                 render();
             }
         });
-        createNewProject(25, 25);
     }
 
-    public void createNewProject(int pixelWidth, int pixelHeight) {
+    public void init(int pixelWidth, int pixelHeight) {
         scaleWidth = pixelWidth * scale;
         scaleHeight = pixelHeight * scale;
-        project = Project.newProject(5, 5, pixelWidth, pixelHeight, scale);
+        project = Project.getProject();
         panelWidth = getWidth();
         panelHeight = getHeight();
         resizeFactor = 1;
@@ -68,11 +67,10 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
         resizeY = Math.clamp(resizeFactor * scaleHeight, scaleHeight, scaleHeight * RESIZE_MAX);
         percentX = percentY = 0.5f;
         currentPixelX = currentPixelY = -1;
+        undoStack.init();
         createBuffers(pixelWidth, pixelHeight, scale);
         positionDrawing();
-        resetBackground();
-        undoStack.init();
-        commit();
+        clear();
     }
 
     public void createBuffers(int pixelWidth, int pixelHeight, int scale) {

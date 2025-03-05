@@ -15,27 +15,29 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import ssm.ProjectManager;
+
 public class NewProjectDialog extends JDialog implements ActionListener, ChangeListener {
     private final int WIDTH = 300, HEIGHT = 200;
-    private JLabel createLabel, widthLabel, heightLabel;
-    private JPanel dimensionPanel, buttonPanel;
-    private SpinnerNumberModel widthModel, heightModel;
-    private JSpinner widthSpinner, heightSpinner;
+    private JLabel createLabel, widthLabel, heightLabel, rowLabel, columnLabel;
+    private JPanel dimensionPanel, spritePanel, buttonPanel;
+    private SpinnerNumberModel widthModel, heightModel, rowModel, columnModel;
+    private JSpinner widthSpinner, heightSpinner, rowSpinner, columnSpinner;
     private JButton okButton, cancelButton;
-    private JCheckBox lockRatio;
-    private ImageFileManager imageFileManager;
+    private JCheckBox lockRatio, spriteSheet;
+    private ProjectManager projectManager;
     private float aspectRatio;
 
-    public NewProjectDialog() {
+    public NewProjectDialog(ProjectManager projectManager) {
         setSize(WIDTH, HEIGHT);
         setResizable(false);
         setLocationRelativeTo(null);
         setAutoRequestFocus(true);
         setAlwaysOnTop(true);
         setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
+        this.projectManager = projectManager;
         createLabel = new JLabel("Create New Project");
         createLabel.setAlignmentX(CENTER_ALIGNMENT);
-        
         dimensionPanel = new JPanel();
         dimensionPanel.setSize(300, 100);
         widthLabel = new JLabel("Width: ");
@@ -58,6 +60,25 @@ public class NewProjectDialog extends JDialog implements ActionListener, ChangeL
         add(Box.createVerticalStrut(5));
         add(dimensionPanel);
 
+        spriteSheet = new JCheckBox("Spritesheet?");
+        spriteSheet.setAlignmentX(CENTER_ALIGNMENT);
+        spriteSheet.addChangeListener(this);
+        add(spriteSheet);
+
+        rowModel = new SpinnerNumberModel(5, 1, 30, 1);
+        columnModel = new SpinnerNumberModel(5, 1, 30, 1);
+        rowSpinner = new JSpinner(rowModel);
+        columnSpinner = new JSpinner(columnModel);
+        rowLabel = new JLabel("Rows: ");
+        columnLabel = new JLabel("Columns: ");
+        spritePanel = new JPanel();
+        spritePanel.add(rowLabel);
+        spritePanel.add(rowSpinner);
+        spritePanel.add(columnLabel);
+        spritePanel.add(columnSpinner);
+        spritePanel.setVisible(false);
+        add(spritePanel);
+
         buttonPanel = new JPanel();
         buttonPanel.setSize(300, 100);
         okButton = new JButton("Ok");
@@ -67,13 +88,20 @@ public class NewProjectDialog extends JDialog implements ActionListener, ChangeL
         buttonPanel.add(okButton);
         buttonPanel.add(cancelButton);
         add(buttonPanel);
-        imageFileManager = ImageFileManager.getImageFileManager();
     }
 
     public void actionPerformed(ActionEvent e) {
         String command = e.getActionCommand();
         if (command.equals("Ok")) {
-            imageFileManager.newDrawing(widthModel.getNumber(), heightModel.getNumber());
+            int drawingWidth = widthModel.getNumber().intValue();
+            int drawingHeight = heightModel.getNumber().intValue();
+            if (spriteSheet.isSelected()) {
+                int numRows = rowModel.getNumber().intValue();
+                int numCols = columnModel.getNumber().intValue();
+                projectManager.createNewProject(numRows, numCols, drawingWidth, drawingHeight);
+            }
+            else
+                projectManager.createNewProject(drawingWidth, drawingHeight);
             dispose();
         }
         if (command.equals("Cancel")) {
@@ -84,6 +112,18 @@ public class NewProjectDialog extends JDialog implements ActionListener, ChangeL
     public void stateChanged(ChangeEvent e) {
         if (e.getSource().equals(lockRatio) && lockRatio.isSelected())
             aspectRatio = widthModel.getNumber().floatValue() / heightModel.getNumber().floatValue();
+
+        if (e.getSource().equals(spriteSheet)) {
+            if (spriteSheet.isSelected()) {
+                setSize(WIDTH, HEIGHT + 100);
+                spriteSheet.setText("Spritesheet!");
+                spritePanel.setVisible(true);
+            } else {
+                setSize(WIDTH, HEIGHT);
+                spriteSheet.setText("Spritesheet?");
+                spritePanel.setVisible(false);
+            } 
+        }
 
         if (!lockRatio.isSelected())
             return;
