@@ -40,6 +40,11 @@ public class ImageFileManager {
     public void saveImage() {
         File output = new File(target);
         try {
+            if (targetExtension == "jpg" || targetExtension == "jpeg") {
+                convertAlpha();
+                ImageIO.write(solidWrite, targetExtension, output);
+                return;
+            }
             ImageIO.write(toWrite, targetExtension, output);
         } catch (IOException e) {
             e.printStackTrace();

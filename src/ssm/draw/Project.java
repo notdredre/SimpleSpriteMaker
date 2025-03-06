@@ -30,6 +30,7 @@ public class Project {
         this.scale = scale;
         imageFileManager = ImageFileManager.getImageFileManager();
         toolManager = ToolManager.getToolManager();
+        previewEnabled = false;
         toolManager.getSquareBrush();
         lastRow = lastCol = previewRow = previewCol = -1;
         currentRow = currentCol = 0;
@@ -115,8 +116,8 @@ public class Project {
         BufferedImage finalWrite = new BufferedImage(drawingWidth * numCols, drawingHeight * numRows, BufferedImage.TYPE_INT_ARGB);
         Graphics2D f2 = (Graphics2D) finalWrite.getGraphics();
         int current = 0;
-        for (int i = 0; i < numCols; i++) {
-            for (int j = 0; j < numRows; j++) {
+        for (int i = 0; i < numRows; i++) {
+            for (int j = 0; j < numCols; j++) {
                 f2.drawImage(writeBuffers.get(current), j * drawingWidth, i * drawingHeight, null);
                 current++;
             }

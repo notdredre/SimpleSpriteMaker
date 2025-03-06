@@ -48,8 +48,8 @@ public class SpritesheetPanel extends JPanel implements ActionListener, ChangeLi
         currentCellPanel = new JPanel();
         currentCellPanel.setMaximumSize(new Dimension(200, 30));
         currentCell = new JLabel("Current Cell: ");
-        rowModel = new SpinnerNumberModel(projectManager.getCurrentRow() + 1, 1, projectManager.getNumRows() + 1, 1);
-        colModel = new SpinnerNumberModel(projectManager.getCurrentCol() + 1, 1, projectManager.getNumCols() + 1, 1);
+        rowModel = new SpinnerNumberModel(projectManager.getCurrentRow() + 1, 1, projectManager.getNumRows(), 1);
+        colModel = new SpinnerNumberModel(projectManager.getCurrentCol() + 1, 1, projectManager.getNumCols(), 1);
         rowSpinner = new JSpinner(rowModel);
         rowSpinner.addChangeListener(this);
         colSpinner = new JSpinner(colModel);

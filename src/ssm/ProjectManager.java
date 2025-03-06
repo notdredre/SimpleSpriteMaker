@@ -8,6 +8,7 @@ import javax.swing.JFileChooser;
 
 import ssm.draw.DrawPanel;
 import ssm.draw.Project;
+import ssm.draw.SpritesheetPanel;
 import ssm.file.ImageFileManager;
 import ssm.file.NewProjectDialog;
 import ssm.file.SaveChooser;
@@ -21,6 +22,7 @@ public class ProjectManager implements ActionListener {
     private NewProjectDialog newDialog;
     private MainWindow mainWindow;
     private DrawPanel drawPanel;
+    private SpritesheetPanel spritesheetPanel;
     private ImageFileManager imageFileManager;
 
     private ProjectManager(MainWindow mainWindow) {
@@ -43,6 +45,12 @@ public class ProjectManager implements ActionListener {
 
     public void createNewProject(int numRow, int numCols, int drawingWidth, int drawingHeight) {
         project = Project.newProject(numRow, numCols, drawingWidth, drawingHeight, 20);
+        if (spritesheetPanel != null) {
+            if (project.getNumCols() > 1 || project.getNumRows() > 1)
+                spritesheetPanel.setVisible(true);
+            else
+                spritesheetPanel.setVisible(false);
+        }
         drawPanel.init(drawingWidth, drawingHeight);
     }
 
@@ -50,8 +58,16 @@ public class ProjectManager implements ActionListener {
         createNewProject(1, 1, drawingWidth, drawingHeight);
     }
 
+    public void setSpritesheetPanel(SpritesheetPanel spritesheetPanel) {
+        this.spritesheetPanel = spritesheetPanel;
+        if (project.getNumCols() > 1 || project.getNumRows() > 1)
+            spritesheetPanel.setVisible(true);
+        else
+            spritesheetPanel.setVisible(false);
+    }
+
     public void setPreview(boolean preview) {
-        project.setPreview(true);
+        project.setPreview(preview);
     }
 
     public int getCurrentCol() {
@@ -83,7 +99,7 @@ public class ProjectManager implements ActionListener {
         project.moveRight();
         drawPanel.updateBuffers();
     }
-    
+
     public void moveUp() {
         project.moveUp();
         drawPanel.updateBuffers();
@@ -118,7 +134,7 @@ public class ProjectManager implements ActionListener {
                         project.saveProject();
                     } catch (FileNotFoundException f) {
                         f.printStackTrace();
-                    }   
+                    }
                 }
                 return;
             }

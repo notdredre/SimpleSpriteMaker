@@ -102,6 +102,7 @@ public class MainWindow extends JFrame implements Runnable {
 
         spritesheetPanel = new SpritesheetPanel();
         mainPanel.add(spritesheetPanel);
+        projectManager.setSpritesheetPanel(spritesheetPanel);
 
         // Constraints for drawPanel
         mainLayout.putConstraint(SpringLayout.WEST, drawPanel, 20, SpringLayout.WEST, mainPanel);
