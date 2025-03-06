@@ -3,7 +3,7 @@ package ssm.draw;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-
+import ssm.ProjectListener;
 import ssm.file.ImageFileManager;
 import ssm.tools.ToolManager;
 
@@ -17,20 +17,32 @@ public class Project {
     private int drawingWidth, drawingHeight;
     private int scale;
     private boolean previewEnabled;
+    private ArrayList<ProjectListener> projectListeners;
 
     private Project(int drawingWidth, int drawingHeight, int scale) {
         this(1, 1, drawingWidth, drawingHeight, scale);
     }
 
     private Project(int numRows, int numCols, int drawingWidth, int drawingHeight, int scale) {
+        
+    }
+    
+    private Project() {
+        imageFileManager = ImageFileManager.getImageFileManager();
+        toolManager = ToolManager.getToolManager();
+        previewEnabled = false;
+        projectListeners = new ArrayList<>();
+    }
+
+    public void newProject(int numRows, int numCols, int drawingWidth, int drawingHeight, int scale) {
         this.numRows = numRows;
         this.numCols = numCols;
         this.drawingWidth = drawingWidth;
         this.drawingHeight = drawingHeight;
         this.scale = scale;
-        imageFileManager = ImageFileManager.getImageFileManager();
-        toolManager = ToolManager.getToolManager();
         previewEnabled = false;
+        if (projectListeners == null)
+            projectListeners = new ArrayList<>();
         toolManager.getSquareBrush();
         lastRow = lastCol = previewRow = previewCol = -1;
         currentRow = currentCol = 0;
@@ -39,23 +51,21 @@ public class Project {
         for (int i = 0; i < numRows * numCols; i++) {
             addDrawing();
         }
+        triggerOnNewProject();
+        triggerOnBuffersChanged();
     }
 
-    public static Project newProject(int numRows, int numCols, int drawingWidth, int drawingHeight, int scale) {
-        project = new Project(numRows, numCols, drawingWidth, drawingHeight, scale);
-        return project;
-    }
-
-    public static Project newProject(int drawingWidth, int drawingHeight, int scale) {
-        project = new Project(drawingWidth, drawingHeight, scale);
-        return project;
+    public void newProject(int drawingWidth, int drawingHeight, int scale) {
+        newProject(1, 1, drawingWidth, drawingHeight, scale);
     }
 
     public static Project getProject() {
+        if (project == null)
+            project = new Project();
         return project;
     }
 
-    public void addDrawing() {
+    private void addDrawing() {
         lastCol = (lastCol + 1) % numCols;
         if (lastCol == 0)
             lastRow = (lastRow + 1) % numRows;
@@ -74,7 +84,12 @@ public class Project {
             previewCol = col;
         }
     }
- 
+
+    public void setPreview(boolean preview) {
+        this.previewEnabled = preview;
+        triggerOnBuffersChanged();
+    }
+
     private BufferedImage getPreviewBuffer(int row, int col) {
         BufferedImage selected = getDrawBuffer(row, col);
         int[] previewPix = new int[drawingWidth * drawingHeight * scale * scale];
@@ -95,8 +110,7 @@ public class Project {
         if (previewEnabled) {
             int[] cell = getLeft(currentRow, currentCol);
             return getPreviewBuffer(cell[0], cell[1]);
-        }
-        else
+        } else
             return null;
     }
 
@@ -113,7 +127,8 @@ public class Project {
     }
 
     public BufferedImage getFinalWrite() {
-        BufferedImage finalWrite = new BufferedImage(drawingWidth * numCols, drawingHeight * numRows, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage finalWrite = new BufferedImage(drawingWidth * numCols, drawingHeight * numRows,
+                BufferedImage.TYPE_INT_ARGB);
         Graphics2D f2 = (Graphics2D) finalWrite.getGraphics();
         int current = 0;
         for (int i = 0; i < numRows; i++) {
@@ -138,7 +153,7 @@ public class Project {
     public int getCurrentCol() {
         return currentCol;
     }
-    
+
     public int getNumRows() {
         return numRows;
     }
@@ -151,12 +166,13 @@ public class Project {
         if (row >= 0 && row < numRows && col >= 0 && col < numCols) {
             currentRow = row;
             currentCol = col;
+            triggerOnCellChanged();
+            triggerOnBuffersChanged();
         }
     }
-    
-    public void setPreview(boolean preview) {
-        this.previewEnabled = preview;
-    }
+
+
+
     public void moveLeft() {
         int[] cell = getLeft(currentRow, currentCol);
         int row = cell[0];
@@ -192,7 +208,7 @@ public class Project {
         cell[1] = (cell[1] + 1) % numCols;
         if (cell[1] == 0)
             cell[0] = (cell[0] + 1) % numRows;
-        
+
         return cell;
     }
 
@@ -215,7 +231,7 @@ public class Project {
         cell[0] = row;
         cell[1] = col;
         cell[0] = (cell[0] + 1) % numRows;
-        if (cell[0] == 0) 
+        if (cell[0] == 0)
             cell[1] = (cell[1] + 1) % numCols;
         return cell;
     }
@@ -223,7 +239,7 @@ public class Project {
     public int[] getUp(int row, int col) {
         int cell[] = new int[2];
         cell[0] = row;
-        cell[1] = col; 
+        cell[1] = col;
         cell[0]--;
         if (cell[0] < 0) {
             cell[0] = numRows - 1;
@@ -232,5 +248,28 @@ public class Project {
                 cell[1] = numCols - 1;
         }
         return cell;
+    }
+
+    public void addProjectListener(ProjectListener p) {
+        projectListeners.add(p);
+        p.onNewProject(numRows, numCols, drawingWidth, drawingHeight);
+    }
+
+    private void triggerOnNewProject() {
+        for (ProjectListener p : projectListeners) {
+            p.onNewProject(numRows, numCols, drawingWidth, drawingHeight);
+        }
+    }
+
+    private void triggerOnCellChanged() {
+        for (ProjectListener p : projectListeners) {
+            p.onCellChanged(currentRow, currentCol);
+        }
+    }
+
+    public void triggerOnBuffersChanged() {
+        for (ProjectListener p : projectListeners) {
+            p.onBuffersChanged(getDrawBuffer(), getWriteBuffer(), getPreviewBuffer());
+        }
     }
 }

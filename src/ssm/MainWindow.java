@@ -17,6 +17,7 @@ import ssm.colour.ColourManager;
 import ssm.colour.ColourPreview;
 import ssm.colour.ColourSliders;
 import ssm.draw.DrawPanel;
+import ssm.draw.Project;
 import ssm.draw.SpritesheetPanel;
 import ssm.tools.ToolPanel;
 
@@ -32,7 +33,8 @@ public class MainWindow extends JFrame implements Runnable {
     private ToolPanel toolPanel;
     private SpritesheetPanel spritesheetPanel;
     private MainMenu mainMenu;
-    private ProjectManager projectManager;
+    private MenuHandler menuHandler;
+    private Project project;
     private ArrayList<Refreshable> toRefresh;
     private Thread refreshThread;
 
@@ -62,6 +64,8 @@ public class MainWindow extends JFrame implements Runnable {
     }
 
     private void initComponents() {
+        project = Project.getProject();
+        project.newProject(25, 25, 20);
         colourManager = ColourManager.getColourManager();
         mainLayout = new SpringLayout();
         mainPanel = new JPanel();
@@ -72,8 +76,6 @@ public class MainWindow extends JFrame implements Runnable {
         colourManager.addColourObject(drawPanel);
         mainPanel.add(drawPanel);
 
-        projectManager = ProjectManager.getProjectManager(this);
-        projectManager.createNewProject(25, 25);
         colourPanel = new JPanel();
         colourPanel.setMaximumSize(new Dimension(200, 300));
         colourPanel.setLayout(new BoxLayout(colourPanel, BoxLayout.PAGE_AXIS));
@@ -102,7 +104,6 @@ public class MainWindow extends JFrame implements Runnable {
 
         spritesheetPanel = new SpritesheetPanel();
         mainPanel.add(spritesheetPanel);
-        projectManager.setSpritesheetPanel(spritesheetPanel);
 
         // Constraints for drawPanel
         mainLayout.putConstraint(SpringLayout.WEST, drawPanel, 20, SpringLayout.WEST, mainPanel);
@@ -133,9 +134,12 @@ public class MainWindow extends JFrame implements Runnable {
         
         add(mainPanel);
 
-        mainMenu = new MainMenu();
         
-        mainMenu.addActionListener(projectManager);
+        project.addProjectListener(drawPanel);
+        project.addProjectListener(spritesheetPanel);
+        mainMenu = new MainMenu();
+        menuHandler = new MenuHandler(this, drawPanel);
+        mainMenu.addActionListener(menuHandler);
         setMenuBar(mainMenu);
     }
 

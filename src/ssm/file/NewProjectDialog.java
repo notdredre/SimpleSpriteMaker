@@ -2,7 +2,6 @@ package ssm.file;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -14,8 +13,7 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import ssm.ProjectManager;
+import ssm.draw.Project;
 
 public class NewProjectDialog extends JDialog implements ActionListener, ChangeListener {
     private final int WIDTH = 300, HEIGHT = 200;
@@ -25,17 +23,17 @@ public class NewProjectDialog extends JDialog implements ActionListener, ChangeL
     private JSpinner widthSpinner, heightSpinner, rowSpinner, columnSpinner;
     private JButton okButton, cancelButton;
     private JCheckBox lockRatio, spriteSheet;
-    private ProjectManager projectManager;
     private float aspectRatio;
+    private Project project;
 
-    public NewProjectDialog(ProjectManager projectManager) {
+    public NewProjectDialog() {
         setSize(WIDTH, HEIGHT);
         setResizable(false);
         setLocationRelativeTo(null);
         setAutoRequestFocus(true);
         setAlwaysOnTop(true);
         setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
-        this.projectManager = projectManager;
+        project = Project.getProject();
         createLabel = new JLabel("Create New Project");
         createLabel.setAlignmentX(CENTER_ALIGNMENT);
         dimensionPanel = new JPanel();
@@ -98,10 +96,10 @@ public class NewProjectDialog extends JDialog implements ActionListener, ChangeL
             if (spriteSheet.isSelected()) {
                 int numRows = rowModel.getNumber().intValue();
                 int numCols = columnModel.getNumber().intValue();
-                projectManager.createNewProject(numRows, numCols, drawingWidth, drawingHeight);
+                project.newProject(numRows, numCols, drawingWidth, drawingHeight, 20);
             }
             else
-                projectManager.createNewProject(drawingWidth, drawingHeight);
+                project.newProject(drawingWidth, drawingHeight, 20);
             dispose();
         }
         if (command.equals("Cancel")) {

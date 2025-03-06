@@ -2,6 +2,7 @@ package ssm.draw;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -11,21 +12,20 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import ssm.ProjectListener;
 
-import ssm.ProjectManager;
-
-public class SpritesheetPanel extends JPanel implements ActionListener, ChangeListener {
+public class SpritesheetPanel extends JPanel implements ActionListener, ChangeListener, ProjectListener {
     private JButton left, right, up, down;
     private JPanel leftRightPanel, currentCellPanel;
     private JLabel currentCell;
     private SpinnerNumberModel rowModel, colModel;
     private JSpinner rowSpinner, colSpinner;
-    private ProjectManager projectManager;
+    private Project project;
     private JCheckBox previewLast;
 
     public SpritesheetPanel() {
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-        projectManager = ProjectManager.getProjectManager(null);
+        project = Project.getProject();
         left = new JButton("Left");
         right = new JButton("Right");
         up = new JButton("Up");
@@ -48,11 +48,9 @@ public class SpritesheetPanel extends JPanel implements ActionListener, ChangeLi
         currentCellPanel = new JPanel();
         currentCellPanel.setMaximumSize(new Dimension(200, 30));
         currentCell = new JLabel("Current Cell: ");
-        rowModel = new SpinnerNumberModel(projectManager.getCurrentRow() + 1, 1, projectManager.getNumRows(), 1);
-        colModel = new SpinnerNumberModel(projectManager.getCurrentCol() + 1, 1, projectManager.getNumCols(), 1);
-        rowSpinner = new JSpinner(rowModel);
+        rowSpinner = new JSpinner();
         rowSpinner.addChangeListener(this);
-        colSpinner = new JSpinner(colModel);
+        colSpinner = new JSpinner();
         colSpinner.addChangeListener(this);
         currentCellPanel.add(currentCell);
         currentCellPanel.add(rowSpinner);
@@ -68,31 +66,50 @@ public class SpritesheetPanel extends JPanel implements ActionListener, ChangeLi
     public void actionPerformed(ActionEvent e) {
         switch(e.getActionCommand()) {
             case "Left":
-                projectManager.moveLeft();
+                project.moveLeft();
                 break;
             case "Right":
-                projectManager.moveRight();
+                project.moveRight();
                 break;
             case "Down":
-                projectManager.moveDown();
+                project.moveDown();
                 break;
             case "Up":
-                projectManager.moveUp();
+                project.moveUp();
                 break;
         }
-        rowSpinner.setValue(projectManager.getCurrentRow() + 1);
-        colSpinner.setValue(projectManager.getCurrentCol() + 1);
+    }
+
+    public void onNewProject(int numRows, int numCols, int drawingWidth, int drawingHeight) {
+        if (numRows > 1 || numCols > 1) {
+            setVisible(true);
+        } else {
+            setVisible(false);
+        }
+        rowModel = new SpinnerNumberModel(1, 1, numRows, 1);
+        colModel = new SpinnerNumberModel(1, 1, numCols, 1);
+        rowSpinner.setModel(rowModel);
+        colSpinner.setModel(colModel);
+    }
+
+    public void onCellChanged(int currentRow, int currentCol) {
+        rowSpinner.setValue(currentRow + 1);
+        colSpinner.setValue(currentCol + 1);
+    }
+
+    public void onBuffersChanged(BufferedImage drawBuffer, BufferedImage writeBuffer, BufferedImage previewBuffer) {
+        
     }
 
     public void stateChanged(ChangeEvent e) {
         int row = rowModel.getNumber().intValue() - 1;
         int col = colModel.getNumber().intValue() - 1;
         if (rowSpinner.isFocusOwner() || colSpinner.isFocusOwner())
-            projectManager.setCell(row, col);
+            project.setCell(row, col);
 
         if (previewLast.isSelected()) {
-            projectManager.setPreview(true);
+            project.setPreview(true);
         } else
-            projectManager.setPreview(false);
+            project.setPreview(false);
     }
 }
