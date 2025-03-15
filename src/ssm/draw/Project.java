@@ -252,7 +252,12 @@ public class Project {
 
     public void addProjectListener(ProjectListener p) {
         projectListeners.add(p);
-        p.onNewProject(numRows, numCols, drawingWidth, drawingHeight);
+    }
+
+    public void updateAll() {
+        triggerOnNewProject();
+        triggerOnCellChanged();
+        triggerOnBuffersChanged();
     }
 
     private void triggerOnNewProject() {

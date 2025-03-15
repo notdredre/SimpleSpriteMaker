@@ -65,7 +65,7 @@ public class MainWindow extends JFrame implements Runnable {
 
     private void initComponents() {
         project = Project.getProject();
-        project.newProject(25, 25, 20);
+        
         colourManager = ColourManager.getColourManager();
         mainLayout = new SpringLayout();
         mainPanel = new JPanel();
@@ -137,6 +137,8 @@ public class MainWindow extends JFrame implements Runnable {
         
         project.addProjectListener(drawPanel);
         project.addProjectListener(spritesheetPanel);
+        project.newProject(25, 25, 20);
+        project.updateAll();
         mainMenu = new MainMenu();
         menuHandler = new MenuHandler(this, drawPanel);
         mainMenu.addActionListener(menuHandler);
