@@ -122,8 +122,12 @@ public class Project {
         return getDrawBuffer(currentRow, currentCol);
     }
 
+    private BufferedImage getWriteBuffer(int row, int col) {
+        return writeBuffers.get(row * numCols + col);
+    }
+
     public BufferedImage getWriteBuffer() {
-        return writeBuffers.get(currentRow * numCols + currentCol);
+        return getWriteBuffer(currentRow, currentCol);
     }
 
     public BufferedImage getFinalWrite() {
@@ -248,6 +252,23 @@ public class Project {
                 cell[1] = numCols - 1;
         }
         return cell;
+    }
+
+    public void duplicate() {
+        int next[] = getRight(currentRow, currentCol);
+        BufferedImage currentDrawing = getDrawBuffer();
+        BufferedImage currentWrite = getWriteBuffer();
+        BufferedImage nextDrawing = getDrawBuffer(next[0], next[1]);
+        BufferedImage nextWrite = getWriteBuffer(next[0], next[1]);
+        
+        Graphics2D d2 = (Graphics2D) nextDrawing.getGraphics();
+        d2.drawImage(currentDrawing, 0, 0, null);
+        d2.dispose();
+
+        Graphics2D w2 = (Graphics2D) nextWrite.getGraphics();
+        w2.drawImage(currentWrite, 0, 0, null);
+        w2.dispose();
+        moveRight();
     }
 
     public void addProjectListener(ProjectListener p) {
