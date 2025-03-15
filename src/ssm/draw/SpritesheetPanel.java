@@ -15,7 +15,7 @@ import javax.swing.event.ChangeListener;
 import ssm.ProjectListener;
 
 public class SpritesheetPanel extends JPanel implements ActionListener, ChangeListener, ProjectListener {
-    private JButton left, right, up, down;
+    private JButton left, right, up, down, duplicate;
     private JPanel leftRightPanel, currentCellPanel;
     private JLabel currentCell;
     private SpinnerNumberModel rowModel, colModel;
@@ -30,10 +30,12 @@ public class SpritesheetPanel extends JPanel implements ActionListener, ChangeLi
         right = new JButton("Right");
         up = new JButton("Up");
         down = new JButton("Down");
+        duplicate = new JButton("Duplicate");
         left.addActionListener(this);
         right.addActionListener(this);
         up.addActionListener(this);
         down.addActionListener(this);
+        duplicate.addActionListener(this);
 
         up.setAlignmentX(CENTER_ALIGNMENT);
         down.setAlignmentX(CENTER_ALIGNMENT);
@@ -45,6 +47,8 @@ public class SpritesheetPanel extends JPanel implements ActionListener, ChangeLi
         add(leftRightPanel);
         add(down);
 
+        duplicate.setAlignmentX(CENTER_ALIGNMENT);
+        add(duplicate);
         currentCellPanel = new JPanel();
         currentCellPanel.setMaximumSize(new Dimension(200, 30));
         currentCell = new JLabel("Current Cell: ");
@@ -76,6 +80,9 @@ public class SpritesheetPanel extends JPanel implements ActionListener, ChangeLi
                 break;
             case "Up":
                 project.moveUp();
+                break;
+            case "Duplicate":
+                project.duplicate();
                 break;
         }
     }
