@@ -3,6 +3,8 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -48,6 +50,7 @@ public class SpritesheetPanel extends JPanel implements ActionListener, ChangeLi
         add(down);
 
         duplicate.setAlignmentX(CENTER_ALIGNMENT);
+        add(Box.createVerticalStrut(10));
         add(duplicate);
         currentCellPanel = new JPanel();
         currentCellPanel.setMaximumSize(new Dimension(200, 30));
