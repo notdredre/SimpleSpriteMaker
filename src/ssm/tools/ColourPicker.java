@@ -6,10 +6,10 @@ import java.awt.image.BufferedImage;
 import ssm.colour.ColourManager;
 import ssm.tools.ToolManager.ToolType;
 
-public class ColorPicker extends Tool {
+public class ColourPicker extends Tool {
     private ColourManager colourManager;
 
-    public ColorPicker() {
+    public ColourPicker() {
         colourManager = ColourManager.getColourManager();
     }
     @Override

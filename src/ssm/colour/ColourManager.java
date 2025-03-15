@@ -38,6 +38,10 @@ public class ColourManager {
         return selected;
     }
 
+    public Color getColour(int selected) {
+        return colours[selected];
+    }
+
     public void setColour(Color c) {
         colours[selected] = c;
         updateColourObjects();
