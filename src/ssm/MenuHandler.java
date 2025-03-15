@@ -1,44 +1,38 @@
-package ssm.file;
+package ssm;
 
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JPanel;
-
-import ssm.draw.Project;
-
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
+import javax.swing.JFileChooser;
+import ssm.draw.DrawPanel;
+import ssm.draw.Project;
+import ssm.file.ImageFileManager;
+import ssm.file.NewProjectDialog;
+import ssm.file.SaveChooser;
 
-public class SaveFilePanel extends JPanel implements ActionListener {
-    private String currentTarget;
-    private SaveChooser saveChooser;
-    private JButton saveButton, saveAsButton, newButton;
-    private NewDrawingDialog newDialog;
-    private ImageFileManager imageFileManager;
+public class MenuHandler implements ActionListener {
     private Project project;
     private String targetExtension;
+    private String currentTarget;
+    private SaveChooser saveChooser;
+    private NewProjectDialog newDialog;
+    private MainWindow mainWindow;
+    private DrawPanel drawPanel;
+    private ImageFileManager imageFileManager;
 
-    public SaveFilePanel() {
-        setPreferredSize(new Dimension(200, 100));
+    public MenuHandler(MainWindow mainWindow, DrawPanel drawPanel) {
+        project = Project.getProject();
+        targetExtension = currentTarget = null;
+        saveChooser = null;
+        newDialog = new NewProjectDialog();
+        this.mainWindow = mainWindow;
+        this.drawPanel = drawPanel;
         imageFileManager = ImageFileManager.getImageFileManager();
-        currentTarget = null;
-        newDialog = new NewDrawingDialog();
-        newButton = new JButton("New Drawing");
-        saveButton = new JButton("Save");
-        saveAsButton = new JButton("Save As");
-        add(newButton);
-        add(saveButton);
-        add(saveAsButton);
-        newButton.addActionListener(this);
-        saveButton.addActionListener(this);
-        saveAsButton.addActionListener(this);
     }
-
+    
     public void actionPerformed(ActionEvent e) {
         project = Project.getProject();
-        if (e.getActionCommand().equals("New Drawing")) {
+        if (e.getActionCommand().equals("New Project")) {
             if (!newDialog.isVisible()) {
                 newDialog.setLocationRelativeTo(null);
                 newDialog.setVisible(true);
@@ -51,7 +45,7 @@ public class SaveFilePanel extends JPanel implements ActionListener {
             if (currentTarget == null) {
                 if (saveChooser == null)
                     saveChooser = new SaveChooser();
-                int result = saveChooser.showSaveDialog(this);
+                int result = saveChooser.showSaveDialog(mainWindow);
                 if (result == JFileChooser.APPROVE_OPTION) {
                     try {
                         currentTarget = saveChooser.getTargetPath();
@@ -60,7 +54,7 @@ public class SaveFilePanel extends JPanel implements ActionListener {
                         project.saveProject();
                     } catch (FileNotFoundException f) {
                         f.printStackTrace();
-                    }   
+                    }
                 }
                 return;
             }
@@ -69,7 +63,7 @@ public class SaveFilePanel extends JPanel implements ActionListener {
         if (e.getActionCommand().equals("Save As")) {
             if (saveChooser == null)
                 saveChooser = new SaveChooser();
-            int result = saveChooser.showSaveDialog(this);
+            int result = saveChooser.showSaveDialog(mainWindow);
             if (result == JFileChooser.APPROVE_OPTION) {
                 try {
                     String target = saveChooser.getTargetPath();
@@ -80,6 +74,9 @@ public class SaveFilePanel extends JPanel implements ActionListener {
                     f.printStackTrace();
                 }
             }
+        }
+        if (e.getActionCommand().equals("Undo")) {
+            drawPanel.undo();
         }
     }
 }
