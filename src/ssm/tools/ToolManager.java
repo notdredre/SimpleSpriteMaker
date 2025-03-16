@@ -28,6 +28,7 @@ public class ToolManager {
         tools.put("SquareBrush", new SquareBrush());
         tools.put("SquareEraser", new SquareEraser());
         tools.put("Fill", new FillTool());
+        tools.put("ColourPicker", new ColourPicker());
         toolListeners = new ArrayList<>();
         current = tools.get("SquareBrush");
     }
@@ -65,6 +66,11 @@ public class ToolManager {
 
     public void getFill() {
         current = tools.get("Fill");
+        updateToolListeners();
+    }
+
+    public void getColourPicker() {
+        current = tools.get("ColourPicker");
         updateToolListeners();
     }
 
