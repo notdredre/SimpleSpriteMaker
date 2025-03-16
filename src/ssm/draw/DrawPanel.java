@@ -13,6 +13,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import ssm.tools.Tool;
 import ssm.tools.ToolListener;
@@ -227,7 +228,8 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
         b2.setBackground(getBackground());
         b2.fillRect(0, 0, getWidth(), getHeight());
         try {
-            Paint transparency = new TexturePaint(ImageIO.read((getClass().getResourceAsStream("/ssm/res/transparentTexture.png"))), new Rectangle2D.Double(0, 0, scale * 5, scale * 5));
+            File trasnparencyFile = new File("src/ssm/res/transparentTexture.png");
+            Paint transparency = new TexturePaint(ImageIO.read(trasnparencyFile), new Rectangle2D.Double(0, 0, scale * 5, scale * 5));
             b2.setPaint(transparency);
         } catch (IOException e) {
             e.printStackTrace();
