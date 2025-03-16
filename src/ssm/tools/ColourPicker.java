@@ -20,8 +20,12 @@ public class ColourPicker extends Tool {
 
     @Override
     protected void draw(int x, int y, Color c, BufferedImage buffer, int scale) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'draw'");
+        int screenX = x * scale;
+        int screenY = y * scale;
+        if (screenX >= 0 && screenX < buffer.getWidth() && screenY >= 0 && screenY < buffer.getHeight()) {
+            Color newColor = new Color(buffer.getRGB(screenX, screenY));
+            colourManager.setColour(newColor);
+        }
     }
 
     @Override
