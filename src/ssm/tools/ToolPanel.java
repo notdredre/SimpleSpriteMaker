@@ -29,7 +29,7 @@ public class ToolPanel extends JPanel implements ActionListener {
 
     private void initButtons() {
         buttonPanel = new JPanel(layout);
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 4; i++) {
             JButton newButton = new JButton();
             newButton.addActionListener(this);
             newButton.setSize(50, 50);
@@ -42,18 +42,23 @@ public class ToolPanel extends JPanel implements ActionListener {
         buttons.get(0).setText("SquareBrush");
         buttons.get(1).setText("SquareEraser");
         buttons.get(2).setText("Fill");
+        buttons.get(3).setText("ColourPicker");
     }
 
     public void actionPerformed(ActionEvent e) {
-        String command = e.getActionCommand();
-        if (command == "SquareBrush") {
-            toolManager.getSquareBrush();
-        }
-        if (command == "SquareEraser") {
-            toolManager.getSquareEraser();
-        }
-        if (command == "Fill") {
-            toolManager.getFill();
+        switch (e.getActionCommand()) {
+            case "SquareBrush":
+                toolManager.getSquareBrush();
+                break;
+            case "SquareEraser":
+                toolManager.getSquareEraser();
+                break;
+            case "Fill":
+                toolManager.getFill();
+                break;
+            case "ColourPicker":
+                toolManager.getColourPicker();
+                break;
         }
     }
 
