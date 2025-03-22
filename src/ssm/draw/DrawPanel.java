@@ -223,7 +223,7 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
 
     private void resetBackground() {
         if (getHeight() > 0 && getWidth() > 0)
-            backgroundBuffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
+            backgroundBuffer = new BufferedImage(scaleWidth, scaleHeight, BufferedImage.TYPE_INT_RGB);
         Graphics2D b2 = (Graphics2D) backgroundBuffer.getGraphics();
         b2.setBackground(getBackground());
         b2.fillRect(0, 0, getWidth(), getHeight());
