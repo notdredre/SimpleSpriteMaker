@@ -39,7 +39,7 @@ public class Project {
     }
 
     public void newProject(int numRows, int numCols, int drawingWidth, int drawingHeight, int scale) {
-        name = "Untitled";
+        name = null;
         this.numRows = numRows;
         this.numCols = numCols;
         this.drawingWidth = drawingWidth;
@@ -73,6 +73,10 @@ public class Project {
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     private void addDrawing() {

@@ -41,14 +41,16 @@ public class MenuHandler implements ActionListener {
             }
 
         }
+        currentTarget = project.getName();
         if (e.getActionCommand().equals("Save")) {
             if (currentTarget == null) {
                 if (saveChooser == null)
-                    saveChooser = new SaveChooser();
+                    saveChooser = new SaveChooser(currentTarget);
                 int result = saveChooser.showSaveDialog(mainWindow);
                 if (result == JFileChooser.APPROVE_OPTION) {
                     try {
                         currentTarget = saveChooser.getTargetPath();
+                        project.setName(currentTarget);
                         targetExtension = saveChooser.getTargetExtension();
                         imageFileManager.setTarget(currentTarget, targetExtension);
                         project.saveProject();
@@ -62,7 +64,7 @@ public class MenuHandler implements ActionListener {
         }
         if (e.getActionCommand().equals("Save As")) {
             if (saveChooser == null)
-                saveChooser = new SaveChooser();
+                saveChooser = new SaveChooser(currentTarget);
             int result = saveChooser.showSaveDialog(mainWindow);
             if (result == JFileChooser.APPROVE_OPTION) {
                 try {
