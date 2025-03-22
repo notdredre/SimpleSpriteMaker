@@ -28,6 +28,14 @@ public class ColourManager {
         return colourManager;
     }
 
+    public void reset() {
+        colours[0] = Color.BLACK;
+        colours[1] = Color.WHITE;
+        setSelected(0);
+        updateColourSwitchers();
+        updateColourReadings();
+    }
+
     public void setSelected(int choice) {
         selected = choice;
         updateColourSwitchers();
@@ -45,6 +53,7 @@ public class ColourManager {
     public void setColour(Color c) {
         colours[selected] = c;
         updateColourObjects();
+        updateColourReadings();
     }
 
     public void setColour(int r, int g, int b) {

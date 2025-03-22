@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import ssm.ProjectListener;
+import ssm.colour.ColourManager;
 import ssm.file.ImageFileManager;
 import ssm.tools.ToolManager;
 
@@ -18,6 +19,7 @@ public class Project {
     private int scale;
     private boolean previewEnabled;
     private ArrayList<ProjectListener> projectListeners;
+    private ColourManager colourManager;
 
     private Project(int drawingWidth, int drawingHeight, int scale) {
         this(1, 1, drawingWidth, drawingHeight, scale);
@@ -32,6 +34,7 @@ public class Project {
         toolManager = ToolManager.getToolManager();
         previewEnabled = false;
         projectListeners = new ArrayList<>();
+        colourManager = ColourManager.getColourManager();
     }
 
     public void newProject(int numRows, int numCols, int drawingWidth, int drawingHeight, int scale) {
@@ -51,6 +54,7 @@ public class Project {
         for (int i = 0; i < numRows * numCols; i++) {
             addDrawing();
         }
+        colourManager.reset();
         triggerOnNewProject();
         triggerOnBuffersChanged();
     }
