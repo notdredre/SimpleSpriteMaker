@@ -113,7 +113,9 @@ public class Project {
     public BufferedImage getPreviewBuffer() {
         if (previewEnabled) {
             int[] cell = getLeft(currentRow, currentCol);
-            return getPreviewBuffer(cell[0], cell[1]);
+            previewRow = cell[0];
+            previewCol = cell[1];
+            return getPreviewBuffer(previewRow, previewCol);
         } else
             return null;
     }
