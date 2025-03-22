@@ -20,6 +20,7 @@ public class Project {
     private boolean previewEnabled;
     private ArrayList<ProjectListener> projectListeners;
     private ColourManager colourManager;
+    private String name;
 
     private Project(int drawingWidth, int drawingHeight, int scale) {
         this(1, 1, drawingWidth, drawingHeight, scale);
@@ -38,6 +39,7 @@ public class Project {
     }
 
     public void newProject(int numRows, int numCols, int drawingWidth, int drawingHeight, int scale) {
+        name = "Untitled";
         this.numRows = numRows;
         this.numCols = numCols;
         this.drawingWidth = drawingWidth;
@@ -67,6 +69,10 @@ public class Project {
         if (project == null)
             project = new Project();
         return project;
+    }
+
+    public String getName() {
+        return name;
     }
 
     private void addDrawing() {

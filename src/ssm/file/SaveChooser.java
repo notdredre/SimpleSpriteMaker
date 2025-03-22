@@ -14,7 +14,7 @@ public class SaveChooser extends JFileChooser {
     private final FileNameExtensionFilter pngFilter = new FileNameExtensionFilter("PNG Image", "png");
     private final FileNameExtensionFilter gifFilter = new FileNameExtensionFilter("GIF Image", "gif");
     private final FileNameExtensionFilter jpgFilter = new FileNameExtensionFilter("JPG/JPEG Image", "jpg", "jpeg");
-    private String targetExtension;
+    private String target, targetExtension;
 
     protected JDialog createDialog(Component parent) {
         JDialog dlg = super.createDialog(parent);
@@ -22,12 +22,16 @@ public class SaveChooser extends JFileChooser {
         return dlg;
     }
 
+
     public SaveChooser() {
+        if (target == null) {
+            target = "Untitled";
+        }
         setAcceptAllFileFilterUsed(false);
         addChoosableFileFilter(gifFilter);
         addChoosableFileFilter(jpgFilter);
         addChoosableFileFilter(pngFilter);
-        setSelectedFile(new File("Untitled"));
+        setSelectedFile(new File(target));
         addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
