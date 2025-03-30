@@ -55,6 +55,7 @@ public class MenuHandler implements ActionListener {
                         targetExtension = saveChooser.getTargetExtension();
                         imageFileManager.setTarget(currentTarget, targetExtension);
                         project.saveProject();
+                        mainWindow.setTitle(project.getName() + "." + targetExtension + " - SimpleSpriteMaker v0.6");
                     } catch (FileNotFoundException f) {
                         f.printStackTrace();
                     }
