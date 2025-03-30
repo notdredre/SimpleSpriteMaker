@@ -102,7 +102,8 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
             r2.drawImage(drawBuffer, 0, 0, null); 
             r2.drawImage(overlayBuffer, 0, 0, null);
             r2.dispose(); 
-            c2.drawImage(renderBuffer.getScaledInstance(resizeX, resizeY, BufferedImage.SCALE_FAST), x, y, null);         
+            c2.drawImage(renderBuffer.getScaledInstance(resizeX, resizeY, BufferedImage.SCALE_FAST), x, y, null);
+            drawPositionMarkers();     
             c2.setColor(Color.BLACK);
             String currentCellOut = "(" + (currentPixelX + 1) + ", " + (currentPixelY + 1) + ")";
             c2.drawString(currentCellOut, compositeBuffer.getWidth() - 50, compositeBuffer.getHeight() - 50);
@@ -171,6 +172,43 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
     public void scaleInput(int eventX, int eventY) {
         currentPixelX = ((eventX - x) / scale) / (resizeX / scaleWidth);
         currentPixelY = ((eventY - y) / scale) / (resizeY / scaleHeight);
+    }
+
+    private void drawPositionMarkers() {
+        Graphics2D c2 = (Graphics2D) compositeBuffer.getGraphics();
+        c2.setColor(new Color(0, 0, 0, 127));
+        c2.setFont(new Font(Font.DIALOG, Font.BOLD, scale * resizeFactor));
+        int subdivide = 1;
+        for (int i = 0; i < pixelWidth; i += 20) {
+            int subWidth = pixelWidth / subdivide;
+            String width = Integer.toString(subWidth);
+            int yOff = 0;
+            if (y > 0)
+                yOff = y;
+            c2.drawString(width, subWidth * scale * resizeFactor + x - scale * resizeFactor, scale * resizeFactor + yOff);
+            if (subdivide > 2) {
+                subWidth = pixelWidth - pixelWidth / subdivide;
+                width = Integer.toString(subWidth);
+                c2.drawString(width, subWidth * scale * resizeFactor + x - scale * resizeFactor, scale * resizeFactor + yOff);
+            }
+            subdivide *= 2;
+        }
+        subdivide = 1;
+        for (int i = 0; i < pixelHeight; i += 20) {
+            int subHeight = pixelHeight / subdivide;
+            String height = Integer.toString(subHeight);
+            int xOff = 0;
+            if (x > 0)
+                xOff = x;
+            c2.drawString(height, xOff, subHeight * scale * resizeFactor + y);
+            if (subdivide > 2) {
+                subHeight = pixelHeight - pixelHeight / subdivide;
+                height = Integer.toString(subHeight);
+                c2.drawString(height, xOff, subHeight * scale * resizeFactor + y);
+            }
+            subdivide *= 2;
+        }
+        
     }
 
     public void clearOverlay() {
