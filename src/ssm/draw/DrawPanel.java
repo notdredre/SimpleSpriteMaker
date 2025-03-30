@@ -6,6 +6,7 @@ import ssm.Refreshable;
 import ssm.colour.ColourObject;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.TexturePaint;
@@ -22,7 +23,7 @@ import ssm.tools.ToolManager;
 public class DrawPanel extends JPanel implements ColourObject, Refreshable, ToolListener, ProjectListener {
     private final int WIDTH = 500, HEIGHT = 500, RESIZE_MAX = 5;
     private final Color bgColour = new Color(180, 180, 180);
-    private int scale, scaleWidth, scaleHeight;
+    private int scale, scaleWidth, scaleHeight, pixelWidth, pixelHeight;
     private BufferedImage drawBuffer, overlayBuffer, renderBuffer, writeBuffer, backgroundBuffer, previewBuffer, compositeBuffer;
     private int x, y;
     private float percentX, percentY;
@@ -74,6 +75,8 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
     }
 
     public void createBuffers(int pixelWidth, int pixelHeight, int scale) {
+        this.pixelWidth = pixelWidth;
+        this.pixelHeight = pixelHeight;
         drawBuffer = new BufferedImage(scaleWidth, scaleHeight, BufferedImage.TYPE_INT_ARGB);
         writeBuffer = new BufferedImage(pixelWidth, pixelHeight, BufferedImage.TYPE_INT_ARGB);
         overlayBuffer = new BufferedImage(scaleWidth, scaleHeight, BufferedImage.TYPE_INT_ARGB);
@@ -96,10 +99,13 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
             r2.drawImage(backgroundBuffer, 0, 0, null);
             if (previewBuffer != null)
                 r2.drawImage(previewBuffer, 0, 0, null);
-            r2.drawImage(drawBuffer, 0, 0, null);
+            r2.drawImage(drawBuffer, 0, 0, null); 
             r2.drawImage(overlayBuffer, 0, 0, null);
-            r2.dispose();  
-            c2.drawImage(renderBuffer.getScaledInstance(resizeX, resizeY, BufferedImage.SCALE_FAST), x, y, null);
+            r2.dispose(); 
+            c2.drawImage(renderBuffer.getScaledInstance(resizeX, resizeY, BufferedImage.SCALE_FAST), x, y, null);         
+            c2.setColor(Color.BLACK);
+            String currentCellOut = "(" + (currentPixelX + 1) + ", " + (currentPixelY + 1) + ")";
+            c2.drawString(currentCellOut, compositeBuffer.getWidth() - 50, compositeBuffer.getHeight() - 50);
         }
         
         c2.dispose();
