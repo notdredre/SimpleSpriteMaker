@@ -43,9 +43,10 @@ public class MenuHandler implements ActionListener {
         }
         currentTarget = project.getName();
         if (e.getActionCommand().equals("Save")) {
-            if (currentTarget == null) {
+            if (currentTarget.equals("Untitled")) {
                 if (saveChooser == null)
                     saveChooser = new SaveChooser(currentTarget);
+                saveChooser.setTarget(currentTarget);
                 int result = saveChooser.showSaveDialog(mainWindow);
                 if (result == JFileChooser.APPROVE_OPTION) {
                     try {

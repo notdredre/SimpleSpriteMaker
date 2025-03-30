@@ -57,6 +57,7 @@ public class Project {
             addDrawing();
         }
         colourManager.reset();
+        setName("Untitled");
         triggerOnNewProject();
         triggerOnBuffersChanged();
     }

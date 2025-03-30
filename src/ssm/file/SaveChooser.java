@@ -24,9 +24,6 @@ public class SaveChooser extends JFileChooser {
 
 
     public SaveChooser(String target) {
-        if (target == null) {
-            target = "Untitled";
-        }
         setAcceptAllFileFilterUsed(false);
         addChoosableFileFilter(gifFilter);
         addChoosableFileFilter(jpgFilter);
@@ -41,6 +38,10 @@ public class SaveChooser extends JFileChooser {
         });
     }
 
+    public void setTarget(String target) {
+        setSelectedFile(new File(target));
+    }
+    
     public String getTargetPath() throws FileNotFoundException {
         if (getSelectedFile() != null)
             return getSelectedFile().getAbsolutePath();
