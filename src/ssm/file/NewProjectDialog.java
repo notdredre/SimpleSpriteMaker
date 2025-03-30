@@ -13,6 +13,8 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import ssm.MainWindow;
 import ssm.draw.Project;
 
 public class NewProjectDialog extends JDialog implements ActionListener, ChangeListener {
@@ -25,8 +27,10 @@ public class NewProjectDialog extends JDialog implements ActionListener, ChangeL
     private JCheckBox lockRatio, spriteSheet;
     private float aspectRatio;
     private Project project;
+    private MainWindow mainWindow;
 
-    public NewProjectDialog() {
+    public NewProjectDialog(MainWindow mainWindow) {
+        this.mainWindow = mainWindow;
         setSize(WIDTH, HEIGHT);
         setResizable(false);
         setLocationRelativeTo(null);
@@ -100,6 +104,7 @@ public class NewProjectDialog extends JDialog implements ActionListener, ChangeL
             }
             else
                 project.newProject(drawingWidth, drawingHeight, 20);
+            mainWindow.setTitle(project.getName() + " - SimpleSpriteMaker v0.6");
             dispose();
         }
         if (command.equals("Cancel")) {

@@ -24,8 +24,8 @@ public class MenuHandler implements ActionListener {
         project = Project.getProject();
         targetExtension = currentTarget = null;
         saveChooser = null;
-        newDialog = new NewProjectDialog();
         this.mainWindow = mainWindow;
+        newDialog = new NewProjectDialog(mainWindow);
         this.drawPanel = drawPanel;
         imageFileManager = ImageFileManager.getImageFileManager();
     }
