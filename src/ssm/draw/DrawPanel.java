@@ -6,6 +6,7 @@ import ssm.Refreshable;
 import ssm.colour.ColourObject;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.TexturePaint;
@@ -22,7 +23,7 @@ import ssm.tools.ToolManager;
 public class DrawPanel extends JPanel implements ColourObject, Refreshable, ToolListener, ProjectListener {
     private final int WIDTH = 500, HEIGHT = 500, RESIZE_MAX = 5;
     private final Color bgColour = new Color(180, 180, 180);
-    private int scale, scaleWidth, scaleHeight;
+    private int scale, scaleWidth, scaleHeight, pixelWidth, pixelHeight;
     private BufferedImage drawBuffer, overlayBuffer, renderBuffer, writeBuffer, backgroundBuffer, previewBuffer, compositeBuffer;
     private int x, y;
     private float percentX, percentY;
@@ -74,6 +75,8 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
     }
 
     public void createBuffers(int pixelWidth, int pixelHeight, int scale) {
+        this.pixelWidth = pixelWidth;
+        this.pixelHeight = pixelHeight;
         drawBuffer = new BufferedImage(scaleWidth, scaleHeight, BufferedImage.TYPE_INT_ARGB);
         writeBuffer = new BufferedImage(pixelWidth, pixelHeight, BufferedImage.TYPE_INT_ARGB);
         overlayBuffer = new BufferedImage(scaleWidth, scaleHeight, BufferedImage.TYPE_INT_ARGB);
@@ -96,10 +99,14 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
             r2.drawImage(backgroundBuffer, 0, 0, null);
             if (previewBuffer != null)
                 r2.drawImage(previewBuffer, 0, 0, null);
-            r2.drawImage(drawBuffer, 0, 0, null);
+            r2.drawImage(drawBuffer, 0, 0, null); 
             r2.drawImage(overlayBuffer, 0, 0, null);
-            r2.dispose();  
+            r2.dispose(); 
             c2.drawImage(renderBuffer.getScaledInstance(resizeX, resizeY, BufferedImage.SCALE_FAST), x, y, null);
+            drawPositionMarkers();     
+            c2.setColor(Color.BLACK);
+            String currentCellOut = "(" + (currentPixelX + 1) + ", " + (currentPixelY + 1) + ")";
+            c2.drawString(currentCellOut, compositeBuffer.getWidth() - 50, compositeBuffer.getHeight() - 50);
         }
         
         c2.dispose();
@@ -165,6 +172,43 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
     public void scaleInput(int eventX, int eventY) {
         currentPixelX = ((eventX - x) / scale) / (resizeX / scaleWidth);
         currentPixelY = ((eventY - y) / scale) / (resizeY / scaleHeight);
+    }
+
+    private void drawPositionMarkers() {
+        Graphics2D c2 = (Graphics2D) compositeBuffer.getGraphics();
+        c2.setColor(new Color(0, 0, 0, 127));
+        c2.setFont(new Font(Font.DIALOG, Font.BOLD, scale * resizeFactor));
+        int subdivide = 1;
+        for (int i = 0; i < pixelWidth; i += 20) {
+            int subWidth = pixelWidth / subdivide;
+            String width = Integer.toString(subWidth);
+            int yOff = 0;
+            if (y > 0)
+                yOff = y;
+            c2.drawString(width, subWidth * scale * resizeFactor + x - scale * resizeFactor, scale * resizeFactor + yOff);
+            if (subdivide > 2) {
+                subWidth = pixelWidth - pixelWidth / subdivide;
+                width = Integer.toString(subWidth);
+                c2.drawString(width, subWidth * scale * resizeFactor + x - scale * resizeFactor, scale * resizeFactor + yOff);
+            }
+            subdivide *= 2;
+        }
+        subdivide = 1;
+        for (int i = 0; i < pixelHeight; i += 20) {
+            int subHeight = pixelHeight / subdivide;
+            String height = Integer.toString(subHeight);
+            int xOff = 0;
+            if (x > 0)
+                xOff = x;
+            c2.drawString(height, xOff, subHeight * scale * resizeFactor + y);
+            if (subdivide > 2) {
+                subHeight = pixelHeight - pixelHeight / subdivide;
+                height = Integer.toString(subHeight);
+                c2.drawString(height, xOff, subHeight * scale * resizeFactor + y);
+            }
+            subdivide *= 2;
+        }
+        
     }
 
     public void clearOverlay() {
