@@ -45,6 +45,7 @@ public class MainWindow extends JFrame implements Runnable {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         initComponents();
+        setTitle(project.getName() + " - SimpleSpriteMaker v0.6");
         setVisible(true);
         setBackground(new Color(240, 240, 240));
         colourManager.updateColourObjects();

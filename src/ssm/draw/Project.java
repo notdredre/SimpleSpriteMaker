@@ -20,6 +20,7 @@ public class Project {
     private boolean previewEnabled;
     private ArrayList<ProjectListener> projectListeners;
     private ColourManager colourManager;
+    private String name;
 
     private Project(int drawingWidth, int drawingHeight, int scale) {
         this(1, 1, drawingWidth, drawingHeight, scale);
@@ -38,6 +39,7 @@ public class Project {
     }
 
     public void newProject(int numRows, int numCols, int drawingWidth, int drawingHeight, int scale) {
+        name = null;
         this.numRows = numRows;
         this.numCols = numCols;
         this.drawingWidth = drawingWidth;
@@ -55,6 +57,7 @@ public class Project {
             addDrawing();
         }
         colourManager.reset();
+        setName("Untitled");
         triggerOnNewProject();
         triggerOnBuffersChanged();
     }
@@ -67,6 +70,14 @@ public class Project {
         if (project == null)
             project = new Project();
         return project;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     private void addDrawing() {

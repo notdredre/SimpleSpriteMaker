@@ -22,12 +22,13 @@ public class SaveChooser extends JFileChooser {
         return dlg;
     }
 
-    public SaveChooser() {
+
+    public SaveChooser(String target) {
         setAcceptAllFileFilterUsed(false);
         addChoosableFileFilter(gifFilter);
         addChoosableFileFilter(jpgFilter);
         addChoosableFileFilter(pngFilter);
-        setSelectedFile(new File("Untitled"));
+        setSelectedFile(new File(target));
         addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
@@ -37,6 +38,10 @@ public class SaveChooser extends JFileChooser {
         });
     }
 
+    public void setTarget(String target) {
+        setSelectedFile(new File(target));
+    }
+    
     public String getTargetPath() throws FileNotFoundException {
         if (getSelectedFile() != null)
             return getSelectedFile().getAbsolutePath();

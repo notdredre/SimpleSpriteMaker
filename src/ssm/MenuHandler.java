@@ -24,8 +24,8 @@ public class MenuHandler implements ActionListener {
         project = Project.getProject();
         targetExtension = currentTarget = null;
         saveChooser = null;
-        newDialog = new NewProjectDialog();
         this.mainWindow = mainWindow;
+        newDialog = new NewProjectDialog(mainWindow);
         this.drawPanel = drawPanel;
         imageFileManager = ImageFileManager.getImageFileManager();
     }
@@ -41,17 +41,21 @@ public class MenuHandler implements ActionListener {
             }
 
         }
+        currentTarget = project.getName();
         if (e.getActionCommand().equals("Save")) {
-            if (currentTarget == null) {
+            if (currentTarget.equals("Untitled")) {
                 if (saveChooser == null)
-                    saveChooser = new SaveChooser();
+                    saveChooser = new SaveChooser(currentTarget);
+                saveChooser.setTarget(currentTarget);
                 int result = saveChooser.showSaveDialog(mainWindow);
                 if (result == JFileChooser.APPROVE_OPTION) {
                     try {
                         currentTarget = saveChooser.getTargetPath();
+                        project.setName(currentTarget);
                         targetExtension = saveChooser.getTargetExtension();
                         imageFileManager.setTarget(currentTarget, targetExtension);
                         project.saveProject();
+                        mainWindow.setTitle(project.getName() + "." + targetExtension + " - SimpleSpriteMaker v0.6");
                     } catch (FileNotFoundException f) {
                         f.printStackTrace();
                     }
@@ -62,7 +66,7 @@ public class MenuHandler implements ActionListener {
         }
         if (e.getActionCommand().equals("Save As")) {
             if (saveChooser == null)
-                saveChooser = new SaveChooser();
+                saveChooser = new SaveChooser(currentTarget);
             int result = saveChooser.showSaveDialog(mainWindow);
             if (result == JFileChooser.APPROVE_OPTION) {
                 try {
