@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
+import ssm.MainWindow;
 import ssm.draw.Project;
 
 public class OpenChooser extends JFrame implements ActionListener {
@@ -21,8 +22,10 @@ public class OpenChooser extends JFrame implements ActionListener {
     private JPanel spinnerPanel;
     private JFileChooser openChooser;
     private Project project;
+    private MainWindow mainWindow;
 
-    public OpenChooser() {
+    public OpenChooser(MainWindow mainWindow) {
+        this.mainWindow = mainWindow;
         setSize(WIDTH, HEIGHT);
         setResizable(false);
         setLocationRelativeTo(null);
@@ -48,6 +51,7 @@ public class OpenChooser extends JFrame implements ActionListener {
         int result = openChooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             project.openProject(openChooser.getSelectedFile().getAbsolutePath(), row.getNumber().intValue(), col.getNumber().intValue());
+            mainWindow.setTitle(project.getName() + " - SimpleSpriteMaker v0.6");
             dispose();
         }
     }

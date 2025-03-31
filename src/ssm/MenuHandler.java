@@ -85,7 +85,7 @@ public class MenuHandler implements ActionListener {
             drawPanel.undo();
             break;
         case "Open":
-            openChooser = new OpenChooser();
+            openChooser = new OpenChooser(mainWindow);
         }
     }
 }

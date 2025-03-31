@@ -78,6 +78,7 @@ public class Project {
         newProject(imageFile.getWidth(), imageFile.getHeight(), 20);
         writeBuffers.set(0, imageFile);
         drawings.get(0).setBuffer(imageFile.getScaledInstance(drawingWidth * scale, drawingHeight * scale, BufferedImage.SCALE_DEFAULT));
+        setName(path);
     }
 
     public void openProject(String path, int numRows, int numCols) {
@@ -89,6 +90,7 @@ public class Project {
             writeBuffers.set(i, images.get(i));
             drawings.get(i).setBuffer(images.get(i).getScaledInstance(drawingWidth * scale, drawingHeight * scale, BufferedImage.SCALE_DEFAULT));
         }
+        setName(path);
     }
 
     public static Project getProject() {
