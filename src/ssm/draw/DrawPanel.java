@@ -34,6 +34,7 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
     private int currentPixelX, currentPixelY;
     private int resizeX, resizeY, resizeFactor;
     private int panelWidth, panelHeight;
+    private int currentRow, currentCol;
     private DrawingMouseListener drawingMouseListener;
     private DrawingKeyboardListener drawingKeyboardListener;
     private UndoStack undoStack;
@@ -328,6 +329,8 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
 
 
     public void onCellChanged(int currentRow, int currentCol, UndoStack currentUndo) {
+        this.currentRow = currentRow;
+        this.currentCol = currentCol;
         undoStack = currentUndo;
     }
 }
