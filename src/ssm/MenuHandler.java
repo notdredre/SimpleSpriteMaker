@@ -64,6 +64,12 @@ public class MenuHandler implements ActionListener {
                     }
                     return;
                 }
+                if (currentTarget.lastIndexOf('.') != -1) {
+                    targetExtension = currentTarget.substring(currentTarget.lastIndexOf('.') + 1);
+                } else {
+                    targetExtension = "gif";
+                }
+                imageFileManager.setTarget(currentTarget, targetExtension);
                 project.saveProject();
                 break;
         case "Save As":
