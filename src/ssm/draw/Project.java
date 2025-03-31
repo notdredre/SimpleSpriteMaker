@@ -80,6 +80,17 @@ public class Project {
         drawings.get(0).setBuffer(imageFile.getScaledInstance(drawingWidth * scale, drawingHeight * scale, BufferedImage.SCALE_DEFAULT));
     }
 
+    public void openProject(String path, int numRows, int numCols) {
+        ArrayList<BufferedImage> images = ImageFileManager.openSpriteSheet(path, numRows, numCols);
+        this.drawingWidth = images.get(0).getWidth();
+        this.drawingHeight = images.get(0).getHeight();
+        newProject(numRows, numCols, drawingWidth, drawingHeight, 20);
+        for (int i = 0; i < images.size(); i++) {
+            writeBuffers.set(i, images.get(i));
+            drawings.get(i).setBuffer(images.get(i).getScaledInstance(drawingWidth * scale, drawingHeight * scale, BufferedImage.SCALE_DEFAULT));
+        }
+    }
+
     public static Project getProject() {
         if (project == null)
             project = new Project();

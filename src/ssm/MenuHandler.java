@@ -8,6 +8,7 @@ import ssm.draw.DrawPanel;
 import ssm.draw.Project;
 import ssm.file.ImageFileManager;
 import ssm.file.NewProjectDialog;
+import ssm.file.OpenChooser;
 import ssm.file.SaveChooser;
 
 public class MenuHandler implements ActionListener {
@@ -15,7 +16,7 @@ public class MenuHandler implements ActionListener {
     private String targetExtension;
     private String currentTarget;
     private SaveChooser saveChooser;
-    private JFileChooser openChooser;
+    private OpenChooser openChooser;
     private NewProjectDialog newDialog;
     private MainWindow mainWindow;
     private DrawPanel drawPanel;
@@ -33,6 +34,7 @@ public class MenuHandler implements ActionListener {
     
     public void actionPerformed(ActionEvent e) {
         project = Project.getProject();
+        currentTarget = project.getName();
         switch (e.getActionCommand()) {
             case "New Project":
                 if (!newDialog.isVisible()) {
@@ -83,12 +85,7 @@ public class MenuHandler implements ActionListener {
             drawPanel.undo();
             break;
         case "Open":
-            openChooser = new JFileChooser();
-            int choice = openChooser.showOpenDialog(mainWindow);
-            if (choice == JFileChooser.APPROVE_OPTION) {
-                project.openProject(openChooser.getSelectedFile().getAbsolutePath());
-            }
+            openChooser = new OpenChooser();
         }
-        currentTarget = project.getName();
     }
 }
