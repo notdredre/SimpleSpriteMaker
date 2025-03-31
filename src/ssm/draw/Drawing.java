@@ -1,5 +1,7 @@
 package ssm.draw;
 
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 
 public class Drawing {
@@ -22,6 +24,11 @@ public class Drawing {
 
     public BufferedImage getBuffer() {
         return drawBuffer;
+    }
+
+    public void setBuffer(Image buffer) {
+        Graphics2D d2 = (Graphics2D) drawBuffer.getGraphics();
+        d2.drawImage(buffer, 0, 0, null);
     }
 
     public int getWidth() {

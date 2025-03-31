@@ -73,6 +73,13 @@ public class Project {
         newProject(1, 1, drawingWidth, drawingHeight, scale);
     }
 
+    public void openProject(String path) {
+        BufferedImage imageFile = ImageFileManager.openImage(path);
+        newProject(imageFile.getWidth(), imageFile.getHeight(), 20);
+        writeBuffers.set(0, imageFile);
+        drawings.get(0).setBuffer(imageFile.getScaledInstance(drawingWidth * scale, drawingHeight * scale, BufferedImage.SCALE_DEFAULT));
+    }
+
     public static Project getProject() {
         if (project == null)
             project = new Project();
