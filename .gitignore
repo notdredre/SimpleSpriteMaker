@@ -1,6 +1,7 @@
 # Compiled class file
 out/
 *.class
+sources.txt
 
 # Log file
 *.log
