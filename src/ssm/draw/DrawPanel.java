@@ -105,9 +105,13 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
             r2.drawImage(overlayBuffer, 0, 0, null);
             r2.dispose();
             c2.drawImage(renderBuffer.getScaledInstance(resizeX, resizeY, BufferedImage.SCALE_FAST), x, y, null);
-            c2.drawImage(previewBuffer, 1, 1, null);
+            c2.scale((panelWidth * 1f / 4) / previewBuffer.getWidth(), (panelWidth * 1f / 4) / previewBuffer.getWidth());
+            c2.setColor(new Color(0,0,0, 100));
+            c2.fillRect(0, 0, previewBuffer.getWidth(), previewBuffer.getHeight());
+            c2.drawImage(previewBuffer, 0, 0, null);
             c2.setColor(Color.YELLOW);
             c2.drawRect(currentCol * pixelWidth, currentRow * pixelHeight, pixelWidth, pixelHeight);
+            c2.scale(1, 1);
             drawPositionMarkers(0, 0, pixelWidth, pixelHeight);
             c2.setColor(Color.BLACK);
             String currentCellOut = "(" + (currentPixelY + 1) + ", " + (currentPixelX + 1) + ")";
