@@ -21,9 +21,9 @@ public abstract class SquareTool extends DrawTool {
                 if (i > screenEast || j > screenSouth || i < 0 || j < 0)
                     continue;
                 int bRGB = drawBuffer.getRGB(i, j);
-                int result = ColourOp.minus(Color.BLACK.getRGB(), bRGB);
-                if (bRGB == Color.BLACK.getRGB())
-                    result = Color.WHITE.getRGB();
+                int result = ColourOp.minus(Color.WHITE.getRGB(), bRGB);
+                if (bRGB == 0)
+                    result = Color.BLACK.getRGB();
                 if (i == screenX || i == pixelEast){   
                     overlayBuffer.setRGB(i, j, result);
                 }
