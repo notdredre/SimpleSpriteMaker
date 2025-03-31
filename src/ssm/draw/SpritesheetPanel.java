@@ -102,7 +102,7 @@ public class SpritesheetPanel extends JPanel implements ActionListener, ChangeLi
         colSpinner.setModel(colModel);
     }
 
-    public void onCellChanged(int currentRow, int currentCol) {
+    public void onCellChanged(int currentRow, int currentCol, UndoStack currentUndo) {
         rowSpinner.setValue(currentRow + 1);
         colSpinner.setValue(currentCol + 1);
     }

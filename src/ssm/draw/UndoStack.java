@@ -4,7 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 public class UndoStack {
-    private final int STACK_SIZE = 10;
+    private final int STACK_SIZE = 20;
     private BufferedImage[][] stack;
     private int top, bottom;
     private BufferedImage drawCopy, writeCopy;

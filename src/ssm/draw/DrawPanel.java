@@ -43,7 +43,6 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
         setBackground(bgColour);
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         panelWidth = panelHeight = 0;
-        undoStack = new UndoStack();
         scale = 20;
         toolManager = ToolManager.getToolManager();
         toolManager.addToolListener(this);
@@ -70,7 +69,6 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
         resizeY = Math.clamp(resizeFactor * scaleHeight, scaleHeight, scaleHeight * RESIZE_MAX);
         percentX = percentY = 0.5f;
         currentPixelX = currentPixelY = -1;
-        undoStack.init();
         createBuffers(pixelWidth, pixelHeight, scale);
         positionDrawing();
         clear();
@@ -328,7 +326,8 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
         init(drawingWidth, drawingHeight);
     }
 
-    public void onCellChanged(int currentRow, int currentCol) {
 
+    public void onCellChanged(int currentRow, int currentCol, UndoStack currentUndo) {
+        undoStack = currentUndo;
     }
 }

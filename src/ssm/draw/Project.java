@@ -14,6 +14,8 @@ public class Project {
     private ToolManager toolManager;
     private ArrayList<Drawing> drawings;
     private ArrayList<BufferedImage> writeBuffers;
+    private ArrayList<UndoStack> undoStacks;
+    private UndoStack currentUndo;
     private int numRows, numCols, currentRow, currentCol, lastRow, lastCol, previewRow, previewCol;
     private int drawingWidth, drawingHeight;
     private int scale;
@@ -53,13 +55,18 @@ public class Project {
         currentRow = currentCol = 0;
         drawings = new ArrayList<>(numRows * numCols);
         writeBuffers = new ArrayList<>(numRows * numCols);
+        undoStacks = new ArrayList<>(numRows * numCols);
         for (int i = 0; i < numRows * numCols; i++) {
             addDrawing();
+            undoStacks.add(new UndoStack());
+            undoStacks.get(i).push(getDrawBuffer(), getWriteBuffer());
         }
+        currentUndo = undoStacks.get(0);
         colourManager.reset();
         setName("Untitled");
         triggerOnNewProject();
         triggerOnBuffersChanged();
+        triggerOnCellChanged();
     }
 
     public void newProject(int drawingWidth, int drawingHeight, int scale) {
@@ -130,6 +137,7 @@ public class Project {
     }
 
     private BufferedImage getDrawBuffer(int row, int col) {
+        currentUndo = undoStacks.get(row * numCols + col);
         return drawings.get(row * numCols + col).getBuffer();
     }
 
@@ -185,6 +193,7 @@ public class Project {
         if (row >= 0 && row < numRows && col >= 0 && col < numCols) {
             currentRow = row;
             currentCol = col;
+            currentUndo = undoStacks.get(row * numCols + col);
             triggerOnCellChanged();
             triggerOnBuffersChanged();
         }
@@ -304,7 +313,7 @@ public class Project {
 
     private void triggerOnCellChanged() {
         for (ProjectListener p : projectListeners) {
-            p.onCellChanged(currentRow, currentCol);
+            p.onCellChanged(currentRow, currentCol, currentUndo);
         }
     }
 
