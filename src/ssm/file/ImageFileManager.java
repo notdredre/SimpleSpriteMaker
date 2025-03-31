@@ -5,6 +5,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+
 import javax.imageio.ImageIO;
 
 public class ImageFileManager {
@@ -66,6 +69,37 @@ public class ImageFileManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static ArrayList<BufferedImage> openSpriteSheet(String path, int numRows, int numCols) {
+        ArrayList<BufferedImage> images = new ArrayList<>();
+        try {
+            BufferedImage sheet = ImageIO.read(new File(path));
+            int frameWidth = sheet.getWidth() / numCols;
+            int frameHeight = sheet.getHeight() / numRows;
+            for (int i = 0; i < numRows; i++) {
+                for (int j = 0; j < numCols; j++) {
+                    BufferedImage frame = new BufferedImage(frameWidth, frameHeight, BufferedImage.TYPE_INT_ARGB);
+                    Graphics2D f2 = (Graphics2D) frame.getGraphics();
+                    f2.drawImage(sheet, 0, 0, frameWidth, frameHeight, j * frameWidth, i * frameHeight, j * frameWidth + frameWidth, i * frameHeight + frameHeight, null);
+                    f2.dispose();
+                    images.add(frame);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return images;
+    }
+
+    public static BufferedImage openImage(String path) {
+        BufferedImage image = null;
+        try {
+            image = ImageIO.read(new File(path));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return image;
     }
 
     private String parseName(String fileName) {
