@@ -15,6 +15,7 @@ public class MenuHandler implements ActionListener {
     private String targetExtension;
     private String currentTarget;
     private SaveChooser saveChooser;
+    private JFileChooser openChooser;
     private NewProjectDialog newDialog;
     private MainWindow mainWindow;
     private DrawPanel drawPanel;
@@ -32,39 +33,38 @@ public class MenuHandler implements ActionListener {
     
     public void actionPerformed(ActionEvent e) {
         project = Project.getProject();
-        if (e.getActionCommand().equals("New Project")) {
-            if (!newDialog.isVisible()) {
-                newDialog.setLocationRelativeTo(null);
-                newDialog.setVisible(true);
-            } else {
-                newDialog.toFront();
-            }
-
-        }
-        currentTarget = project.getName();
-        if (e.getActionCommand().equals("Save")) {
-            if (currentTarget.equals("Untitled")) {
-                if (saveChooser == null)
-                    saveChooser = new SaveChooser(currentTarget);
-                saveChooser.setTarget(currentTarget);
-                int result = saveChooser.showSaveDialog(mainWindow);
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    try {
-                        currentTarget = saveChooser.getTargetPath();
-                        project.setName(currentTarget);
-                        targetExtension = saveChooser.getTargetExtension();
-                        imageFileManager.setTarget(currentTarget, targetExtension);
-                        project.saveProject();
-                        mainWindow.setTitle(project.getName() + "." + targetExtension + " - SimpleSpriteMaker v0.6");
-                    } catch (FileNotFoundException f) {
-                        f.printStackTrace();
-                    }
+        switch (e.getActionCommand()) {
+            case "New Project":
+                if (!newDialog.isVisible()) {
+                    newDialog.setLocationRelativeTo(null);
+                    newDialog.setVisible(true);
+                } else {
+                    newDialog.toFront();
                 }
-                return;
-            }
-            project.saveProject();
-        }
-        if (e.getActionCommand().equals("Save As")) {
+                break;
+            case "Save":
+                if (currentTarget.equals("Untitled")) {
+                    if (saveChooser == null)
+                        saveChooser = new SaveChooser(currentTarget);
+                    saveChooser.setTarget(currentTarget);
+                    int result = saveChooser.showSaveDialog(mainWindow);
+                    if (result == JFileChooser.APPROVE_OPTION) {
+                        try {
+                            currentTarget = saveChooser.getTargetPath();
+                            project.setName(currentTarget);
+                            targetExtension = saveChooser.getTargetExtension();
+                            imageFileManager.setTarget(currentTarget, targetExtension);
+                            project.saveProject();
+                            mainWindow.setTitle(project.getName() + "." + targetExtension + " - SimpleSpriteMaker v0.6");
+                        } catch (FileNotFoundException f) {
+                            f.printStackTrace();
+                        }
+                    }
+                    return;
+                }
+                project.saveProject();
+                break;
+        case "Save As":
             if (saveChooser == null)
                 saveChooser = new SaveChooser(currentTarget);
             int result = saveChooser.showSaveDialog(mainWindow);
@@ -78,9 +78,17 @@ public class MenuHandler implements ActionListener {
                     f.printStackTrace();
                 }
             }
-        }
-        if (e.getActionCommand().equals("Undo")) {
+            break;
+        case "Undo":
             drawPanel.undo();
+            break;
+        case "Open":
+            openChooser = new JFileChooser();
+            int choice = openChooser.showOpenDialog(mainWindow);
+            if (choice == JFileChooser.APPROVE_OPTION) {
+                project.openProject(openChooser.getSelectedFile().getAbsolutePath());
+            }
         }
+        currentTarget = project.getName();
     }
 }

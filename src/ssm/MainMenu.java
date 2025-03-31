@@ -7,7 +7,7 @@ import java.awt.event.ActionListener;
 
 public class MainMenu extends MenuBar{
     private Menu file, edit, help;
-    private MenuItem newProject, saveDrawing, saveAs, undo;
+    private MenuItem newProject, saveDrawing, saveAs, undo, open;
 
     public MainMenu() {
         file = new Menu("File");
@@ -17,9 +17,11 @@ public class MainMenu extends MenuBar{
         saveDrawing = new MenuItem("Save");
         saveAs = new MenuItem("Save As");
         undo = new MenuItem("Undo");
+        open = new MenuItem("Open");
         file.add(newProject);
         file.add(saveDrawing);
         file.add(saveAs);
+        file.add(open);
         edit.add(undo);
         add(file);
         add(edit);
