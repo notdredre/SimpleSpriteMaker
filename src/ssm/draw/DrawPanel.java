@@ -15,7 +15,6 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import ssm.tools.Tool;
 import ssm.tools.ToolListener;
@@ -25,8 +24,8 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
     private final int WIDTH = 500, HEIGHT = 500, RESIZE_MAX = 5;
     private final Color bgColour = new Color(180, 180, 180);
     private int scale, scaleWidth, scaleHeight, pixelWidth, pixelHeight;
-    private BufferedImage drawBuffer, overlayBuffer, renderBuffer, writeBuffer, backgroundBuffer, previewBuffer,
-            compositeBuffer;
+    private BufferedImage drawBuffer, overlayBuffer, renderBuffer, writeBuffer, backgroundBuffer, onionSkinBuffer,
+            compositeBuffer, previewBuffer;
     private int x, y;
     private float percentX, percentY;
     private Color primary, secondary;
@@ -38,6 +37,7 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
     private DrawingMouseListener drawingMouseListener;
     private DrawingKeyboardListener drawingKeyboardListener;
     private UndoStack undoStack;
+    private Project project;
 
     public DrawPanel() {
         setBackground(bgColour);
@@ -60,6 +60,7 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
     }
 
     public void init(int pixelWidth, int pixelHeight) {
+        project = Project.getProject();
         scaleWidth = pixelWidth * scale;
         scaleHeight = pixelHeight * scale;
         panelWidth = getWidth();
@@ -93,12 +94,12 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
         Graphics2D c2 = (Graphics2D) compositeBuffer.getGraphics();
         c2.setColor(getBackground());
         c2.fillRect(0, 0, getWidth(), getHeight());
-
+        previewBuffer = project.getFinalWrite();
         if (renderBuffer != null) {
             Graphics2D r2 = (Graphics2D) renderBuffer.getGraphics();
             r2.drawImage(backgroundBuffer, 0, 0, null);
-            if (previewBuffer != null)
-                r2.drawImage(previewBuffer, 0, 0, null);
+            if (onionSkinBuffer != null)
+                r2.drawImage(onionSkinBuffer, 0, 0, null);
             r2.drawImage(drawBuffer, 0, 0, null);
             r2.drawImage(overlayBuffer, 0, 0, null);
             r2.dispose();
@@ -317,7 +318,7 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
     public void onBuffersChanged(BufferedImage drawBuffer, BufferedImage writeBuffer, BufferedImage previewBuffer) {
         this.drawBuffer = drawBuffer;
         this.writeBuffer = writeBuffer;
-        this.previewBuffer = previewBuffer;
+        this.onionSkinBuffer = previewBuffer;
         render();
     }
 
