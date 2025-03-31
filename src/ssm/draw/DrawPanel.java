@@ -1,4 +1,5 @@
 package ssm.draw;
+
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import ssm.ProjectListener;
@@ -24,7 +25,8 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
     private final int WIDTH = 500, HEIGHT = 500, RESIZE_MAX = 5;
     private final Color bgColour = new Color(180, 180, 180);
     private int scale, scaleWidth, scaleHeight, pixelWidth, pixelHeight;
-    private BufferedImage drawBuffer, overlayBuffer, renderBuffer, writeBuffer, backgroundBuffer, previewBuffer, compositeBuffer;
+    private BufferedImage drawBuffer, overlayBuffer, renderBuffer, writeBuffer, backgroundBuffer, previewBuffer,
+            compositeBuffer;
     private int x, y;
     private float percentX, percentY;
     private Color primary, secondary;
@@ -36,7 +38,7 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
     private DrawingMouseListener drawingMouseListener;
     private DrawingKeyboardListener drawingKeyboardListener;
     private UndoStack undoStack;
-    
+
     public DrawPanel() {
         setBackground(bgColour);
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -85,7 +87,7 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
         if (panelWidth > 0 && panelHeight > 0)
             compositeBuffer = new BufferedImage(panelWidth, panelHeight, BufferedImage.TYPE_INT_RGB);
         else
-        compositeBuffer = new BufferedImage(scaleWidth, scaleHeight, BufferedImage.TYPE_INT_RGB);
+            compositeBuffer = new BufferedImage(scaleWidth, scaleHeight, BufferedImage.TYPE_INT_RGB);
     }
 
     public void render() {
@@ -99,21 +101,21 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
             r2.drawImage(backgroundBuffer, 0, 0, null);
             if (previewBuffer != null)
                 r2.drawImage(previewBuffer, 0, 0, null);
-            r2.drawImage(drawBuffer, 0, 0, null); 
+            r2.drawImage(drawBuffer, 0, 0, null);
             r2.drawImage(overlayBuffer, 0, 0, null);
-            r2.dispose(); 
+            r2.dispose();
             c2.drawImage(renderBuffer.getScaledInstance(resizeX, resizeY, BufferedImage.SCALE_FAST), x, y, null);
-            drawPositionMarkers();     
+            drawPositionMarkers(0, 0, pixelWidth, pixelHeight);
             c2.setColor(Color.BLACK);
             String currentCellOut = "(" + (currentPixelY + 1) + ", " + (currentPixelX + 1) + ")";
             c2.drawString(currentCellOut, compositeBuffer.getWidth() - 50, compositeBuffer.getHeight() - 50);
         }
-        
+
         c2.dispose();
 
         Graphics2D g2 = (Graphics2D) getGraphics();
         if (g2 == null)
-            return;        
+            return;
         g2.drawImage(compositeBuffer, 0, 0, null);
         g2.dispose();
     }
@@ -169,46 +171,68 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
             return true;
         return false;
     }
+
     public void scaleInput(int eventX, int eventY) {
         currentPixelX = ((eventX - x) / scale) / (resizeX / scaleWidth);
         currentPixelY = ((eventY - y) / scale) / (resizeY / scaleHeight);
     }
 
-    private void drawPositionMarkers() {
+    private void drawPositionMarkers(int x1, int y1, int x2, int y2) {
+        int xWidth = x2 - x1;
+        int yHeight = y2 - y1;
+        if (xWidth >= 20) {
+            drawWidthMarkers(x1, x2 / 2);
+            drawWidthMarkers(x2 / 2, x2);
+        }
+        if (yHeight >= 20) {
+            drawHeightMarkers(y1, y2 / 2);
+            drawHeightMarkers(y2 / 2, y2);
+        }
         Graphics2D c2 = (Graphics2D) compositeBuffer.getGraphics();
         c2.setColor(new Color(0, 0, 0, 127));
         c2.setFont(new Font(Font.DIALOG, Font.BOLD, scale * resizeFactor));
-        int subdivide = 1;
-        for (int i = 0; i < pixelWidth; i += 20) {
-            int subWidth = pixelWidth / subdivide;
-            String width = Integer.toString(subWidth);
-            int yOff = 0;
-            if (y > 0)
-                yOff = y;
-            c2.drawString(width, subWidth * scale * resizeFactor + x - scale * resizeFactor, scale * resizeFactor + yOff);
-            if (subdivide > 2) {
-                subWidth = pixelWidth - pixelWidth / subdivide;
-                width = Integer.toString(subWidth);
-                c2.drawString(width, subWidth * scale * resizeFactor + x - scale * resizeFactor, scale * resizeFactor + yOff);
-            }
-            subdivide *= 2;
-        }
-        subdivide = 1;
-        for (int i = 0; i < pixelHeight; i += 20) {
-            int subHeight = pixelHeight / subdivide;
-            String height = Integer.toString(subHeight);
-            int xOff = 0;
-            if (x > 0)
-                xOff = x;
-            c2.drawString(height, xOff, subHeight * scale * resizeFactor + y);
-            if (subdivide > 2) {
-                subHeight = pixelHeight - pixelHeight / subdivide;
-                height = Integer.toString(subHeight);
-                c2.drawString(height, xOff, subHeight * scale * resizeFactor + y);
-            }
-            subdivide *= 2;
-        }
-        
+        int yOff = 0;
+        if (y >= 0)
+            yOff = y;
+        if (xWidth >= 20)
+            c2.drawString(Integer.toString(x1 + xWidth / 2), (x1 + xWidth / 2) * scale * resizeFactor + x - scale * resizeFactor, scale * resizeFactor + yOff);
+        c2.drawString(Integer.toString(x2), x2 * scale * resizeFactor + x - scale * resizeFactor, scale * resizeFactor + yOff);
+
+        int xOff = 0;
+        if (x >= 0)
+            xOff = x;
+        if (yHeight >= 20)
+            c2.drawString(Integer.toString(y1 + yHeight / 2), xOff, (y1 + yHeight / 2) * scale * resizeFactor + y);
+        c2.drawString(Integer.toString(y2), xOff, (y2) * scale * resizeFactor + y);
+    }
+
+    private void drawWidthMarkers(int x1, int x2) {
+        int xWidth = x2 - x1;
+        if (xWidth < 20)
+            return;
+
+        Graphics2D c2 = (Graphics2D) compositeBuffer.getGraphics();
+        c2.setColor(new Color(0, 0, 0, 127));
+        c2.setFont(new Font(Font.DIALOG, Font.BOLD, scale * resizeFactor));
+        int yOff = 0;
+        if (y >= 0)
+            yOff = y;
+        c2.drawString(Integer.toString(x1 + xWidth / 2), (x1 + xWidth / 2) * scale * resizeFactor + x - scale * resizeFactor, scale * resizeFactor + yOff);
+
+    }
+
+    private void drawHeightMarkers(int y1, int y2) {
+        int yHeight = y2 - y1;
+        if (yHeight < 20)
+            return;
+
+        Graphics2D c2 = (Graphics2D) compositeBuffer.getGraphics();
+        c2.setColor(new Color(0, 0, 0, 127));
+        c2.setFont(new Font(Font.DIALOG, Font.BOLD, scale * resizeFactor));
+        int xOff = 0;
+        if (x >= 0)
+            xOff = x;
+        c2.drawString(Integer.toString(y1 + yHeight / 2), xOff, (y1 + yHeight / 2) * scale * resizeFactor + y);
     }
 
     public void clearOverlay() {
@@ -244,7 +268,7 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
         positionDrawing();
     }
 
-    public void reposition(int newX, int newY, int oldX, int oldY) {  
+    public void reposition(int newX, int newY, int oldX, int oldY) {
         float diffX = newX - oldX;
         float diffY = newY - oldY;
         percentX += diffX / panelWidth;
@@ -273,7 +297,8 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
         b2.fillRect(0, 0, getWidth(), getHeight());
         try {
             File trasnparencyFile = new File("src/ssm/res/transparentTexture.png");
-            Paint transparency = new TexturePaint(ImageIO.read(trasnparencyFile), new Rectangle2D.Double(0, 0, scale * 5, scale * 5));
+            Paint transparency = new TexturePaint(ImageIO.read(trasnparencyFile),
+                    new Rectangle2D.Double(0, 0, scale * 5, scale * 5));
             b2.setPaint(transparency);
         } catch (IOException e) {
             e.printStackTrace();
@@ -304,6 +329,6 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
     }
 
     public void onCellChanged(int currentRow, int currentCol) {
-        
+
     }
 }
