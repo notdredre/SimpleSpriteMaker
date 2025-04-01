@@ -141,8 +141,12 @@ public class Project {
         for (int i = 0; i < drawingWidth * drawingHeight * scale * scale; i++) {
             if (previewPix[i] != 0) {
                 int alpha = 100;
-                int rest = previewPix[i] << 8;
-                previewPix[i] = alpha << 24 | (rest >> 8);
+                int rest = previewPix[i] << 8; 
+                int a = alpha;
+                int r = rest >> 24 & 255;
+                int g = rest >> 16 & 255;
+                int b = rest >> 8 & 255;
+                previewPix[i] = b | g << 8 | r << 16 | a << 24;
             }
         }
         BufferedImage out = new BufferedImage(drawingWidth * scale, drawingHeight * scale, BufferedImage.TYPE_INT_ARGB);
