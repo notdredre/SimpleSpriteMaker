@@ -15,7 +15,6 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import ssm.tools.Tool;
 import ssm.tools.ToolListener;
@@ -25,8 +24,8 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
     private final int WIDTH = 500, HEIGHT = 500, RESIZE_MAX = 5;
     private final Color bgColour = new Color(180, 180, 180);
     private int scale, scaleWidth, scaleHeight, pixelWidth, pixelHeight;
-    private BufferedImage drawBuffer, overlayBuffer, renderBuffer, writeBuffer, backgroundBuffer, previewBuffer,
-            compositeBuffer;
+    private BufferedImage drawBuffer, overlayBuffer, renderBuffer, writeBuffer, backgroundBuffer, onionSkinBuffer,
+            compositeBuffer, previewBuffer;
     private int x, y;
     private float percentX, percentY;
     private Color primary, secondary;
@@ -35,9 +34,12 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
     private int currentPixelX, currentPixelY;
     private int resizeX, resizeY, resizeFactor;
     private int panelWidth, panelHeight;
+    private int currentRow, currentCol;
     private DrawingMouseListener drawingMouseListener;
     private DrawingKeyboardListener drawingKeyboardListener;
     private UndoStack undoStack;
+    private Project project;
+    private boolean fullPreview;
 
     public DrawPanel() {
         setBackground(bgColour);
@@ -60,6 +62,7 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
     }
 
     public void init(int pixelWidth, int pixelHeight) {
+        project = Project.getProject();
         scaleWidth = pixelWidth * scale;
         scaleHeight = pixelHeight * scale;
         panelWidth = getWidth();
@@ -69,6 +72,7 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
         resizeY = Math.clamp(resizeFactor * scaleHeight, scaleHeight, scaleHeight * RESIZE_MAX);
         percentX = percentY = 0.5f;
         currentPixelX = currentPixelY = -1;
+        fullPreview = false;
         createBuffers(pixelWidth, pixelHeight, scale);
         positionDrawing();
         clear();
@@ -93,16 +97,25 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
         Graphics2D c2 = (Graphics2D) compositeBuffer.getGraphics();
         c2.setColor(getBackground());
         c2.fillRect(0, 0, getWidth(), getHeight());
-
+        previewBuffer = project.getFinalWrite();
         if (renderBuffer != null) {
             Graphics2D r2 = (Graphics2D) renderBuffer.getGraphics();
             r2.drawImage(backgroundBuffer, 0, 0, null);
-            if (previewBuffer != null)
-                r2.drawImage(previewBuffer, 0, 0, null);
+            if (onionSkinBuffer != null)
+                r2.drawImage(onionSkinBuffer, 0, 0, null);
             r2.drawImage(drawBuffer, 0, 0, null);
             r2.drawImage(overlayBuffer, 0, 0, null);
             r2.dispose();
             c2.drawImage(renderBuffer.getScaledInstance(resizeX, resizeY, BufferedImage.SCALE_FAST), x, y, null);
+            if (fullPreview) {
+                c2.scale((panelWidth * 1f / 4) / previewBuffer.getWidth(), (panelWidth * 1f / 4) / previewBuffer.getWidth());
+                c2.setColor(new Color(0,0,0, 100));
+                c2.fillRect(0, 0, previewBuffer.getWidth(), previewBuffer.getHeight());
+                c2.drawImage(previewBuffer, 0, 0, null);
+                c2.setColor(Color.YELLOW);
+                c2.drawRect(currentCol * pixelWidth, currentRow * pixelHeight, pixelWidth, pixelHeight);
+                c2.scale(1, 1);
+            }
             drawPositionMarkers(0, 0, pixelWidth, pixelHeight);
             c2.setColor(Color.BLACK);
             String currentCellOut = "(" + (currentPixelY + 1) + ", " + (currentPixelX + 1) + ")";
@@ -314,10 +327,14 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
         return currentTool;
     }
 
+    public void toggleFullPreview() {
+        fullPreview = !fullPreview;
+    }
+
     public void onBuffersChanged(BufferedImage drawBuffer, BufferedImage writeBuffer, BufferedImage previewBuffer) {
         this.drawBuffer = drawBuffer;
         this.writeBuffer = writeBuffer;
-        this.previewBuffer = previewBuffer;
+        this.onionSkinBuffer = previewBuffer;
         render();
     }
 
@@ -327,6 +344,8 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
 
 
     public void onCellChanged(int currentRow, int currentCol, UndoStack currentUndo) {
+        this.currentRow = currentRow;
+        this.currentCol = currentCol;
         undoStack = currentUndo;
     }
 }
