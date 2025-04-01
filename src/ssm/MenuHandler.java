@@ -31,7 +31,7 @@ public class MenuHandler implements ActionListener {
         this.drawPanel = drawPanel;
         imageFileManager = ImageFileManager.getImageFileManager();
     }
-    
+
     public void actionPerformed(ActionEvent e) {
         project = Project.getProject();
         currentTarget = project.getName();
@@ -57,7 +57,8 @@ public class MenuHandler implements ActionListener {
                             targetExtension = saveChooser.getTargetExtension();
                             imageFileManager.setTarget(currentTarget, targetExtension);
                             project.saveProject();
-                            mainWindow.setTitle(project.getName() + "." + targetExtension + " - SimpleSpriteMaker v0.6");
+                            mainWindow
+                                    .setTitle(project.getName() + "." + targetExtension + " - SimpleSpriteMaker v0.6");
                         } catch (FileNotFoundException f) {
                             f.printStackTrace();
                         }
@@ -72,26 +73,30 @@ public class MenuHandler implements ActionListener {
                 imageFileManager.setTarget(currentTarget, targetExtension);
                 project.saveProject();
                 break;
-        case "Save As":
-            if (saveChooser == null)
-                saveChooser = new SaveChooser(currentTarget);
-            int result = saveChooser.showSaveDialog(mainWindow);
-            if (result == JFileChooser.APPROVE_OPTION) {
-                try {
-                    String target = saveChooser.getTargetPath();
-                    targetExtension = saveChooser.getTargetExtension();
-                    imageFileManager.setTarget(target, targetExtension);
-                    project.saveProject();
-                } catch (FileNotFoundException f) {
-                    f.printStackTrace();
+            case "Save As":
+                if (saveChooser == null)
+                    saveChooser = new SaveChooser(currentTarget);
+                int result = saveChooser.showSaveDialog(mainWindow);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    try {
+                        String target = saveChooser.getTargetPath();
+                        targetExtension = saveChooser.getTargetExtension();
+                        imageFileManager.setTarget(target, targetExtension);
+                        project.saveProject();
+                    } catch (FileNotFoundException f) {
+                        f.printStackTrace();
+                    }
                 }
-            }
-            break;
-        case "Undo":
-            drawPanel.undo();
-            break;
-        case "Open":
-            openChooser = new OpenChooser(mainWindow);
+                break;
+            case "Undo":
+                drawPanel.undo();
+                break;
+            case "Open":
+                openChooser = new OpenChooser(mainWindow);
+                break;
+            case "View full preview":
+                drawPanel.toggleFullPreview();
+                break;
         }
     }
 }

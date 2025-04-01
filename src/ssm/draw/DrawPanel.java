@@ -327,6 +327,10 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
         return currentTool;
     }
 
+    public void toggleFullPreview() {
+        fullPreview = !fullPreview;
+    }
+
     public void onBuffersChanged(BufferedImage drawBuffer, BufferedImage writeBuffer, BufferedImage previewBuffer) {
         this.drawBuffer = drawBuffer;
         this.writeBuffer = writeBuffer;
