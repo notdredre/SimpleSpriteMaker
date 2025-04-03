@@ -1,36 +1,45 @@
 package ssm.tools;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import ssm.colour.ColourOp;
 
 public abstract class SquareTool extends DrawTool {
     public void preview(int x, int y, BufferedImage drawBuffer, BufferedImage overlayBuffer, int scale) {
-        clearPreview(overlayBuffer);
         int screenX = x * scale;
         int screenY = y * scale;
-        int screenEast = overlayBuffer.getWidth() - 1;
-        int screenSouth = overlayBuffer.getHeight() - 1;
+        int screenEast = overlayBuffer.getWidth();
+        int screenSouth = overlayBuffer.getHeight();
+        int pixelEast = screenX + size * scale;
+        int pixelSouth = screenY + size * scale;
+        int width = pixelEast - screenX;
+        int height = pixelSouth - screenY;
 
-        int pixelEast = screenX + size * scale - 1;
-        int pixelSouth = screenY + size * scale - 1;
-
-        for (int i = screenX; i <= pixelEast; i++) {
-            for (int j = screenY; j <= pixelSouth; j++) {
-                if (i > screenEast || j > screenSouth || i < 0 || j < 0)
-                    continue;
-                int bRGB = drawBuffer.getRGB(i, j);
+        BufferedImage pixelOverlay = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        int drawPic = 0;
+        if (screenX >= 0 && screenX < screenEast)
+            drawPic = drawBuffer.getRGB(screenX, 0);
+        if (screenY >= 0 && screenY < screenSouth)
+            drawPic = drawBuffer.getRGB(0, screenY);
+        if (screenX >= 0 && screenX < screenEast && screenY >= 0 && screenY < screenSouth)
+            drawPic = drawBuffer.getRGB(screenX, screenY);
+        int[] resultPix = new int[width * height];
+        
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                int bRGB = drawPic;
                 int result = ColourOp.minus(Color.WHITE.getRGB(), bRGB);
                 if (bRGB == 0)
                     result = Color.BLACK.getRGB();
-                if (i == screenX || i == pixelEast){   
-                    overlayBuffer.setRGB(i, j, result);
-                }
-                if (j == screenY || j == pixelSouth) {
-                    overlayBuffer.setRGB(i, j, result);
+                if (i == 0 || i == width - 1 || j == 0 || j == height - 1){   
+                    resultPix[j * height + i] = result;
                 }
             }
         }
+        pixelOverlay.setRGB(0, 0, width, height, resultPix, 0, width);
+        Graphics2D  o2 = (Graphics2D) overlayBuffer.getGraphics();
+        o2.drawImage(pixelOverlay, screenX, screenY, null);
     }
 }
