@@ -321,7 +321,7 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
     }
 
     public void commit() {
-        undoStack.push(drawBuffer, writeBuffer);
+        undoStack.push(writeBuffer);
     }
 
     public void undo() {

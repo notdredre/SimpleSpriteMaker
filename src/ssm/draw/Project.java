@@ -14,7 +14,6 @@ public class Project {
     private ImageFileManager imageFileManager;
     private static Project project = null;
     private ToolManager toolManager;
-    private ArrayList<Drawing> drawings;
     private ArrayList<BufferedImage> writeBuffers;
     private ArrayList<UndoStack> undoStacks;
     private UndoStack currentUndo;
@@ -60,7 +59,7 @@ public class Project {
         for (int i = 0; i < numRows * numCols; i++) {
             addDrawing();
             undoStacks.add(new UndoStack());
-            undoStacks.get(i).push(getDrawBuffer(), getWriteBuffer());
+            undoStacks.get(i).push(getWriteBuffer());
         }
         currentUndo = undoStacks.get(0);
         colourManager.reset();
