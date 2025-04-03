@@ -1,6 +1,8 @@
 package ssm.draw;
 
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import ssm.ProjectListener;
@@ -12,7 +14,6 @@ public class Project {
     private ImageFileManager imageFileManager;
     private static Project project = null;
     private ToolManager toolManager;
-    private ArrayList<Drawing> drawings;
     private ArrayList<BufferedImage> writeBuffers;
     private ArrayList<UndoStack> undoStacks;
     private UndoStack currentUndo;
@@ -53,13 +54,12 @@ public class Project {
         toolManager.getSquareBrush();
         lastRow = lastCol = previewRow = previewCol = -1;
         currentRow = currentCol = 0;
-        drawings = new ArrayList<>(numRows * numCols);
         writeBuffers = new ArrayList<>(numRows * numCols);
         undoStacks = new ArrayList<>(numRows * numCols);
         for (int i = 0; i < numRows * numCols; i++) {
             addDrawing();
             undoStacks.add(new UndoStack());
-            undoStacks.get(i).push(getDrawBuffer(), getWriteBuffer());
+            undoStacks.get(i).push(getWriteBuffer());
         }
         currentUndo = undoStacks.get(0);
         colourManager.reset();
@@ -77,7 +77,6 @@ public class Project {
         BufferedImage imageFile = ImageFileManager.openImage(path);
         newProject(imageFile.getWidth(), imageFile.getHeight(), 20);
         writeBuffers.set(0, imageFile);
-        drawings.get(0).setBuffer(imageFile.getScaledInstance(drawingWidth * scale, drawingHeight * scale, BufferedImage.SCALE_DEFAULT));
         triggerOnBuffersChanged();
         setName(path);
     }
@@ -89,7 +88,6 @@ public class Project {
         newProject(numRows, numCols, drawingWidth, drawingHeight, 20);
         for (int i = 0; i < images.size(); i++) {
             writeBuffers.set(i, images.get(i));
-            drawings.get(i).setBuffer(images.get(i).getScaledInstance(drawingWidth * scale, drawingHeight * scale, BufferedImage.SCALE_DEFAULT));
         }
         triggerOnBuffersChanged();
         setName(path);
@@ -114,7 +112,6 @@ public class Project {
         if (lastCol == 0)
             lastRow = (lastRow + 1) % numRows;
 
-        drawings.add(new Drawing(drawingWidth * scale, drawingHeight * scale, lastRow, lastCol));
         addWriteBuffer();
     }
 
@@ -164,7 +161,13 @@ public class Project {
 
     private BufferedImage getDrawBuffer(int row, int col) {
         currentUndo = undoStacks.get(row * numCols + col);
-        return drawings.get(row * numCols + col).getBuffer();
+        BufferedImage write = getWriteBuffer(row, col);
+        AffineTransform af = new AffineTransform();
+        af.setToScale(scale, scale);
+        AffineTransformOp op = new AffineTransformOp(af, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+        BufferedImage draw = new BufferedImage(write.getWidth() * scale, write.getHeight() * scale, BufferedImage.TYPE_INT_ARGB);
+        op.filter(write, draw);
+        return draw;
     }
 
     public BufferedImage getDrawBuffer() {
@@ -306,14 +309,8 @@ public class Project {
 
     public void duplicate() {
         int next[] = getRight(currentRow, currentCol);
-        BufferedImage currentDrawing = getDrawBuffer();
         BufferedImage currentWrite = getWriteBuffer();
-        BufferedImage nextDrawing = getDrawBuffer(next[0], next[1]);
         BufferedImage nextWrite = getWriteBuffer(next[0], next[1]);
-        
-        Graphics2D d2 = (Graphics2D) nextDrawing.getGraphics();
-        d2.drawImage(currentDrawing, 0, 0, null);
-        d2.dispose();
 
         Graphics2D w2 = (Graphics2D) nextWrite.getGraphics();
         w2.drawImage(currentWrite, 0, 0, null);

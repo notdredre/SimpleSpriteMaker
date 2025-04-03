@@ -184,6 +184,9 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
     }
 
     public void scaleInput(int eventX, int eventY) {
+        if (comparePixel(eventX, eventY))
+            return;
+        clearBuffer(overlayBuffer, currentPixelX * scale, currentPixelY * scale, currentPixelX * scale + toolManager.getSize() * scale, currentPixelY * scale + toolManager.getSize() * scale);
         currentPixelX = ((eventX - x) / scale) / (resizeX / scaleWidth);
         currentPixelY = ((eventY - y) / scale) / (resizeY / scaleHeight);
     }
@@ -250,6 +253,36 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
         clearBuffer(overlayBuffer);
     }
 
+    private void clearBuffer(BufferedImage buffer, int startX, int startY, int endX, int endY) {
+        int bWidth = buffer.getWidth();
+        int bHeight = buffer.getHeight();
+        if (startX < 0)
+            startX = 0;
+        if (startY < 0)
+            startY = 0;
+        if (startX > bWidth)
+            startX = bWidth;
+        if (startY > bHeight)
+            startY = bHeight;
+        
+        if (endX < 0)
+            endX = 0;
+        if (endY < 0)
+            endY = 0;
+        if (endX > bWidth)
+            endX = bWidth;
+        if (endY > bHeight)
+            endY = bHeight;
+        int aWidth = endX - startX;
+        int aHeight = endY - startY;
+        int[] pix = new int[aWidth * aHeight];
+        buffer.getRGB(startX, startY, aWidth, aHeight, pix, 0, aWidth);
+        for (int i = 0; i < aWidth * aHeight; i++) {
+            pix[i] = 0;
+        }
+        buffer.setRGB(startX, startY, aWidth, aHeight, pix, 0, aWidth);
+    }
+
     private void clearBuffer(BufferedImage buffer) {
         int bWidth = buffer.getWidth();
         int bHeight = buffer.getHeight();
@@ -288,7 +321,7 @@ public class DrawPanel extends JPanel implements ColourObject, Refreshable, Tool
     }
 
     public void commit() {
-        undoStack.push(drawBuffer, writeBuffer);
+        undoStack.push(writeBuffer);
     }
 
     public void undo() {
